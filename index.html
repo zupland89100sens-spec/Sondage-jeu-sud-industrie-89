@@ -30,6 +30,7 @@ header .sub{margin:0;color:#fff;font-weight:600;font-size:1.1rem;opacity:.9}
 .tab:nth-child(3){border-color:#b8860b;color:#8a6500}
 .tab:nth-child(4){border-color:#2e7d32;color:#2e7d32}
 .tab:nth-child(5){border-color:#7b1fa2;color:#7b1fa2}
+.tab:nth-child(6){border-color:#00838f;color:#00838f}
 .tab[aria-pressed="true"]{background:#004aad;color:#fff}
 button,.btn{width:100%;padding:15px 20px;min-height:50px;border:0;border-radius:8px;background:var(--acc);color:#fff;font-weight:700;cursor:pointer;font-size:1rem;margin-top:10px;text-align:center;display:block;text-decoration:none;box-shadow:0 4px 0 rgba(0,0,0,.2);transition:transform .15s,box-shadow .15s,filter .2s}
 button:hover,.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
@@ -77,18 +78,16 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 .opt.ko{background:var(--acc);color:#fff;border-color:var(--acc)}
 .expl{margin-top:12px;padding:12px;background:var(--bg);border-left:4px solid var(--blue);border-radius:6px;text-align:left;font-size:.95rem}
 .final-emoji{font-size:5rem;animation:bob 1s ease-in-out infinite}
-.live{margin-top:30px;padding:20px;border-radius:14px;background:linear-gradient(135deg,#004aad,#0a2a6b);color:#fff;box-shadow:0 8px 20px rgba(0,74,173,.35)}
-.live h3{margin:0 0 10px;font:700 1.6rem "Barlow Condensed",Impact,sans-serif;text-transform:uppercase;color:#ffcc00}
-.live select{width:100%;padding:10px;border-radius:8px;border:0;font:inherit;margin-bottom:10px}
-.live .note{color:#fff;opacity:.9;text-align:left}
-#qtitre{font-weight:700;margin:0 0 8px}
-.bar-row{margin:12px 0}
-.bar-lab{display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:.95rem;margin-bottom:4px}
-.bar-bg{height:24px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
-.bar-bg i{display:block;height:100%;width:0;border-radius:99px;transition:width 1s cubic-bezier(.2,.8,.2,1);box-shadow:inset 0 0 12px rgba(255,255,255,.5)}
-.galerie{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px}
-.galerie img{width:100%;height:120px;object-fit:cover;border-radius:8px;border:2px solid var(--line);cursor:pointer;transition:transform .2s}
-.galerie img:hover{transform:scale(1.03)}
+/* GALERIE PHOTOS */
+.galerie{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
+.galerie a{display:block;position:relative;overflow:hidden;border-radius:8px;border:2px solid var(--line);background:var(--bg);aspect-ratio:1/1}
+.galerie img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s;cursor:zoom-in}
+.galerie a:hover img{transform:scale(1.06)}
+.galerie .vide{grid-column:1/-1;text-align:center;padding:30px 15px;color:var(--mute);font-size:.95rem}
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;cursor:zoom-out;animation:fadeUp .2s ease}
+.lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.lightbox .fermer{position:absolute;top:15px;right:20px;color:#fff;font-size:2rem;font-weight:700;background:rgba(255,255,255,.15);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -105,6 +104,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <button class="tab" data-t="elections" aria-pressed="false">🗳️ Élections</button>
   <button class="tab" data-t="sondage" aria-pressed="false">📊 Sondage</button>
   <button class="tab" data-t="quiz" aria-pressed="false">🎮 Quiz</button>
+  <button class="tab" data-t="photos" aria-pressed="false">📷 Photos</button>
 </div>
 <div class="tabs" style="grid-template-columns:1fr; margin-top:-8px; margin-bottom:16px;">
   <button class="tab" data-t="qrcode" aria-pressed="false" style="border-color:var(--blue); color:var(--blue);">📱 Afficher le QR Code</button>
@@ -196,12 +196,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
       <h3>⏳ Période d'essai</h3>
       <p>Pour un ouvrier en CDI, elle est en général limitée à 2 mois. Elle doit figurer dans ton contrat.</p>
       <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019017133" target="_blank" rel="noopener">📖 Article L1221-19 du Code du travail</a>
-    </div>
-
-    <div class="droit-item">
-      <h3>📷 Photos du terrain</h3>
-      <p>Retrouvez des photos prises sur le terrain (signalétique, zones de circulation, anomalies).</p>
-      <div id="galerie-photos" class="galerie"></div>
     </div>
 
     <a href="tel:0626711687" class="btn contact-btn">📞 M'appeler directement (06 26 71 16 87)</a>
@@ -447,15 +441,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
     <div id="res-sondage" style="display:none; background:var(--success); color:#fff; padding:20px; border-radius:8px; text-align:center; font-weight:bold; margin-top:15px;">
       ✅ Merci ! Tes réponses ont bien été envoyées de manière anonyme.
     </div>
-
-    <div class="live" id="live" hidden>
-      <h3>📊 Résultats en direct</h3>
-      <label class="note" for="qsel">Choisis une question :</label>
-      <select id="qsel"></select>
-      <p id="qtitre"></p>
-      <div id="bars"></div>
-      <p class="note" id="total"></p>
-    </div>
   </div>
 </section>
 
@@ -482,6 +467,17 @@ section:not([hidden]){animation:fadeUp .5s ease both}
       <p style="font-size:1.2rem;font-weight:700" id="fscore"></p>
       <p class="note" id="fbest"></p>
       <button id="quiz-again">🔄 Rejouer</button>
+    </div>
+  </div>
+</section>
+
+<!-- ONGLET PHOTOS -->
+<section id="photos" hidden>
+  <div class="card">
+    <h2>📷 Photos du terrain</h2>
+    <p style="font-size:.9rem; color:var(--mute); margin-bottom:10px;">Signalétique, zones de circulation, anomalies… Clique sur une photo pour l'agrandir.</p>
+    <div id="galerie" class="galerie">
+      <div class="vide">Chargement des photos…</div>
     </div>
   </div>
 </section>
@@ -521,9 +517,10 @@ updateTimer();
 // Onglets
 document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", x === b));
-  ["droits","victoires","elections","sondage","quiz","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
+  ["droits","victoires","elections","sondage","quiz","photos","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
   if(b.dataset.t === "qrcode") drawQR();
   if(b.dataset.t === "quiz") showStart();
+  if(b.dataset.t === "photos") chargerGalerie();
 });
 
 // ===== QUIZ =====
@@ -615,9 +612,7 @@ $("quiz-go").onclick = startQuiz;
 $("quiz-again").onclick = startQuiz;
 $("best").textContent = bestScore();
 
-// ===== SONDAGE : UN VOTE PAR APPAREIL =====
-const COULEURS_BARRES = ["#ffcc00","#ffffff","#ff7043","#66bb6a","#ce93d8","#4dd0e1"];
-
+// ===== SONDAGE =====
 $("form-sondage").onsubmit = async function(e){
   e.preventDefault();
   const btn = $("btn-submit");
@@ -654,30 +649,63 @@ function drawQR(){
   new QRCode(el, {text: url, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M});
 }
 
-// ===== GALERIE PHOTOS =====
-// Dépose tes images dans le dossier "photos/" à la racine de index.html
-// Nomme-les : photo1.jpg, photo2.jpg, photo3.jpg ... (jpg, png, jpeg, webp)
-const PHOTOS = [
-  "photos/photo1.jpg",
-  "photos/photo2.jpg",
-  "photos/photo3.jpg"
-  // Ajoute autant de lignes que tu veux
-];
-function chargerGalerie(){
-  const box = $("galerie-photos");
-  if(!box) return;
+// ===== GALERIE PHOTOS (chargement auto via liste.json) =====
+let galerieChargee = false;
+async function chargerGalerie(){
+  if(galerieChargee) return;
+  galerieChargee = true;
+  const box = $("galerie");
+  box.innerHTML = '<div class="vide">Chargement des photos…</div>';
+  let liste = [];
+  try{
+    const r = await fetch("photos/liste.json?cache=" + Date.now());
+    if(!r.ok) throw new Error("liste.json introuvable");
+    liste = await r.json();
+    if(!Array.isArray(liste)) throw new Error("liste.json doit être un tableau");
+  }catch(err){
+    box.innerHTML = `<div class="vide">
+      📷 Aucune photo pour le moment.<br>
+      <small style="opacity:.7">(Crée un fichier <code>photos/liste.json</code> avec la liste des noms de fichiers)</small>
+    </div>`;
+    return;
+  }
+  if(!liste.length){
+    box.innerHTML = '<div class="vide">📷 Aucune photo pour le moment.</div>';
+    return;
+  }
   box.innerHTML = "";
-  PHOTOS.forEach(src => {
+  liste.forEach(nom => {
+    const chemin = "photos/" + nom;
+    const a = document.createElement("a");
+    a.href = chemin;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.onclick = (e) => { e.preventDefault(); ouvrirLightbox(chemin); };
     const img = document.createElement("img");
-    img.src = src;
+    img.src = chemin;
     img.alt = "Photo terrain Sud Industrie";
     img.loading = "lazy";
-    img.onerror = () => { img.style.display = "none"; };
-    img.onclick = () => window.open(src, "_blank");
-    box.appendChild(img);
+    img.onerror = () => { a.style.display = "none"; };
+    a.appendChild(img);
+    box.appendChild(a);
   });
 }
-chargerGalerie();
+
+// Lightbox plein écran
+function ouvrirLightbox(src){
+  const lb = document.createElement("div");
+  lb.className = "lightbox";
+  lb.onclick = () => lb.remove();
+  const img = document.createElement("img");
+  img.src = src;
+  const btn = document.createElement("button");
+  btn.className = "fermer";
+  btn.textContent = "✕";
+  btn.onclick = (e) => { e.stopPropagation(); lb.remove(); };
+  lb.appendChild(img);
+  lb.appendChild(btn);
+  document.body.appendChild(lb);
+}
 </script>
 </body>
 </html>
