@@ -649,7 +649,7 @@ function drawQR(){
   new QRCode(el, {text: url, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M});
 }
 
-// ===== GALERIE PHOTOS (chargement auto via liste.json) =====
+// ===== GALERIE PHOTOS =====
 let galerieChargee = false;
 async function chargerGalerie(){
   if(galerieChargee) return;
@@ -665,7 +665,7 @@ async function chargerGalerie(){
   }catch(err){
     box.innerHTML = `<div class="vide">
       📷 Aucune photo pour le moment.<br>
-      <small style="opacity:.7">(Crée un fichier <code>photos/liste.json</code> avec la liste des noms de fichiers)</small>
+      <small style="opacity:.7">(Erreur: le fichier liste.json n'est pas trouvé ou mal écrit)</small>
     </div>`;
     return;
   }
@@ -685,7 +685,11 @@ async function chargerGalerie(){
     img.src = chemin;
     img.alt = "Photo terrain Sud Industrie";
     img.loading = "lazy";
-    img.onerror = () => { a.style.display = "none"; };
+    // Si l'image ne charge pas, on l'affiche en rouge temporairement pour comprendre
+    img.onerror = () => { 
+      a.style.border = "2px solid red"; 
+      a.title = "Image introuvable : " + nom;
+    };
     a.appendChild(img);
     box.appendChild(a);
   });
