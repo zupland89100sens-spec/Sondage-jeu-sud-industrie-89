@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sud Industrie ELE – Espace Salarié</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#eef0f2;--surface:#fff;--ink:#16181d;--mute:#5b616b;--line:#d3d7dc;--acc:#c8102e;--blue:#004aad;--yellow:#ffcc00;--success:#2e7d32;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121316;--surface:#1b1d22;--ink:#f1f2f4;--mute:#a2a8b2;--line:#33363d;--acc:#ff4d63;--blue:#4d8bff;--yellow:#ffd633;--success:#4caf50;color-scheme:dark}}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Barlow,system-ui,-apple-system,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px 14px 40px}
+header{text-align:center;margin-bottom:20px;padding:25px 15px;background:var(--blue);color:#fff;border-radius:12px;box-shadow:0 4px 10px rgba(0,74,173,0.3);}
+header h1{font:700 clamp(2rem,8vw,2.8rem)/.95 "Barlow Condensed",Impact,sans-serif;margin:0 0 5px;text-transform:uppercase;color:#fff;}
+header h1 span{color:var(--yellow);}
+header .sub{margin:0;color:#fff;font-weight:600;font-size:1.1rem;opacity:0.9}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.tab{padding:12px 6px;min-height:50px;border:2px solid var(--ink);background:var(--surface);border-radius:8px;font-weight:700;cursor:pointer;font-size:0.85rem;transition:all 0.2s;color:var(--ink);display:flex;align-items:center;justify-content:center;text-align:center;}
+.tab[aria-pressed="true"]{background:var(--blue);color:#fff;border-color:var(--blue);}
+button,.btn{width:100%;padding:15px 20px;min-height:50px;border:0;border-radius:8px;background:var(--acc);color:#fff;font-weight:700;cursor:pointer;font-size:1rem;margin-top:10px;text-align:center;display:block;text-decoration:none;transition:opacity 0.2s}
+button:active{opacity:0.8}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.card h2{margin-top:0;color:var(--blue);font-size:1.3rem;border-bottom:2px solid var(--blue);padding-bottom:10px;}
+.droit-item{background:var(--bg);border-left:4px solid var(--acc);padding:15px;margin-bottom:15px;border-radius:4px;}
+.droit-item h3{margin:0 0 8px 0;font-size:1.1rem;color:var(--ink);}
+.droit-item p{margin:0;font-size:0.95rem;color:var(--mute);}
+.victoire-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:15px;padding-bottom:15px;border-bottom:1px dashed var(--line);}
+.victoire-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.victoire-item .icon{font-size:1.5rem;line-height:1;}
+.victoire-item p{margin:0;font-weight:600;font-size:1.05rem;}
+.victoire-item span{display:block;font-size:0.85rem;color:var(--mute);font-weight:400;}
+.countdown-box{text-align:center;padding:20px;background:var(--yellow);border-radius:12px;margin-bottom:20px;color:#000;}
+.countdown-box h2{margin:0 0 10px 0;font-size:1.4rem;color:#000;border:none;}
+.countdown-timer{font:700 2.5rem/1 "Barlow Condensed",Impact,sans-serif;letter-spacing:2px;color:var(--acc);}
+.note{font-size:0.85rem;color:var(--mute);margin-top:12px;line-height:1.4;text-align:center}
+[hidden]{display:none!important}
+.qr{background:#fff;padding:16px;display:inline-block;border-radius:12px;margin:12px 0}
+.contact-btn{background:var(--success);font-size:1.1rem;display:flex;align-items:center;justify-content:center;gap:10px;}
+
+/* Styles pour le sondage */
+.question{margin-bottom:20px; padding-bottom:15px; border-bottom:1px dashed var(--line);}
+.question:last-child{border-bottom:none;}
+.q-title{font-weight:600; margin-bottom:10px; display:block; color:var(--ink);}
+.radio-group label{display:flex; align-items:flex-start; padding:10px; background:var(--bg); margin-bottom:6px; border-radius:8px; cursor:pointer; font-weight:400; font-size:0.95rem; line-height:1.3;}
+.radio-group input[type="radio"]{width:18px; height:18px; margin-right:10px; margin-top:2px; accent-color:var(--acc); flex-shrink:0;}
+header{background:linear-gradient(135deg,#004aad,#0a7cff,#c8102e);background-size:200% 200%;animation:grad 8s ease infinite}
+@keyframes grad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.bob{display:inline-block;animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-8px) rotate(6deg)}}
+section:not([hidden]){animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.card{transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1)}
+.droit-item{transition:transform .2s}
+.droit-item:hover{transform:translateX(5px)}
+.tab:hover{transform:translateY(-2px)}
+.lf-link{display:inline-block;margin-top:8px;font-size:.9rem;font-weight:700;color:var(--blue);text-decoration:none}
+.lf-link:hover{text-decoration:underline}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--success));transition:width .4s}
+.q-img{font-size:4.5rem;display:block;text-align:center;animation:bob 1.6s ease-in-out infinite;margin:10px 0}
+.opt{background:var(--bg);color:var(--ink);border:2px solid var(--line);text-align:left;font-weight:600;transition:all .2s}
+.opt:hover:not(:disabled){border-color:var(--blue);transform:translateX(4px)}
+.opt.ok{background:var(--success);color:#fff;border-color:var(--success)}
+.opt.ko{background:var(--acc);color:#fff;border-color:var(--acc)}
+.expl{margin-top:12px;padding:12px;background:var(--bg);border-left:4px solid var(--blue);border-radius:6px;text-align:left;font-size:.95rem}
+.final-emoji{font-size:5rem;animation:bob 1s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+body{background:linear-gradient(-45deg,#e6efff,#fff0f2,#fff8d6,#e6efff);background-size:400% 400%;animation:bg 16s ease infinite}
+@keyframes bg{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@media (prefers-color-scheme:dark){body{background:linear-gradient(-45deg,#0b1a38,#2a0c14,#2a2306,#0b1a38);background-size:400% 400%}}
+.tab{border-width:3px}
+.tab:nth-child(1){border-color:#004aad;color:#004aad}
+.tab:nth-child(2){border-color:#c8102e;color:#c8102e}
+.tab:nth-child(3){border-color:#b8860b;color:#8a6500}
+.tab:nth-child(4){border-color:#2e7d32;color:#2e7d32}
+.tab:nth-child(5){border-color:#7b1fa2;color:#7b1fa2}
+.tab[aria-pressed="true"]{background:#004aad;color:#fff}
+.card{position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,#004aad,#c8102e,#ffcc00)}
+.card h2{color:#004aad}
+.droit-item:nth-of-type(3n+1){border-left-color:#004aad}
+.droit-item:nth-of-type(3n+2){border-left-color:#c8102e}
+.droit-item:nth-of-type(3n){border-left-color:#ffcc00}
+button,.btn{box-shadow:0 4px 0 rgba(0,0,0,.2);transition:transform .15s,box-shadow .15s,filter .2s}
+button:hover,.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+button:active,.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.radio-group label{transition:transform .2s,background .2s}
+.radio-group label:hover{background:#e6efff;transform:translateX(4px)}
+.live{margin-top:30px;padding:20px;border-radius:14px;background:linear-gradient(135deg,#004aad,#0a2a6b);color:#fff;box-shadow:0 8px 20px rgba(0,74,173,.35)}
+.live h3{margin:0 0 10px;font:700 1.6rem "Barlow Condensed",Impact,sans-serif;text-transform:uppercase;color:#ffcc00}
+.live select{width:100%;padding:10px;border-radius:8px;border:0;font:inherit;margin-bottom:10px}
+.live .note{color:#fff;opacity:.9;text-align:left}
+#qtitre{font-weight:700;margin:0 0 8px}
+.bar-row{margin:12px 0}
+.bar-lab{display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:.95rem;margin-bottom:4px}
+.bar-bg{height:24px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
+.bar-bg i{display:block;height:100%;width:0;border-radius:99px;transition:width 1s cubic-bezier(.2,.8,.2,1);box-shadow:inset 0 0 12px rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>SUD <span>INDUSTRIE</span> ELE</h1>
+  <p class="sub"><span class="bob">✊</span> Votre Espace Salarié <span class="bob">🗳️</span></p>
+</header>
+
+<div class="tabs" role="group">
+  <button class="tab" data-t="droits" aria-pressed="true">🛡️ Mes Droits</button>
+  <button class="tab" data-t="victoires" aria-pressed="false">🏆 Victoires</button>
+  <button class="tab" data-t="elections" aria-pressed="false">🗳️ Élections</button>
+  <button class="tab" data-t="sondage" aria-pressed="false">📊 Sondage</button>
+  <button class="tab" data-t="quiz" aria-pressed="false">🎮 Quiz</button>
+</div>
+<div class="tabs" style="grid-template-columns:1fr; margin-top:-8px; margin-bottom:16px;">
+  <button class="tab" data-t="qrcode" aria-pressed="false" style="border-color:var(--blue); color:var(--blue);">📱 Afficher le QR Code</button>
+</div>
+
+<!-- ONGLET 1 : MES DROITS -->
+<section id="droits">
+  <div class="card">
+    <h2>Connaître ses droits</h2>
+    
+    <div class="droit-item">
+      <h3>🚨 Convocation par la direction</h3>
+      <p>Tu as le droit d'être accompagné par un élu du personnel. L'employeur doit te laisser un délai de 5 jours ouvrables entre la convocation et l'entretien.</p>
+    </div>
+    
+    <div class="droit-item">
+      <h3>🤒 Arrêt maladie</h3>
+      <p>Préviens l'employeur dans les 48h. Tu acquiers des congés payés pendant ton arrêt (depuis la loi de 2024). Tu peux être contrôlé par la Sécurité Sociale.</p>
+    </div>
+
+    <div class="droit-item">
+      <h3>⏱️ Heures supplémentaires</h3>
+      <p>Elles sont majorées de 25% pour les 8 premières heures, puis 50%. L'employeur peut les imposer dans la limite du contingent annuel (220h à défaut d'accord).</p>
+    </div>
+
+    <div class="droit-item">
+      <h3>🚫 Harcèlement moral ou sexuel</h3>
+      <p>C'est interdit. Si tu en es victime, tu peux alerter le CSE, l'inspection du travail, ou nous contacter directement. La direction a une obligation de protection.</p>
+    </div>
+    
+    <div class="droit-item">
+      <h3>🦺 Sécurité et EPI</h3>
+      <p>L'employeur doit te fournir des Équipements de Protection Individuelle (EPI) adaptés et gratuits. Tu as un droit de retrait si tu constates un danger grave et imminent.</p>
+    </div>
+
+    <div class="droit-item">
+      <h3>✈️ Congés payés</h3>
+      <p>2,5 jours ouvrables par mois travaillé (soit 5 semaines par an). Le départ en congés doit être validé par la direction en respectant l'ordre des départs.</p>
+    </div>
+
+    <div class="droit-item">
+      <h3>📬 Remise en main propre d'un courrier</h3>
+      <p>Si l'on te remet une lettre en main propre (avertissement, convocation…), demande un exemplaire daté et signé et garde une copie. Une lettre de licenciement doit être envoyée en recommandé avec accusé de réception.</p>
+    </div>
+
+    <div class="droit-item">
+      <h3>⚠️ Danger grave et imminent</h3>
+      <p>Tu peux exercer ton droit de retrait : quitter ton poste sans sanction, après avoir immédiatement prévenu l'employeur ou son représentant.</p>
+    </div>
+
+    <div class="droit-item">
+      <h3>🧾 Fiche de paie</h3>
+      <p>Ton employeur doit te remettre un bulletin de paie à chaque versement de salaire. Vérifie-le : salaire, heures, cotisations.</p>
+    </div>
+
+    <div class="droit-item">
+      <h3>⏳ Période d'essai</h3>
+      <p>Pour un ouvrier en CDI, elle est en général limitée à 2 mois. Elle doit figurer dans ton contrat.</p>
+    </div>
+
+    <a href="tel:0626711687" class="btn contact-btn">📞 M'appeler directement (06 26 71 16 87)</a>
+  </div>
+</section>
+
+<!-- ONGLET 2 : NOS VICTOIRES -->
+<section id="victoires" hidden>
+  <div class="card">
+    <h2>Nos Bilan et Victoires</h2>
+    <p style="font-size:0.9rem; color:var(--mute); margin-bottom:20px;">Ce sont des actions concrètes obtenues grâce à votre mobilisation.</p>
+    
+    <div class="victoire-item">
+      <div class="icon">❄️</div>
+      <div><p>Prime Froid</p><span>Revalorisation et attribution de la prime.</span></div>
+    </div>
+    <div class="victoire-item">
+      <div class="icon">🔊</div>
+      <div><p>Point de Pénibilité Bruit</p><span>Obtention d'un point pour les salariés exposés.</span></div>
+    </div>
+    <div class="victoire-item">
+      <div class="icon">🏥</div>
+      <div><p>Congés Payés & Arrêt Maladie</p><span>Maintien de l'acquisition des CP pendant les arrêts.</span></div>
+    </div>
+    <div class="victoire-item">
+      <div class="icon">👂</div>
+      <div><p>Une écoute permanente</p><span>Toujours à l'écoute des salariés sur le terrain.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ONGLET 3 : ÉLECTIONS -->
+<section id="elections" hidden>
+  <div class="card">
+    <h2>Élections Professionnelles</h2>
+    <div class="countdown-box">
+      <h2>Rendez-vous en Octobre 2027</h2>
+      <p style="font-size:1rem; margin:0 0 15px 0;">Ne laissez pas les autres décider pour vous.</p>
+      <div class="countdown-timer" id="timer">Chargement...</div>
+    </div>
+    <p style="font-weight:600; text-align:center;">En votant pour Sud Industrie, vous choisissez une équipe présente sur le terrain, qui connaît vos réalités et qui se bat pour vos conditions de travail.</p>
+    <a href="tel:0626711687" class="btn contact-btn" style="margin-top:20px;">📞 Rejoindre le syndicat / M'appeler</a>
+  </div>
+</section>
+
+<!-- ONGLET 4 : SONDAGE -->
+<section id="sondage" hidden>
+  <div class="card">
+    <h2>Sondage Climat Social</h2>
+    <p style="font-size:0.9rem; color:var(--mute); margin-bottom:15px;">Ce sondage fait suite à nos alertes. Tes réponses seront analysées et transmises à la direction pour exiger des changements.</p>
+    
+    <form id="form-sondage">
+      <!-- Les champs "name" sont importants pour l'e-mail -->
+      <div class="question">
+        <span class="q-title">1. La polyvalence est-elle appliquée de manière claire et équitable ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q1_Polyvalence_Clarte" value="Non, c'est le flou total" required> Non, c'est le flou total</label>
+          <label><input type="radio" name="Q1_Polyvalence_Clarte" value="Un peu, mais les règles changent"> Un peu, mais les règles changent</label>
+          <label><input type="radio" name="Q1_Polyvalence_Clarte" value="Oui, c'est clair"> Oui, c'est clair</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">2. As-tu un planning de polyvalence communiqué à l'avance ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q2_Planning_Polyvalence" value="Jamais" required> Jamais, on l'apprend au dernier moment</label>
+          <label><input type="radio" name="Q2_Planning_Polyvalence" value="Parfois"> Parfois, mais pas toujours à temps</label>
+          <label><input type="radio" name="Q2_Planning_Polyvalence" value="Oui, toujours"> Oui, toujours</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">3. As-tu reçu toutes les formations pour les postes occupés ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q3_Formations" value="Non" required> Non, on me demande sans formation</label>
+          <label><input type="radio" name="Q3_Formations" value="Partiellement"> Partiellement</label>
+          <label><input type="radio" name="Q3_Formations" value="Oui, toutes"> Oui, toutes</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">4. La nouvelle organisation des allées complique-t-elle ton travail ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q4_Reimplantation" value="Oui, on perd du temps" required> Oui, on perd du temps et de l'énergie</label>
+          <label><input type="radio" name="Q4_Reimplantation" value="Un peu"> Un peu</label>
+          <label><input type="radio" name="Q4_Reimplantation" value="Non"> Non, ça va</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">5. La signalétique (panneaux) est-elle suffisante et visible ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q5_Signaletique" value="Non, source d'erreurs" required> Non, source d'erreurs</label>
+          <label><input type="radio" name="Q5_Signaletique" value="Moyenne"> Moyenne</label>
+          <label><input type="radio" name="Q5_Signaletique" value="Oui"> Oui, c'est bien indiqué</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">6. Les QR codes sont-ils faciles à utiliser ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q6_QRCodes" value="Non, perte de temps" required> Non, perte de temps et erreurs</label>
+          <label><input type="radio" name="Q6_QRCodes" value="Parfois"> Parfois ça marche, parfois non</label>
+          <label><input type="radio" name="Q6_QRCodes" value="Oui"> Oui, efficaces</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">7. Les décisions se font-elles "à la tête du client" (favoritisme) ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q7_Favoritisme" value="Oui, flagrant" required> Oui, flagrant</label>
+          <label><input type="radio" name="Q7_Favoritisme" value="Parfois"> Parfois</label>
+          <label><input type="radio" name="Q7_Favoritisme" value="Non"> Non</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">8. La direction actuelle dégrade-t-elle tes conditions de travail ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q8_Gouvernance_Conditions" value="Oui, fortement" required> Oui, fortement</label>
+          <label><input type="radio" name="Q8_Gouvernance_Conditions" value="Un peu"> Un peu</label>
+          <label><input type="radio" name="Q8_Gouvernance_Conditions" value="Non"> Non</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">9. Les postes de roulage sont-ils attribués en priorité aux titulaires ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q9_Roulage_Titulaires" value="Non" required> Non, les intérimaires passent avant</label>
+          <label><input type="radio" name="Q9_Roulage_Titulaires" value="Parfois"> Parfois</label>
+          <label><input type="radio" name="Q9_Roulage_Titulaires" value="Oui"> Oui, règle respectée</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">10. Postes vacants donnés à l'extérieur alors que des titulaires étaient dispos ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q10_Equite_Postes" value="Oui, souvent" required> Oui, souvent</label>
+          <label><input type="radio" name="Q10_Equite_Postes" value="Oui, une fois"> Oui, une fois</label>
+          <label><input type="radio" name="Q10_Equite_Postes" value="Non"> Non, jamais</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">11. Quand tu remontes un problème, l'encadrement t'écoute et agit ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q11_Ecoute" value="Non, ignorés" required> Non, ignorés</label>
+          <label><input type="radio" name="Q11_Ecoute" value="Écoute sans action"> On nous écoute, rien ne change</label>
+          <label><input type="radio" name="Q11_Ecoute" value="Oui"> Oui, solutions trouvées</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">12. Y a-t-il un climat de peur ou de tension ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q12_Climat_Peur" value="Oui, très pesant" required> Oui, très pesant</label>
+          <label><input type="radio" name="Q12_Climat_Peur" value="Un peu tendu"> Un peu tendu</label>
+          <label><input type="radio" name="Q12_Climat_Peur" value="Non"> Non</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">13. Ta charge de travail t'empêche-t-elle de travailler en sécurité ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q13_Securite_Cadence" value="Oui" required> Oui, on nous pousse à aller trop vite</label>
+          <label><input type="radio" name="Q13_Securite_Cadence" value="Parfois"> Parfois</label>
+          <label><input type="radio" name="Q13_Securite_Cadence" value="Non"> Non, je peux travailler en sécurité</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">14. Les EPI (gants, chaussures...) sont-ils fournis en quantité suffisante ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q14_EPI" value="Non" required> Non, il en manque ou ils sont usés</label>
+          <label><input type="radio" name="Q14_EPI" value="Faut réclamer"> Il faut réclamer</label>
+          <label><input type="radio" name="Q14_EPI" value="Oui"> Oui, tout est fourni</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">15. As-tu été témoin ou victime d'un accident (ou presque-accident) ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q15_Accident" value="Oui" required> Oui</label>
+          <label><input type="radio" name="Q15_Accident" value="Non"> Non</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <span class="q-title">16. Souffres-tu de fatigue physique ou mentale (stress, mal de dos) ?</span>
+        <div class="radio-group">
+          <label><input type="radio" name="Q16_Fatigue" value="Oui, tous les jours" required> Oui, tous les jours</label>
+          <label><input type="radio" name="Q16_Fatigue" value="Parfois"> Parfois</label>
+          <label><input type="radio" name="Q16_Fatigue" value="Non"> Non</label>
+        </div>
+      </div>
+
+      <div class="question">
+        <label class="q-title" for="message-libre">17. As-tu un exemple concret ou une remarque à partager ? (Optionnel)</label>
+        <textarea id="message-libre" name="Q17_Remarque_Libre" rows="4" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex: Mardi dernier, un collègue a failli se blesser..."></textarea>
+      </div>
+
+      <button type="submit" id="btn-submit" style="margin-top:20px; background:var(--success);">Envoyer mes réponses anonymement</button>
+    </form>
+    
+    <div id="res-sondage" style="display:none; background:var(--success); color:#fff; padding:20px; border-radius:8px; text-align:center; font-weight:bold; margin-top:15px;">
+      ✅ Merci ! Tes réponses ont bien été envoyées au syndicat de manière anonyme.
+    </div>
+  <div class="live" id="live">
+    <h3>📊 Résultats en direct</h3>
+    <label class="note" for="qsel">Choisis une question :</label>
+    <select id="qsel"></select>
+    <p id="qtitre"></p>
+    <div id="bars"></div>
+    <p class="note" id="total"></p>
+  </div>
+  </div>
+</section>
+
+<!-- ONGLET QUIZ -->
+<section id="quiz" hidden>
+  <div class="card" style="text-align:center;">
+    <h2>🎮 Quiz : tes droits en rigolant</h2>
+    <div id="quiz-start">
+      <p>10 questions tirées au hasard, avec une explication après chaque réponse.</p>
+      <p class="note">🏅 Meilleur score sur cet appareil : <strong id="best">0</strong>/10</p>
+      <button id="quiz-go">🚀 Lancer une partie</button>
+    </div>
+    <div id="quiz-play" hidden>
+      <div class="bar"><i id="qbar"></i></div>
+      <p class="note" id="qnum"></p>
+      <span class="q-img" id="qimg"></span>
+      <p class="q-title" id="qtext" style="font-size:1.1rem"></p>
+      <div id="qopts"></div>
+      <div id="qexp" class="expl" hidden></div>
+      <button id="qnext" hidden>Suivante ➡️</button>
+    </div>
+    <div id="quiz-end" hidden>
+      <div class="final-emoji" id="fe"></div>
+      <p style="font-size:1.2rem;font-weight:700" id="fscore"></p>
+      <p class="note" id="fbest"></p>
+      <button id="quiz-again">🔄 Rejouer</button>
+    </div>
+  </div>
+</section>
+
+<!-- ONGLET 5 : QR CODE -->
+<section id="qrcode" hidden>
+  <div class="card" style="text-align:center;">
+    <h2>Partager l'Espace Salarié</h2>
+    <div class="qr" id="qrb"></div><br>
+    <p class="note">Imprimez-le sur vos tracts pour que tout le monde accède aux droits et au sondage.</p>
+  </div>
+</section>
+
+<p class="note" style="margin-top:30px">Sud Industrie ELE. Vos droits, notre combat.</p>
+</main>
+
+<script>
+const APP_URL = ""; 
+const $=id=>document.getElementById(id);
+
+// Compte à rebours
+function updateTimer() {
+  const countDownDate = new Date("Oct 1, 2027 08:00:00").getTime();
+  const now = new Date().getTime();
+  const distance = countDownDate - now;
+  if (distance < 0) { $("timer").innerHTML = "C'EST LE MOMENT DE VOTER !"; return; }
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  $("timer").innerHTML = days + " JOURS RESTANTS";
+}
+setInterval(updateTimer, 1000);
+updateTimer();
+
+// Onglets
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  ["droits","victoires","elections","sondage","quiz","qrcode"].forEach(s=>$(s).hidden=s!==b.dataset.t);
+  if(b.dataset.t === "qrcode") drawQR();
+  if(b.dataset.t === "quiz") showStart();
+});
+
+// ENVOI DU SONDAGE PAR EMAIL (FormSubmit)
+$("form-sondage").onsubmit=function(e){
+  e.preventDefault();
+  
+  const btn = $("btn-submit");
+  btn.textContent = "Envoi en cours...";
+  btn.disabled = true;
+
+  // On prépare les données du formulaire
+  const formData = new FormData(this);
+  
+  // On envoie les données à FormSubmit (qui les transfère à ton email)
+  fetch("https://formsubmit.co/ajax/Zupland89100sens@gmail.com", {
+    method: "POST",
+    headers: { 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(Object.fromEntries(formData))
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Succès : on cache le formulaire et on affiche le message
+    $("form-sondage").style.display = "none";
+    $("res-sondage").style.display = "block";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  })
+  .catch(error => {
+    alert("Oups, il y a eu une erreur. Vérifie ta connexion internet et réessaie.");
+    btn.textContent = "Envoyer mes réponses anonymement";
+    btn.disabled = false;
+  });
+};
+
+// LIENS LÉGIFRANCE (Code du travail)
+const LEGI = "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/";
+document.querySelectorAll(".droit-item").forEach(d=>{
+  const a=document.createElement("a");
+  a.href=LEGI; a.target="_blank"; a.rel="noopener"; a.className="lf-link";
+  a.textContent="📖 Lire le Code du travail sur Légifrance";
+  d.appendChild(a);
+});
+
+// QUIZ
+const QUIZ = [
+  {img:"📨",q:"Quel est le délai minimum entre la convocation écrite à un entretien préalable de licenciement et l'entretien ?",a:["2 jours","5 jours ouvrables","1 mois","15 jours"],c:1,e:"Le délai minimum est de 5 jours ouvrables. Tu peux te faire assister pendant l'entretien.",art:"L1232-2"},
+  {img:"✉️",q:"On te remet une lettre en main propre. Que dois-tu faire ?",a:["La signer sans la lire","Demander un exemplaire daté et signé, et garder une copie","La jeter","Répondre seulement à l'oral"],c:1,e:"Une copie datée et signée te protège en cas de litige."},
+  {img:"📮",q:"Comment un licenciement doit-il être notifié ?",a:["Par SMS","Par mail simple","Par lettre recommandée avec accusé de réception","Par téléphone"],c:2,e:"La lettre de licenciement est envoyée en recommandé avec accusé de réception.",art:"L1232-6"},
+  {img:"⚠️",q:"Tu constates un danger grave et imminent. Quel droit peux-tu utiliser ?",a:["Rester sans rien dire","Le droit de retrait","Démissionner sur-le-champ","Attendre le mois prochain"],c:1,e:"Tu peux quitter ton poste sans sanction, après avoir alerté l'employeur.",art:"L4131-1"},
+  {img:"🚧",q:"Pour exercer le droit de retrait, qui faut-il prévenir ?",a:["Personne","Ses collègues seulement","L'employeur ou son représentant, immédiatement","L'inspection du travail, dans un mois"],c:2,e:"L'employeur doit être informé immédiatement.",art:"L4131-1"},
+  {img:"🚫",q:"Un supérieur humilie régulièrement un salarié. Est-ce permis ?",a:["Oui, c'est son supérieur","Non, c'est du harcèlement moral interdit","Oui, si le salarié ne se plaint pas","Oui, pendant la période d'essai"],c:1,e:"Le harcèlement moral est interdit, quelle que soit la position hiérarchique.",art:"L1152-1"},
+  {img:"🤝",q:"Qui peut t'aider si tu es victime de harcèlement ?",a:["Le CSE, l'inspection du travail ou un élu","Personne","Seulement la police","Seulement ton employeur"],c:0,e:"Tu peux saisir le CSE et l'inspection du travail, et te faire accompagner par un élu.",art:"L1152-1"},
+  {img:"⏱️",q:"Quelle majoration s'applique en général aux 8 premières heures supplémentaires ?",a:["10 %","25 %","50 %","100 %"],c:1,e:"La majoration est de 25 % pour les 8 premières heures supplémentaires, puis de 50 %."},
+  {img:"✈️",q:"Combien de congés payés acquiert-on par mois travaillé ?",a:["1 jour","2,5 jours ouvrables","4 jours","5 jours"],c:1,e:"2,5 jours ouvrables par mois, soit 5 semaines par an.",art:"L3141-3"},
+  {img:"💶",q:"Le bulletin de paie est-il obligatoire ?",a:["Non, seulement sur demande","Oui, à chaque versement de salaire","Oui, une fois par an","Seulement en CDI"],c:1,e:"L'employeur doit remettre le bulletin de paie à chaque paiement du salaire.",art:"L3243-2"},
+  {img:"⏳",q:"Pour un ouvrier en CDI, quelle est en général la durée maximale de la période d'essai ?",a:["1 mois","2 mois","3 mois","6 mois"],c:1,e:"Elle est en général limitée à 2 mois pour un ouvrier, et doit figurer dans le contrat.",art:"L1221-19"},
+  {img:"🤒",q:"Dans quel délai dois-tu prévenir l'employeur d'un arrêt maladie ?",a:["24 heures","48 heures","1 semaine","Aucun délai"],c:1,e:"Il faut prévenir l'employeur dans les 48 heures."},
+  {img:"🦺",q:"Les EPI (gants, chaussures de sécurité…) sont-ils payés par le salarié ?",a:["Oui, toujours","Non, l'employeur les fournit gratuitement","Oui, à moitié prix","Seulement pour les cadres"],c:1,e:"L'employeur fournit les équipements de protection adaptés et gratuits."},
+  {img:"☕",q:"Au bout de combien de temps de travail a-t-on droit à une pause de 20 minutes ?",a:["4 heures","6 heures","8 heures","10 heures"],c:1,e:"Au-delà de 6 heures de travail par jour, une pause d'au moins 20 minutes est obligatoire.",art:"L3121-16"},
+  {img:"🕒",q:"Quelle est en principe la durée maximale de travail quotidien ?",a:["8 heures","10 heures","12 heures","14 heures"],c:1,e:"La durée quotidienne maximale est en principe de 10 heures.",art:"L3121-18"},
+  {img:"😴",q:"Quel est le repos quotidien minimum entre deux journées de travail ?",a:["8 heures","9 heures","11 heures","13 heures"],c:2,e:"Tu dois avoir 11 heures consécutives de repos.",art:"L3131-1"},
+  {img:"👥",q:"Peux-tu être accompagné lors d'un entretien préalable ?",a:["Non, jamais","Oui, par un salarié de l'entreprise ou un conseiller","Oui, seulement par un avocat","Oui, seulement par un membre de ta famille"],c:1,e:"Tu peux te faire assister par un salarié de l'entreprise ou un conseiller extérieur.",art:"L1232-4"},
+  {img:"🏛️",q:"Quelle instance représente le personnel dans les entreprises d'au moins 11 salariés ?",a:["La CAF","Le CSE","La CPAM","L'URSSAF"],c:1,e:"Le CSE (Comité social et économique) représente les salariés."},
+  {img:"📅",q:"Quel est le délai pour réclamer un salaire impayé ?",a:["1 an","3 ans","5 ans","10 ans"],c:1,e:"Les salaires impayés peuvent être réclamés pendant 3 ans.",art:"L3245-1"},
+  {img:"🤝",q:"Une rupture conventionnelle suppose-t-elle l'accord des deux parties ?",a:["Oui, de l'employeur et du salarié","Non, l'employeur seul décide","Oui, du salarié seul","Non, l'inspecteur décide"],c:0,e:"Elle repose sur un accord commun, formalisé dans une convention signée.",art:"L1237-11"},
+  {img:"↩️",q:"Quel est le délai de rétractation d'une rupture conventionnelle ?",a:["48 heures","7 jours","15 jours calendaires","1 mois"],c:2,e:"Tu peux revenir sur ta décision pendant 15 jours calendaires.",art:"L1237-13"},
+  {img:"⚖️",q:"Un employeur peut-il refuser d'embaucher quelqu'un à cause de son origine ?",a:["Oui, si le poste est dangereux","Oui, si le candidat est trop jeune","Non, c'est une discrimination interdite","Oui, si le patron le décide"],c:2,e:"Toute discrimination à l'embauche est interdite.",art:"L1132-1"},
+  {img:"👩‍🏭",q:"Quel principe s'applique au salaire entre femmes et hommes ?",a:["Salaire égal pour un travail de valeur égale","Salaire plus bas pour les femmes","Pas de règle","Seulement dans la fonction publique"],c:0,e:"L'égalité de rémunération entre femmes et hommes est obligatoire.",art:"L3221-2"},
+  {img:"📜",q:"Un employeur peut-il sanctionner un fait vieux de plus de 2 mois ?",a:["Oui, toujours","Non, les faits sont prescrits au-delà de 2 mois","Oui, s'il le décide","Oui, si le salarié ne dit rien"],c:1,e:"Le délai pour sanctionner est en principe de 2 mois à partir de la connaissance des faits.",art:"L1332-4"},
+  {img:"📝",q:"Un avertissement doit-il être notifié par écrit ?",a:["Non, à l'oral suffit","Oui, par écrit","Seulement pour un licenciement","Non, par SMS suffit"],c:1,e:"Toute sanction doit être notifiée par écrit au salarié.",art:"L1332-1"},
+  {img:"🕔",q:"Ton employeur te demande de rester après l'heure sans être payé. Est-ce normal ?",a:["Oui, c'est normal","Non, c'est du temps de travail à payer","Oui, si c'est exceptionnel","Oui, si tu es cadre"],c:1,e:"Le temps de travail effectif doit être rémunéré.",art:"L3121-1"},
+  {img:"🚑",q:"Une maladie peut-elle à elle seule justifier un licenciement ?",a:["Oui, toujours","Non, pas à elle seule","Oui, après 3 jours d'arrêt","Oui, si elle est répétée"],c:1,e:"La maladie ne justifie pas à elle seule un licenciement, sauf cas particuliers.",art:"L1132-1"},
+  {img:"📘",q:"Quel document officiel regroupe les règles applicables aux salariés ?",a:["Le Code du travail","Le Code de la route","Le Code civil","Le Code rural"],c:0,e:"Le Code du travail regroupe les règles applicables aux salariés.",art:""},
+  {img:"📄",q:"Un CDD peut-il être renouvelé sans limite ?",a:["Oui, sans limite","Non, il est encadré par la loi","Oui, sans écrit","Oui, seulement en CDI"],c:1,e:"La durée et le nombre de renouvellements d'un CDD sont encadrés par la loi.",art:"L1243-13"},
+  {img:"🛡️",q:"Qui peut te conseiller en premier si tu as un problème au travail ?",a:["Les élus du CSE ou le syndicat","Personne","Ton voisin","Seulement un avocat"],c:0,e:"Tu peux toujours contacter les élus du personnel et le syndicat."}
+];
+let qDeck=[], qI=0, qScore=0;
+const BEST_KEY="sudQuizBest";
+const bestScore=()=>+(localStorage.getItem(BEST_KEY)||0);
+function showStart(){
+  $("quiz-start").hidden=false; $("quiz-play").hidden=true; $("quiz-end").hidden=true;
+  $("best").textContent=bestScore();
+}
+function startQuiz(){
+  qDeck=[...QUIZ].sort(()=>Math.random()-0.5).slice(0,10);
+  qI=0; qScore=0;
+  $("quiz-start").hidden=true; $("quiz-end").hidden=true; $("quiz-play").hidden=false;
+  showQuestion();
+}
+function showQuestion(){
+  const q=qDeck[qI];
+  $("qbar").style.width=(qI/qDeck.length*100)+"%";
+  $("qnum").textContent=`Question ${qI+1} / ${qDeck.length}`;
+  $("qimg").textContent=q.img;
+  $("qtext").textContent=q.q;
+  $("qexp").hidden=true; $("qnext").hidden=true;
+  const box=$("qopts"); box.innerHTML="";
+  q.a.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.textContent=t;
+    b.onclick=()=>pick(i,b);
+    box.appendChild(b);
+  });
+}
+function pick(i,btn){
+  const q=qDeck[qI];
+  document.querySelectorAll("#qopts button").forEach((b,k)=>{
+    b.disabled=true;
+    if(k===q.c) b.classList.add("ok");
+  });
+  if(i===q.c){ qScore++; btn.classList.add("ok"); $("qimg").textContent="🎉"; }
+  else { btn.classList.add("ko"); $("qimg").textContent="😅"; }
+  const ref = q.art ? `Article ${q.art} : ` : "";
+  $("qexp").innerHTML=`<strong>💡 ${q.e}</strong><br><a class="lf-link" href="${LEGI}" target="_blank" rel="noopener">📖 ${ref}voir le Code du travail sur Légifrance</a>`;
+  $("qexp").hidden=false;
+  $("qnext").hidden=false;
+  $("qnext").textContent = qI===qDeck.length-1 ? "🏁 Voir mon score" : "Suivante ➡️";
+}
+$("qnext").onclick=()=>{ qI++; if(qI<qDeck.length) showQuestion(); else endQuiz(); };
+function endQuiz(){
+  const prev=bestScore(), s=qScore;
+  if(s>prev) localStorage.setItem(BEST_KEY,s);
+  $("quiz-play").hidden=true; $("quiz-end").hidden=false;
+  $("fe").textContent = s>=9?"🏆":s>=6?"🌟":s>=3?"😊":"📚";
+  $("fscore").textContent=`Tu as ${s} / ${qDeck.length} bonnes réponses`;
+  $("fbest").textContent = s>prev ? "🎊 Nouveau meilleur score !" : `Meilleur score : ${Math.max(prev,s)}/10`;
+}
+$("quiz-go").onclick=startQuiz;
+$("quiz-again").onclick=startQuiz;
+$("best").textContent=bestScore();
+
+// ===== SONDAGE : VOTE UNIQUE + RÉSULTATS EN DIRECT =====
+// Colle ici l'adresse de ton Apps Script (voir la procédure), entre les guillemets
+const SONDAGE_API = "";
+const COULEURS_BARRES = ["#ffcc00","#ffffff","#ff7043","#66bb6a","#ce93d8","#4dd0e1"];
+const SEUIL = 10; // résultats affichés seulement à partir de 10 réponses (anonymat)
+const DATA_RES = { valeur: {} };
+
+function identifiantAppareil(){
+  let id = localStorage.getItem("sudDevice");
+  if(!id){
+    id = (crypto.randomUUID ? crypto.randomUUID() : Date.now()+"-"+Math.random());
+    localStorage.setItem("sudDevice", id);
+  }
+  return id;
+}
+
+$("form-sondage").onsubmit = async function(e){
+  e.preventDefault();
+  const btn = $("btn-submit");
+  if(localStorage.getItem("sudVote")){ alert("Tu as déjà voté avec ce téléphone. Merci !"); return; }
+  if(!SONDAGE_API){ alert("Le sondage n'est pas encore connecté."); return; }
+  const reponses = {};
+  new FormData(this).forEach((v,k)=>{ if(k !== "Q17_Remarque_Libre") reponses[k] = v; });
+  btn.textContent = "Envoi en cours..."; btn.disabled = true;
+  try{
+    const r = await fetch(SONDAGE_API, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ deviceId: identifiantAppareil(), reponses })
+    });
+    const data = await r.json();
+    if(data.ok){
+      localStorage.setItem("sudVote","1");
+      $("form-sondage").style.display = "none";
+      $("res-sondage").style.display = "block";
+      chargerResultats();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      alert("Tu as déjà voté avec ce téléphone.");
+      btn.textContent = "Envoyer mes réponses anonymement"; btn.disabled = false;
+    }
+  }catch(err){
+    alert("Oups, erreur de connexion. Réessaie.");
+    btn.textContent = "Envoyer mes réponses anonymement"; btn.disabled = false;
+  }
+};
+
+function libelleQuestion(nom){
+  const inp = document.querySelector(`input[name="${nom}"]`);
+  const t = inp?.closest(".question")?.querySelector(".q-title")?.textContent || nom;
+  return t.replace(/^\d+\.\s*/, "");
+}
+
+async function chargerResultats(){
+  if(!SONDAGE_API){ afficherBarres(); return; }
+  try{
+    const r = await fetch(SONDAGE_API);
+    DATA_RES.valeur = await r.json();
+    afficherBarres();
+  }catch(err){
+    $("total").textContent = "Résultats indisponibles pour le moment.";
+  }
+}
+
+function afficherBarres(){
+  const q = $("qsel").value;
+  const rep = DATA_RES.valeur[q] || {};
+  const total = Object.values(rep).reduce((a,b)=>a+b, 0);
+  $("qtitre").textContent = libelleQuestion(q);
+  const box = $("bars"); box.innerHTML = "";
+  if(total < SEUIL){
+    $("total").textContent = `Résultats affichés dès ${SEUIL} réponses (actuellement ${total}).`;
+    return;
+  }
+  Object.entries(rep).sort((a,b)=>b[1]-a[1]).forEach(([lab,n], i)=>{
+    const pct = Math.round(n / total * 100);
+    const row = document.createElement("div");
+    row.className = "bar-row";
+    row.innerHTML = `<div class="bar-lab"><span></span><b>${n} · ${pct}%</b></div>
+                     <div class="bar-bg"><i style="background:${COULEURS_BARRES[i % COULEURS_BARRES.length]}"></i></div>`;
+    row.querySelector(".bar-lab span").textContent = lab;
+    box.appendChild(row);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ row.querySelector("i").style.width = pct + "%"; }));
+  });
+  $("total").textContent = `${total} réponses au total · mise à jour automatique`;
+}
+
+// Liste des questions remplie depuis le formulaire (toujours disponible, même sans votes)
+function remplirChoix(){
+  const sel = $("qsel");
+  sel.innerHTML = "";
+  const noms = [...new Set([...document.querySelectorAll('#form-sondage input[type="radio"]')].map(i => i.name))];
+  noms.forEach(n => sel.add(new Option(libelleQuestion(n), n)));
+  sel.onchange = afficherBarres;
+}
+remplirChoix();
+
+// Mise à jour toutes les 15 secondes
+chargerResultats();
+setInterval(()=>{ if(SONDAGE_API && !$("sondage").hidden) chargerResultats(); }, 15000);
+
+// QR Code
+function drawQR(){
+  const el = $("qrb"); el.innerHTML = "";
+  if(typeof QRCode==="undefined"){el.textContent="QR code indisponible.";return}
+  const url = APP_URL || location.href;
+  new QRCode(el, {text: url, width: 220, height: 220, colorDark:"#000000", colorLight:"#ffffff", correctLevel: QRCode.CorrectLevel.M});
+}
+</script>
+</body>
+</html>
