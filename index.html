@@ -654,10 +654,11 @@ function drawQR(){
 }
 
 // ===== GALERIE PHOTOS =====
-// REMPLACE LES TEXTES CI-DESSOUS PAR TES LONGS CODES BASE64
 const PHOTOS = [
-  "COLLE_TON_TEXTE_BASE64_POUR_PHOTO_1_ICI",
-  "COLLE_TON_TEXTE_BASE64_POUR_PHOTO_2_ICI"
+  "photo1.jpg",
+  "photo2.jpg",
+  "photo3.jpg",
+  "photo4.jpg"
 ];
 
 let galerieChargee = false;
@@ -667,12 +668,13 @@ function chargerGalerie(){
   const box = $("galerie");
   box.innerHTML = "";
 
-  if(PHOTOS.length === 0 || PHOTOS[0] === "COLLE_TON_TEXTE_BASE64_POUR_PHOTO_1_ICI"){
-    box.innerHTML = '<div class="vide">📷 Ajoute tes photos dans le code (ligne const PHOTOS).</div>';
+  if(PHOTOS.length === 0){
+    box.innerHTML = '<div class="vide">📷 Aucune photo pour le moment.</div>';
     return;
   }
 
-  PHOTOS.forEach(chemin => {
+  PHOTOS.forEach(nom => {
+    const chemin = "photos/" + nom;
     const a = document.createElement("a");
     a.href = chemin;
     a.target = "_blank";
@@ -682,6 +684,10 @@ function chargerGalerie(){
     img.src = chemin;
     img.alt = "Photo terrain Sud Industrie";
     img.loading = "lazy";
+    img.onerror = () => { 
+      a.style.border = "2px solid red"; 
+      a.title = "Image introuvable : " + nom;
+    };
     a.appendChild(img);
     box.appendChild(a);
   });
