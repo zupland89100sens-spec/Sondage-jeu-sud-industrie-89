@@ -351,7 +351,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
       ✅ Merci ! Tes réponses ont bien été envoyées de manière anonyme.
     </div>
 
-    <div class="live" id="live">
+    <div class="live" id="live" hidden>
       <h3>📊 Résultats en direct</h3>
       <label class="note" for="qsel">Choisis une question :</label>
       <select id="qsel"></select>
@@ -403,7 +403,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 
 <script>
 const APP_URL = "";
-const SONDAGE_API = "https://script.google.com/macros/s/AKfycbzWl3gMgmMMyQe_d5h7V-SEDWU5XPVHGLE4ZkFuU31NaPmKwFTiQGBhoHuVOX7a1aU9Rw/exec";
+const FORMSPREE_URL = "https://formspree.io/f/xljbejjl";
 const $ = id => document.getElementById(id);
 const LEGI = "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/";
 
@@ -545,20 +545,18 @@ $("form-sondage").onsubmit = async function(e){
   new FormData(this).forEach((v, k) => { reponses[k] = v; });
   btn.textContent = "Envoi en cours..."; btn.disabled = true;
   try{
-    const r = await fetch(SONDAGE_API, {
+    const r = await fetch(FORMSPREE_URL, {
       method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ deviceId: identifiantAppareil(), reponses })
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify(reponses)
     });
-    const data = await r.json();
-    if(data.ok){
+    if(r.ok){
       localStorage.setItem("sudVote", "1");
       $("form-sondage").style.display = "none";
       $("res-sondage").style.display = "block";
-      chargerResultats();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      alert("Tu as déjà voté avec ce téléphone.");
+      alert("Oups, l'envoi n'a pas abouti. Réessaie.");
       btn.textContent = "Envoyer mes réponses anonymement"; btn.disabled = false;
     }
   }catch(err){
@@ -614,8 +612,6 @@ function remplirChoix(){
   sel.onchange = afficherBarres;
 }
 remplirChoix();
-chargerResultats();
-setInterval(() => { if(!$("sondage").hidden) chargerResultats(); }, 15000);
 
 // ===== QR CODE =====
 function drawQR(){
