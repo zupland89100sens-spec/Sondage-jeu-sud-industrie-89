@@ -477,7 +477,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
     <h2>📷 Photos du terrain</h2>
     <p style="font-size:.9rem; color:var(--mute); margin-bottom:10px;">Signalétique, zones de circulation, anomalies… Clique sur une photo pour l'agrandir.</p>
     <div id="galerie" class="galerie">
-      <div class="vide">Chargement des photos…</div>
+      <!-- Le script va injecter les photos ici -->
     </div>
   </div>
 </section>
@@ -649,32 +649,26 @@ function drawQR(){
   new QRCode(el, {text: url, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M});
 }
 
-// ===== GALERIE PHOTOS =====
+// ===== GALERIE PHOTOS (SANS JSON) =====
+// C'est ici que tu ajoutes tes photos (attention aux majuscules JPG)
+const PHOTOS = [
+  "photo1.JPG",
+  "photo2.JPG"
+];
+
 let galerieChargee = false;
-async function chargerGalerie(){
+function chargerGalerie(){
   if(galerieChargee) return;
   galerieChargee = true;
   const box = $("galerie");
-  box.innerHTML = '<div class="vide">Chargement des photos…</div>';
-  let liste = [];
-  try{
-    const r = await fetch("photos/liste.json?cache=" + Date.now());
-    if(!r.ok) throw new Error("liste.json introuvable");
-    liste = await r.json();
-    if(!Array.isArray(liste)) throw new Error("liste.json doit être un tableau");
-  }catch(err){
-    box.innerHTML = `<div class="vide">
-      📷 Aucune photo pour le moment.<br>
-      <small style="opacity:.7">(Erreur: le fichier liste.json n'est pas trouvé ou mal écrit)</small>
-    </div>`;
-    return;
-  }
-  if(!liste.length){
+  box.innerHTML = "";
+
+  if(PHOTOS.length === 0){
     box.innerHTML = '<div class="vide">📷 Aucune photo pour le moment.</div>';
     return;
   }
-  box.innerHTML = "";
-  liste.forEach(nom => {
+
+  PHOTOS.forEach(nom => {
     const chemin = "photos/" + nom;
     const a = document.createElement("a");
     a.href = chemin;
@@ -685,7 +679,6 @@ async function chargerGalerie(){
     img.src = chemin;
     img.alt = "Photo terrain Sud Industrie";
     img.loading = "lazy";
-    // Si l'image ne charge pas, on l'affiche en rouge temporairement pour comprendre
     img.onerror = () => { 
       a.style.border = "2px solid red"; 
       a.title = "Image introuvable : " + nom;
