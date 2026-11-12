@@ -135,6 +135,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <button class="tab" data-t="photos" aria-pressed="false">📷 Photos</button>
   <button class="tab" data-t="videos" aria-pressed="false">🎬 Vidéos</button>
   <button class="tab" data-t="questions" aria-pressed="false">💬 Questions</button>
+  <button class="tab" data-t="jeu" aria-pressed="false">🎯 Jeu</button>
 </div>
 <div class="tabs" style="grid-template-columns:1fr; margin-top:-8px; margin-bottom:16px;">
   <button class="tab" data-t="qrcode" aria-pressed="false" style="border-color:var(--blue); color:var(--blue);">📱 Afficher le QR Code</button>
@@ -623,6 +624,28 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   </div>
 </section>
 
+<!-- ONGLET JEU -->
+<section id="jeu" hidden>
+  <div class="card" style="text-align:center;">
+    <style>
+      .hs{cursor:pointer;transition:opacity .2s}
+      .hs:hover{opacity:.8}
+      .hs.trouve{opacity:.4;filter:drop-shadow(0 0 4px #2e7d32)}
+    </style>
+    <h2>🎯 Trouve les dangers</h2>
+    <p style="font-size:.95rem; color:var(--mute);">Touche les situations dangereuses sur le dessin. Chaque danger trouvé t'explique la règle à retenir.</p>
+    <p class="note">Scène <span id="jeu-scene">1</span> / 2 · Score : <strong id="jeu-score">0</strong> · Meilleur : <strong id="jeu-best">0</strong></p>
+    <div id="jeu-zone"></div>
+    <div id="jeu-regle" class="expl" hidden></div>
+    <button id="jeu-suite" hidden>Scène suivante ➡️</button>
+    <div id="jeu-fin" hidden>
+      <div class="final-emoji" id="jeu-badge"></div>
+      <p id="jeu-resultat" style="font-weight:700;font-size:1.1rem"></p>
+      <button onclick="jeuLancer()">🔄 Rejouer</button>
+    </div>
+  </div>
+</section>
+
  <!-- ONGLET QR CODE -->
 <section id="qrcode" hidden>
   <div class="card" style="text-align:center;">
@@ -659,11 +682,12 @@ updateTimer();
 // Onglets
 document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", x === b));
-  ["droits","victoires","elections","sondage","quiz","photos","videos","questions","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
+  ["droits","victoires","elections","sondage","quiz","photos","videos","questions","jeu","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
   if(b.dataset.t === "qrcode") drawQR();
   if(b.dataset.t === "quiz") showStart();
   if(b.dataset.t === "photos") chargerGalerie();
   if(b.dataset.t === "videos") chargerVideos();
+  if(b.dataset.t === "jeu") jeuLancer();
   if(window.goatcounter) goatcounter.count({ path: "onglet-" + b.dataset.t, title: "Onglet " + b.dataset.t, event: true });
 });
 
@@ -954,6 +978,126 @@ $("btn-question").onclick = async () => {
     btn.disabled = false; btn.textContent = "Envoyer ma question";
   }
 };
+// ===== JEU « TROUVE LES DANGERS » =====
+const JEU_SCENES = [
+  {
+    titre: "Allée de préparation",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Allée de préparation">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect width="320" height="30" fill="#9aa1ab"/>
+<rect x="8" y="6" width="22" height="18" fill="#d9b87c"/><rect x="36" y="6" width="22" height="18" fill="#e8c98f"/><rect x="64" y="6" width="22" height="18" fill="#d9b87c"/>
+<rect y="120" width="320" height="50" fill="#ffcc00" opacity=".3"/>
+<rect y="170" width="320" height="30" fill="#c5cad1"/>
+<g class="hs" data-id="palette">
+<rect x="30" y="80" width="46" height="30" fill="#d9b87c"/>
+<rect x="34" y="56" width="40" height="22" fill="#e8c98f" transform="rotate(10 54 67)"/>
+<rect x="26" y="112" width="54" height="8" fill="#8a6a3f"/>
+<rect x="20" y="50" width="70" height="72" fill="transparent"/>
+</g>
+<g class="hs" data-id="pieton">
+<circle cx="165" cy="136" r="7" fill="#f0c08a"/>
+<rect x="158" y="144" width="14" height="22" rx="3" fill="#2a78d6"/>
+<rect x="145" y="124" width="40" height="46" fill="transparent"/>
+</g>
+<rect x="250" y="40" width="50" height="80" fill="#2e7d32"/>
+<g class="hs" data-id="issue">
+<rect x="236" y="100" width="70" height="36" fill="#d9b87c" stroke="#8a6a3f"/>
+</g>
+</svg>`,
+    dangers: {
+      palette: { nom: "Palettes mal empilées", regle: "Une palette instable peut basculer et blesser. Une charge doit être stable, bien gerbée et jamais dépasser ce qui est prévu." },
+      pieton: { nom: "Piéton sur la voie des chariots", regle: "Piétons et engins doivent être séparés. Un piéton sur la voie des chariots risque le choc : il doit rester sur le cheminement signalé." },
+      issue: { nom: "Issue de secours bloquée", regle: "Une issue de secours doit toujours être dégagée. Une palette devant la sortie peut empêcher de sortir en cas d'urgence." }
+    }
+  },
+  {
+    titre: "Prise de poste",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Prise de poste">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect y="176" width="320" height="24" fill="#c5cad1"/>
+<g class="hs" data-id="casque">
+<circle cx="60" cy="60" r="13" fill="#f0c08a"/>
+<rect x="50" y="76" width="20" height="50" rx="4" fill="#ffcc00"/>
+<rect x="40" y="40" width="40" height="86" fill="transparent"/>
+</g>
+<rect x="110" y="120" width="100" height="45" rx="4" fill="#004aad"/>
+<circle cx="130" cy="172" r="11" fill="#111"/>
+<circle cx="195" cy="172" r="11" fill="#111"/>
+<rect x="205" y="50" width="6" height="115" fill="#555"/>
+<g class="hs" data-id="charge">
+<rect x="200" y="26" width="60" height="32" fill="#c9a46a" stroke="#8a6a3f"/>
+</g>
+<g class="hs" data-id="frein">
+<rect x="122" y="128" width="58" height="20" rx="3" fill="#c8102e"/>
+<text x="151" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Arial">FREIN HS</text>
+</g>
+</svg>`,
+    dangers: {
+      casque: { nom: "Protections absentes", regle: "Les EPI demandés par ton poste (casque, gilet, chaussures) doivent être portés. Sans eux, tu n'es pas protégé en cas de choc ou de chute." },
+      frein: { nom: "Chariot avec un frein défectueux", regle: "Un engin signalé défectueux ne doit pas être utilisé. Il est mis hors service jusqu'à sa réparation, et tu préviens ta hiérarchie." },
+      charge: { nom: "Charge qui masque la vue", regle: "Le conducteur doit toujours voir sa route. Si la charge masque la vue, on circule autrement, par exemple en marche arrière ou avec un guidage." }
+    }
+  }
+];
+
+let jeuIdx = 0, jeuTotal = 0, jeuTrouves = [];
+const JEU_BEST = "sudJeuBest";
+
+function jeuLancer(){
+  jeuIdx = 0; jeuTotal = 0;
+  $("jeu-fin").hidden = true;
+  jeuAfficher();
+}
+function jeuAfficher(){
+  const sc = JEU_SCENES[jeuIdx];
+  jeuTrouves = [];
+  $("jeu-scene").textContent = jeuIdx + 1;
+  $("jeu-score").textContent = jeuTotal;
+  $("jeu-best").textContent = localStorage.getItem(JEU_BEST) || 0;
+  $("jeu-zone").innerHTML = `<p style="font-weight:700">${sc.titre} : touche les dangers</p>` + sc.svg;
+  $("jeu-regle").hidden = true;
+  $("jeu-suite").hidden = true;
+  $("jeu-fin").hidden = true;
+}
+$("jeu-zone").addEventListener("click", e => {
+  const sc = JEU_SCENES[jeuIdx];
+  const hs = e.target.closest(".hs");
+  if(!hs){
+    if(e.target.closest("svg")){
+      $("jeu-regle").innerHTML = "🔍 Pas de danger ici, continue de chercher.";
+      $("jeu-regle").hidden = false;
+    }
+    return;
+  }
+  if(hs.classList.contains("trouve")) return;
+  const d = sc.dangers[hs.dataset.id];
+  if(!d) return;
+  hs.classList.add("trouve");
+  jeuTrouves.push(hs.dataset.id);
+  jeuTotal += 10;
+  $("jeu-score").textContent = jeuTotal;
+  $("jeu-regle").innerHTML = `<strong>✅ ${d.nom}</strong><br>${d.regle}`;
+  $("jeu-regle").hidden = false;
+  if(jeuTrouves.length === Object.keys(sc.dangers).length){
+    $("jeu-suite").textContent = jeuIdx === JEU_SCENES.length - 1 ? "🏁 Voir mon résultat" : "Scène suivante ➡️";
+    $("jeu-suite").hidden = false;
+  }
+});
+$("jeu-suite").onclick = () => {
+  if(jeuIdx < JEU_SCENES.length - 1){ jeuIdx++; jeuAfficher(); }
+  else jeuFinir();
+};
+function jeuFinir(){
+  const max = JEU_SCENES.reduce((s, sc) => s + Object.keys(sc.dangers).length * 10, 0);
+  const prev = +(localStorage.getItem(JEU_BEST) || 0);
+  if(jeuTotal > prev) localStorage.setItem(JEU_BEST, jeuTotal);
+  $("jeu-zone").innerHTML = "";
+  $("jeu-regle").hidden = true;
+  $("jeu-suite").hidden = true;
+  $("jeu-badge").textContent = jeuTotal >= max ? "🏆" : jeuTotal >= max / 2 ? "🌟" : "📚";
+  $("jeu-resultat").textContent = `Tu as trouvé ${jeuTotal / 10} danger(s) sur ${max / 10}. ` + (jeuTotal > prev ? "🎊 Nouveau meilleur score !" : "");
+  $("jeu-fin").hidden = false;
+}
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
