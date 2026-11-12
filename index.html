@@ -731,28 +731,22 @@ function ouvrirLightbox(src){
   lb.appendChild(btn);
   document.body.appendChild(lb);
 }
-// ===== VIDÉOS (chargement auto via videos/liste.json) =====
+// ===== VIDÉOS (liste écrite dans le code) =====
+const VIDEOS = [
+  "terrain-1.mp4"
+];
+
 let videosChargees = false;
-async function chargerVideos(){
+function chargerVideos(){
   if(videosChargees) return;
   videosChargees = true;
   const box = $("galerie-videos");
-  box.innerHTML = '<div class="vide">Chargement des vidéos…</div>';
-  let liste = [];
-  try{
-    const r = await fetch("videos/liste.json?cache=" + Date.now());
-    if(!r.ok) throw new Error("introuvable");
-    liste = await r.json();
-  }catch(err){
-    box.innerHTML = '<div class="vide">🎬 Aucune vidéo pour le moment.<br><small style="opacity:.7">(Crée un fichier <code>videos/liste.json</code>)</small></div>';
-    return;
-  }
-  if(!Array.isArray(liste) || !liste.length){
+  box.innerHTML = "";
+  if(VIDEOS.length === 0){
     box.innerHTML = '<div class="vide">🎬 Aucune vidéo pour le moment.</div>';
     return;
   }
-  box.innerHTML = "";
-  liste.forEach(nom => {
+  VIDEOS.forEach(nom => {
     const chemin = "videos/" + nom;
     const a = document.createElement("a");
     a.href = chemin;
@@ -762,11 +756,12 @@ async function chargerVideos(){
     v.muted = true;
     v.playsInline = true;
     v.preload = "metadata";
-    v.onerror = () => { a.style.display = "none"; };
+    v.onerror = () => { a.style.border = "2px solid red"; a.title = "Vidéo introuvable : " + nom; };
     a.appendChild(v);
     box.appendChild(a);
   });
 }
+
 // Lecteur vidéo plein écran
 function ouvrirVideo(src){
   const lb = document.createElement("div");
