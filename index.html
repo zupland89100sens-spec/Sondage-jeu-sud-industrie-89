@@ -118,6 +118,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 <section id="droits">
   <div class="card">
     <h2>Connaître ses droits</h2>
+    <input type="search" id="recherche-droits" placeholder="🔍 Rechercher : arrêt maladie, chariot, congés…" style="width:100%; padding:12px; border:2px solid var(--line); border-radius:8px; font:inherit; margin-bottom:16px; background:var(--surface); color:var(--ink);">
 
     <div class="droit-item">
       <h3>🚨 Convocation par la direction</h3>
@@ -784,6 +785,14 @@ function ouvrirVideo(src){
   lb.appendChild(btn);
   document.body.appendChild(lb);
 }
+// ===== RECHERCHE DANS MES DROITS =====
+const rechercheDroits = $("recherche-droits");
+rechercheDroits.addEventListener("input", () => {
+  const terme = rechercheDroits.value.trim().toLowerCase();
+  document.querySelectorAll("#droits .droit-item").forEach(item => {
+    item.hidden = terme !== "" && !item.textContent.toLowerCase().includes(terme);
+  });
+});
 </script>
 </body>
 </html>
