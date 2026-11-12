@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<script data-goatcounter="https://sud-ele.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+ <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sud Industrie ELE – Espace Salarié</title>
@@ -525,6 +526,7 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   if(b.dataset.t === "qrcode") drawQR();
   if(b.dataset.t === "quiz") showStart();
   if(b.dataset.t === "photos") chargerGalerie();
+  if(window.goatcounter) goatcounter.count({ path: "onglet-" + b.dataset.t, title: "Onglet " + b.dataset.t, event: true });
 });
 
 // ===== QUIZ =====
