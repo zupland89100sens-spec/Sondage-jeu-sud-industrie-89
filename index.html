@@ -103,6 +103,11 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 </header>
 <p style="margin:12px 0 0 0; color:#fff; font-size:.95rem;">Tes droits en quelques clics, sans rien à installer. Le sondage est anonyme.</p>
 
+<div id="bienvenue" class="card" hidden style="background:var(--yellow); color:#000; text-align:center;">
+  <p style="margin:0 0 10px 0; font-weight:700;">👋 Bienvenue ! Tes droits sont à un clic, et le sondage est anonyme.</p>
+  <button onclick="fermerBienvenue()">Compris</button>
+</div>
+<p style="text-align:center; font-weight:700; margin:0 0 14px 0;">🗳️ Élections professionnelles : <span id="compteur-accueil"></span></p>
 <div class="tabs" role="group">
   <button class="tab" data-t="droits" aria-pressed="true">🛡️ Mes Droits</button>
   <button class="tab" data-t="victoires" aria-pressed="false">🏆 Victoires</button>
@@ -806,6 +811,19 @@ rechercheDroits.addEventListener("input", () => {
     item.hidden = terme !== "" && !item.textContent.toLowerCase().includes(terme);
   });
 });
+// ===== MESSAGE DE BIENVENUE (une seule fois) =====
+if(!localStorage.getItem("sudBienvenue")){
+  $("bienvenue").hidden = false;
+}
+function fermerBienvenue(){
+  localStorage.setItem("sudBienvenue", "1");
+  $("bienvenue").hidden = true;
+}
+// ===== COMPTEUR SUR LA PAGE D'ACCUEIL =====
+setInterval(() => {
+  const el = $("compteur-accueil");
+  if(el) el.textContent = $("timer").textContent;
+}, 1000);
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
