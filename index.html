@@ -630,21 +630,28 @@ section:not([hidden]){animation:fadeUp .5s ease both}
     <style>
       .hs{cursor:pointer;transition:opacity .2s}
       .hs:hover{opacity:.8}
-      .hs.trouve{opacity:.4;filter:drop-shadow(0 0 4px #2e7d32)}
+      .hs.trouve{opacity:.35;filter:drop-shadow(0 0 4px #2e7d32)}
+      .hs.rate *{stroke:#c8102e;stroke-width:3px;stroke-dasharray:4 3}
     </style>
-    <h2>🎯 Trouve les dangers</h2>
-    <p style="font-size:.95rem; color:var(--mute);">Touche les situations dangereuses sur le dessin. Chaque danger trouvé t'explique la règle à retenir.</p>
-    <p class="note">Scène <span id="jeu-scene">1</span> / 2 · Score : <strong id="jeu-score">0</strong> · Meilleur : <strong id="jeu-best">0</strong></p>
+    <h2>🎯 Mission sécurité</h2>
+    <p style="font-size:.95rem; color:var(--mute);">Quatre scènes de ta journée à l'entrepôt. Repère les dangers, puis choisis la bonne décision. Chaque erreur te montre ce qu'elle peut provoquer.</p>
+    <p class="note">Scène <span id="jeu-scene">1</span> · Score : <strong id="jeu-score">0</strong> · Meilleur : <strong id="jeu-best">0</strong></p>
     <div id="jeu-zone"></div>
     <div id="jeu-regle" class="expl" hidden></div>
+    <button id="jeu-bilan">✋ J'ai fini de chercher</button>
+    <div id="jeu-decision" class="card" style="margin-top:14px; text-align:left;" hidden></div>
     <button id="jeu-suite" hidden>Scène suivante ➡️</button>
     <div id="jeu-fin" hidden>
       <div class="final-emoji" id="jeu-badge"></div>
-      <p id="jeu-resultat" style="font-weight:700;font-size:1.1rem"></p>
+      <p id="jeu-titre" style="font-weight:700;font-size:1.2rem"></p>
+      <p id="jeu-resultat"></p>
+      <p class="note">Chaque règle de cette mission vient des fiches Mes Droits : relis-les pour aller plus loin.</p>
       <button onclick="jeuLancer()">🔄 Rejouer</button>
+      <button onclick="document.querySelector('.tab[data-t=droits]').click()">📚 Revoir mes droits</button>
     </div>
   </div>
 </section>
+
 
  <!-- ONGLET QR CODE -->
 <section id="qrcode" hidden>
@@ -975,129 +982,303 @@ $("btn-question").onclick = async () => {
     }
   }catch(err){
     alert("Oups, erreur de connexion. Réessaie.");
-    btn.disabled = false; btn.textContent = "Envoyer ma question";
-  }
-};
-// ===== JEU « TROUVE LES DANGERS » =====
+    btn.disabled = false; btn.textContent = "Envoyer ma // ===== MISSION SÉCURITÉ (jeu) =====
 const JEU_SCENES = [
   {
-    titre: "Allée de préparation",
-    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Allée de préparation">
+    titre: "1. Prise de poste",
+    intro: "Avant de démarrer, repère ce qui ne va pas.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Prise de poste avec un chariot">
 <rect width="320" height="200" fill="#d5d9de"/>
-<rect width="320" height="30" fill="#9aa1ab"/>
-<rect x="8" y="6" width="22" height="18" fill="#d9b87c"/><rect x="36" y="6" width="22" height="18" fill="#e8c98f"/><rect x="64" y="6" width="22" height="18" fill="#d9b87c"/>
-<rect y="120" width="320" height="50" fill="#ffcc00" opacity=".3"/>
 <rect y="170" width="320" height="30" fill="#c5cad1"/>
-<g class="hs" data-id="palette">
-<rect x="30" y="80" width="46" height="30" fill="#d9b87c"/>
-<rect x="34" y="56" width="40" height="22" fill="#e8c98f" transform="rotate(10 54 67)"/>
-<rect x="26" y="112" width="54" height="8" fill="#8a6a3f"/>
-<rect x="20" y="50" width="70" height="72" fill="transparent"/>
+<line x1="0" y1="170" x2="320" y2="170" stroke="#ffcc00" stroke-width="3"/>
+<g class="hs" data-id="casque">
+<rect x="18" y="40" width="46" height="130" fill="transparent"/>
+<circle cx="40" cy="68" r="11" fill="#8a5a3c"/>
+<rect x="28" y="82" width="24" height="46" rx="3" fill="#ffcc00"/>
+<rect x="30" y="128" width="8" height="42" fill="#333"/>
+<rect x="42" y="128" width="8" height="42" fill="#333"/>
 </g>
-<g class="hs" data-id="pieton">
-<circle cx="165" cy="136" r="7" fill="#f0c08a"/>
-<rect x="158" y="144" width="14" height="22" rx="3" fill="#2a78d6"/>
-<rect x="145" y="124" width="40" height="46" fill="transparent"/>
+<rect x="110" y="112" width="120" height="48" rx="4" fill="#004aad"/>
+<rect x="104" y="92" width="44" height="40" fill="#1d3f7a"/>
+<g class="hs" data-id="ceinture">
+<rect x="110" y="98" width="30" height="24" fill="transparent"/>
+<rect x="112" y="108" width="24" height="10" fill="#333"/>
+<line x1="112" y1="113" x2="136" y2="113" stroke="#ffcc00" stroke-width="2"/>
 </g>
-<rect x="250" y="40" width="50" height="80" fill="#2e7d32"/>
-<g class="hs" data-id="issue">
-<rect x="236" y="100" width="70" height="36" fill="#d9b87c" stroke="#8a6a3f"/>
+<rect x="236" y="60" width="6" height="100" fill="#555"/>
+<rect x="236" y="148" width="50" height="5" fill="#333"/>
+<circle cx="130" cy="166" r="11" fill="#111"/>
+<circle cx="206" cy="166" r="11" fill="#111"/>
+<g class="hs" data-id="controle">
+<rect x="262" y="104" width="50" height="62" fill="transparent"/>
+<rect x="270" y="112" width="36" height="46" rx="2" fill="#f5f5f5" stroke="#888"/>
+<line x1="276" y1="124" x2="300" y2="124" stroke="#999"/>
+<line x1="276" y1="134" x2="300" y2="134" stroke="#999"/>
+<line x1="276" y1="144" x2="300" y2="144" stroke="#999"/>
 </g>
 </svg>`,
     dangers: {
-      palette: { nom: "Palettes mal empilées", regle: "Une palette instable peut basculer et blesser. Une charge doit être stable, bien gerbée et jamais dépasser ce qui est prévu." },
-      pieton: { nom: "Piéton sur la voie des chariots", regle: "Piétons et engins doivent être séparés. Un piéton sur la voie des chariots risque le choc : il doit rester sur le cheminement signalé." },
-      issue: { nom: "Issue de secours bloquée", regle: "Une issue de secours doit toujours être dégagée. Une palette devant la sortie peut empêcher de sortir en cas d'urgence." }
+      casque: { nom: "Casque non porté", regle: "Le casque est obligatoire dans les zones où circulent des engins ou des charges en hauteur.", risque: "Choc à la tête par une charge qui tombe." },
+      ceinture: { nom: "Ceinture de sécurité non attachée", regle: "Sur un engin avec protection, la ceinture maintient le conducteur dans l'habitacle en cas de renversement.", risque: "Éjection ou écrasement lors d'un basculement." },
+      controle: { nom: "Contrôle de prise de poste non fait", regle: "Avant chaque prise de poste, freins, direction, avertisseur et fourches sont contrôlés, et le contrôle est tracé.", risque: "Un engin défectueux n'est pas repéré avant qu'il ne cause un accident." }
+    },
+    decision: {
+      q: "Le frein d'un chariot tire d'un côté. Que fais-tu ?",
+      a: ["Je l'utilise prudemment jusqu'à la fin du poste", "Je signale le défaut et je ne l'utilise pas", "Je le répare moi-même vite fait"],
+      c: 1,
+      e: "Un engin défectueux se signale et se met hors service jusqu'à sa réparation. Aucun gain de temps ne vaut un risque de renversement."
     }
   },
   {
-    titre: "Prise de poste",
-    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Prise de poste">
+    titre: "2. Allée de préparation",
+    intro: "Observe les allées, les zones piétons et les sorties.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Allée de préparation">
 <rect width="320" height="200" fill="#d5d9de"/>
-<rect y="176" width="320" height="24" fill="#c5cad1"/>
-<g class="hs" data-id="casque">
-<circle cx="60" cy="60" r="13" fill="#f0c08a"/>
-<rect x="50" y="76" width="20" height="50" rx="4" fill="#ffcc00"/>
-<rect x="40" y="40" width="40" height="86" fill="transparent"/>
+<rect x="0" y="0" width="320" height="34" fill="#9aa1ab"/>
+<rect x="8" y="6" width="26" height="22" fill="#d9b87c"/>
+<rect x="40" y="6" width="26" height="22" fill="#e8c98f"/>
+<rect x="72" y="6" width="26" height="22" fill="#d9b87c"/>
+<rect x="0" y="34" width="320" height="10" fill="#8a94a0"/>
+<rect x="0" y="92" width="320" height="2" fill="#ffcc00"/>
+<rect x="0" y="176" width="320" height="24" fill="#cfe0f5"/>
+<line x1="0" y1="176" x2="320" y2="176" stroke="#2a78d6" stroke-width="3"/>
+<text x="6" y="192" font-size="9" fill="#2a78d6" font-family="Arial">CHEMINEMENT PIÉTON</text>
+<rect x="262" y="40" width="50" height="58" fill="#2e7d32"/>
+<text x="268" y="74" font-size="10" fill="#fff" font-family="Arial" font-weight="700">SORTIE</text>
+<g class="hs" data-id="palette">
+<rect x="138" y="96" width="76" height="46" fill="transparent"/>
+<rect x="150" y="110" width="50" height="34" fill="#d9b87c"/>
+<rect x="150" y="98" width="60" height="16" fill="#e8c98f"/>
+<rect x="142" y="140" width="66" height="6" fill="#8a6a3f"/>
 </g>
-<rect x="110" y="120" width="100" height="45" rx="4" fill="#004aad"/>
-<circle cx="130" cy="172" r="11" fill="#111"/>
-<circle cx="195" cy="172" r="11" fill="#111"/>
-<rect x="205" y="50" width="6" height="115" fill="#555"/>
-<g class="hs" data-id="charge">
-<rect x="200" y="26" width="60" height="32" fill="#c9a46a" stroke="#8a6a3f"/>
+<g class="hs" data-id="pieton">
+<rect x="78" y="106" width="34" height="70" fill="transparent"/>
+<circle cx="95" cy="118" r="7" fill="#f0c08a"/>
+<rect x="87" y="126" width="16" height="30" rx="3" fill="#2a78d6"/>
+<rect x="88" y="156" width="6" height="18" fill="#333"/>
+<rect x="96" y="156" width="6" height="18" fill="#333"/>
 </g>
-<g class="hs" data-id="frein">
-<rect x="122" y="128" width="58" height="20" rx="3" fill="#c8102e"/>
-<text x="151" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="Arial">FREIN HS</text>
+<g class="hs" data-id="issue">
+<rect x="250" y="70" width="70" height="60" fill="transparent"/>
+<rect x="252" y="80" width="64" height="40" fill="#d9b87c" stroke="#8a6a3f"/>
+<rect x="258" y="88" width="24" height="24" fill="#e8c98f"/>
+<rect x="286" y="88" width="24" height="24" fill="#e8c98f"/>
 </g>
 </svg>`,
     dangers: {
-      casque: { nom: "Protections absentes", regle: "Les EPI demandés par ton poste (casque, gilet, chaussures) doivent être portés. Sans eux, tu n'es pas protégé en cas de choc ou de chute." },
-      frein: { nom: "Chariot avec un frein défectueux", regle: "Un engin signalé défectueux ne doit pas être utilisé. Il est mis hors service jusqu'à sa réparation, et tu préviens ta hiérarchie." },
-      charge: { nom: "Charge qui masque la vue", regle: "Le conducteur doit toujours voir sa route. Si la charge masque la vue, on circule autrement, par exemple en marche arrière ou avec un guidage." }
+      pieton: { nom: "Piéton sur la voie des engins", regle: "Piétons et engins doivent être séparés. Un piéton reste sur le cheminement signalé.", risque: "Collision avec un engin dont le conducteur ne voit pas la personne." },
+      palette: { nom: "Palette qui déborde sur l'allée", regle: "Une charge qui déborde gêne la circulation et peut accrocher un engin ou tomber.", risque: "Chute de la charge sur un passant ou choc avec un chariot." },
+      issue: { nom: "Sortie de secours encombrée", regle: "Les issues de secours doivent toujours rester dégagées.", risque: "Évacuation bloquée en cas d'incendie ou d'urgence." }
+    },
+    decision: {
+      q: "Tu vois un collègue marcher sur la voie d'un chariot qui approche. Que fais-tu ?",
+      a: ["Je continue, il va bien se pousser", "J'interpelle le collègue et je préviens le conducteur", "Je ne dis rien, ce n'est pas mon affaire"],
+      c: 1,
+      e: "Interpeller et prévenir évite la collision. Un conducteur ne voit pas toujours une personne à pied : la sécurité du groupe repose sur la vigilance de chacun."
+    }
+  },
+  {
+    titre: "3. Quai de dépose",
+    intro: "Un camion est en cours de déchargement. Repère ce qui n'est pas sécurisé.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Quai de dépose avec un camion">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect x="0" y="120" width="200" height="80" fill="#b8bec6"/>
+<rect x="0" y="116" width="200" height="6" fill="#ffcc00"/>
+<rect x="200" y="40" width="120" height="120" rx="4" fill="#f4f6f8" stroke="#9aa1ab"/>
+<rect x="200" y="100" width="120" height="8" fill="#2a78d6"/>
+<rect x="136" y="110" width="66" height="50" fill="none" stroke="#999" stroke-dasharray="4 3"/>
+<g class="hs" data-id="barriere">
+<rect x="150" y="104" width="50" height="16" fill="transparent"/>
+<line x1="150" y1="112" x2="200" y2="112" stroke="#c8102e" stroke-dasharray="6 4" stroke-width="2"/>
+</g>
+<circle cx="236" cy="172" r="12" fill="#111"/>
+<circle cx="296" cy="172" r="12" fill="#111"/>
+<g class="hs" data-id="cale">
+<rect x="236" y="148" width="32" height="38" fill="transparent"/>
+<polygon points="244,184 258,184 258,164" fill="none" stroke="#c8102e" stroke-dasharray="3 2"/>
+</g>
+<g class="hs" data-id="personne">
+<rect x="120" y="60" width="50" height="110" fill="transparent"/>
+<circle cx="150" cy="88" r="8" fill="#f0c08a"/>
+<rect x="141" y="97" width="18" height="34" rx="3" fill="#ffcc00"/>
+<rect x="142" y="130" width="6" height="28" fill="#333"/>
+<rect x="152" y="130" width="6" height="28" fill="#333"/>
+</g>
+</svg>`,
+    dangers: {
+      personne: { nom: "Personne dans la zone de manœuvre", regle: "Pendant une manœuvre de camion, personne ne doit se trouver entre le camion et le quai.", risque: "Écrasement entre le camion et le quai." },
+      cale: { nom: "Camion non calé", regle: "Le camion doit être calé avant d'utiliser un pont de quai ou de charger.", risque: "Le camion peut s'éloigner du quai et provoquer une chute." },
+      barriere: { nom: "Bord de quai non protégé", regle: "Un bord de quai ouvert doit être protégé par une barrière ou un dispositif équivalent.", risque: "Chute de hauteur d'une personne ou d'un engin." }
+    },
+    decision: {
+      q: "Le chauffeur te fait signe d'avancer le chariot alors qu'une personne se trouve encore entre le camion et le quai. Que fais-tu ?",
+      a: ["J'avance, il faut aller vite", "Je ne bouge pas, je fais signe et j'attends que la zone soit libre", "Je démarre sans regarder"],
+      c: 1,
+      e: "Une zone de manœuvre doit être dégagée avant tout mouvement. Attendre et signaler un danger est une règle de sécurité, pas un manque de coopération."
+    }
+  },
+  {
+    titre: "4. Fin de poste",
+    intro: "Ton poste se termine. Sécurise ton engin avant de partir.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Fin de poste, chariot à l'arrêt">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect x="0" y="0" width="320" height="30" fill="#9aa1ab"/>
+<rect x="8" y="6" width="26" height="20" fill="#d9b87c"/>
+<rect x="40" y="6" width="26" height="20" fill="#e8c98f"/>
+<rect x="0" y="164" width="320" height="36" fill="#c5cad1"/>
+<line x1="0" y1="168" x2="320" y2="168" stroke="#ffcc00" stroke-width="2" stroke-dasharray="8 6"/>
+<g class="hs" data-id="passage">
+<rect x="96" y="96" width="120" height="78" fill="transparent"/>
+<rect x="110" y="120" width="96" height="40" rx="4" fill="#004aad"/>
+<rect x="104" y="100" width="34" height="44" fill="#1d3f7a"/>
+<rect x="206" y="60" width="6" height="100" fill="#555"/>
+<g class="hs" data-id="cle">
+<rect x="112" y="124" width="22" height="20" fill="transparent"/>
+<rect x="114" y="128" width="16" height="10" rx="2" fill="#ffcc00"/>
+</g>
+<circle cx="126" cy="164" r="11" fill="#111"/>
+<circle cx="190" cy="164" r="11" fill="#111"/>
+</g>
+<g class="hs" data-id="fourches">
+<rect x="204" y="44" width="62" height="24" fill="transparent"/>
+<rect x="212" y="54" width="54" height="5" fill="#333"/>
+</g>
+</svg>`,
+    dangers: {
+      passage: { nom: "Engin garé dans le passage", regle: "Le stationnement ne doit jamais gêner une issue, un passage ou une zone de circulation.", risque: "Passage bloqué, et obstacle en cas d'évacuation." },
+      cle: { nom: "Engin laissé avec la clé en place", regle: "Un engin non surveillé est arrêté, moteur coupé, clé retirée, et stationné à l'emplacement prévu.", risque: "Mise en mouvement par une personne non formée." },
+      fourches: { nom: "Fourches laissées en hauteur", regle: "En fin de poste, les fourches sont abaissées au sol.", risque: "Chute de la fourche sur une personne qui passe dessous." }
+    },
+    decision: {
+      q: "Ton engin tombe en panne à côté d'une allée, et ta fin de poste approche. Que fais-tu ?",
+      a: ["Je le laisse là, je le signalerai demain", "Je le sécurise (fourches abaissées, clé retirée) et je préviens ma hiérarchie", "Je le pousse à la main jusqu'à la zone de charge"],
+      c: 1,
+      e: "Sécuriser l'engin et prévenir la hiérarchie protège les autres. Un engin laissé sans précaution, ou déplacé sans contrôle, peut blesser quelqu'un qui n'y pense pas."
     }
   }
 ];
 
-let jeuIdx = 0, jeuTotal = 0, jeuTrouves = [];
-const JEU_BEST = "sudJeuBest";
+const JEU_BEST_KEY = "sudMissionBest";
+let jeuIdx = 0, jeuScore = 0, jeuTrouves = [], jeuFini = false, jeuChoisi = false;
 
 function jeuLancer(){
-  jeuIdx = 0; jeuTotal = 0;
+  jeuIdx = 0;
+  jeuScore = 0;
   $("jeu-fin").hidden = true;
   jeuAfficher();
 }
+
 function jeuAfficher(){
   const sc = JEU_SCENES[jeuIdx];
   jeuTrouves = [];
-  $("jeu-scene").textContent = jeuIdx + 1;
-  $("jeu-score").textContent = jeuTotal;
-  $("jeu-best").textContent = localStorage.getItem(JEU_BEST) || 0;
-  $("jeu-zone").innerHTML = `<p style="font-weight:700">${sc.titre} : touche les dangers</p>` + sc.svg;
+  jeuFini = false;
+  jeuChoisi = false;
+  $("jeu-scene").textContent = (jeuIdx + 1) + " / " + JEU_SCENES.length;
+  $("jeu-score").textContent = jeuScore;
+  $("jeu-best").textContent = localStorage.getItem(JEU_BEST_KEY) || 0;
+  $("jeu-zone").innerHTML = '<p style="font-weight:700;margin:0 0 4px 0">' + sc.titre + '</p><p style="font-size:.9rem;color:var(--mute);margin:0 0 8px 0">' + sc.intro + '</p>' + sc.svg;
   $("jeu-regle").hidden = true;
+  $("jeu-decision").hidden = true;
+  $("jeu-decision").innerHTML = "";
   $("jeu-suite").hidden = true;
+  $("jeu-bilan").hidden = false;
   $("jeu-fin").hidden = true;
 }
-$("jeu-zone").addEventListener("click", e => {
+
+function jeuClic(e){
+  if(jeuFini) return;
   const sc = JEU_SCENES[jeuIdx];
   const hs = e.target.closest(".hs");
-  if(!hs){
-    if(e.target.closest("svg")){
-      $("jeu-regle").innerHTML = "🔍 Pas de danger ici, continue de chercher.";
-      $("jeu-regle").hidden = false;
-    }
-    return;
-  }
-  if(hs.classList.contains("trouve")) return;
-  const d = sc.dangers[hs.dataset.id];
-  if(!d) return;
+  if(!hs) return;
+  const id = hs.dataset.id;
+  const d = sc.dangers[id];
+  if(!d || jeuTrouves.indexOf(id) !== -1) return;
+  jeuTrouves.push(id);
   hs.classList.add("trouve");
-  jeuTrouves.push(hs.dataset.id);
-  jeuTotal += 10;
-  $("jeu-score").textContent = jeuTotal;
-  $("jeu-regle").innerHTML = `<strong>✅ ${d.nom}</strong><br>${d.regle}`;
+  jeuScore += 10;
+  $("jeu-score").textContent = jeuScore;
+  $("jeu-regle").innerHTML = "<strong>✅ " + d.nom + "</strong><br>" + d.regle + "<br><em>Risque évité : " + d.risque + "</em>";
   $("jeu-regle").hidden = false;
-  if(jeuTrouves.length === Object.keys(sc.dangers).length){
-    $("jeu-suite").textContent = jeuIdx === JEU_SCENES.length - 1 ? "🏁 Voir mon résultat" : "Scène suivante ➡️";
-    $("jeu-suite").hidden = false;
+  if(jeuTrouves.length === Object.keys(sc.dangers).length) jeuBilan();
+}
+
+function jeuBilan(){
+  if(jeuFini) return;
+  jeuFini = true;
+  const sc = JEU_SCENES[jeuIdx];
+  const manques = Object.keys(sc.dangers).filter(id => jeuTrouves.indexOf(id) === -1);
+  document.querySelectorAll("#jeu-zone .hs").forEach(el => {
+    if(manques.indexOf(el.dataset.id) !== -1) el.classList.add("rate");
+  });
+  let html;
+  if(manques.length){
+    html = "<strong>⚠️ Dangers que tu n'as pas repérés :</strong>";
+    manques.forEach(id => {
+      const d = sc.dangers[id];
+      html += "<br><br><strong>" + d.nom + "</strong> : " + d.regle + "<br><em>Risque : " + d.risque + "</em>";
+    });
+  } else {
+    html = "<strong>🎉 Tu as repéré tous les dangers de cette scène !</strong>";
   }
-});
+  $("jeu-regle").innerHTML = html;
+  $("jeu-regle").hidden = false;
+
+  const dec = sc.decision;
+  const box = $("jeu-decision");
+  box.innerHTML = '<p style="font-weight:700;margin:0 0 8px 0">🤔 ' + dec.q + '</p>';
+  dec.a.forEach((t, i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = t;
+    b.onclick = () => jeuChoisir(i, b);
+    box.appendChild(b);
+  });
+  box.hidden = false;
+  $("jeu-bilan").hidden = true;
+}
+
+function jeuChoisir(i, btn){
+  if(jeuChoisi) return;
+  jeuChoisi = true;
+  const dec = JEU_SCENES[jeuIdx].decision;
+  document.querySelectorAll("#jeu-decision button").forEach((b, k) => {
+    b.disabled = true;
+    if(k === dec.c) b.classList.add("ok");
+  });
+  if(i === dec.c){
+    jeuScore += 10;
+    $("jeu-score").textContent = jeuScore;
+  } else {
+    btn.classList.add("ko");
+  }
+  const p = document.createElement("p");
+  p.style.margin = "10px 0 0 0";
+  p.innerHTML = "<strong>💡 " + (i === dec.c ? "Bonne décision. " : "Pas tout à fait. ") + "</strong>" + dec.e;
+  $("jeu-decision").appendChild(p);
+  $("jeu-suite").textContent = jeuIdx === JEU_SCENES.length - 1 ? "🏁 Voir mon résultat" : "Scène suivante ➡️";
+  $("jeu-suite").hidden = false;
+}
+
+function jeuFinir(){
+  const max = JEU_SCENES.reduce((s, sc) => s + (Object.keys(sc.dangers).length + 1) * 10, 0);
+  const pct = Math.round(jeuScore / max * 100);
+  const prev = +(localStorage.getItem(JEU_BEST_KEY) || 0);
+  if(jeuScore > prev) localStorage.setItem(JEU_BEST_KEY, jeuScore);
+  $("jeu-zone").innerHTML = "";
+  ["jeu-regle", "jeu-decision", "jeu-suite", "jeu-bilan"].forEach(id => $(id).hidden = true);
+  $("jeu-badge").textContent = pct >= 90 ? "🛡️" : pct >= 60 ? "🌟" : "📚";
+  $("jeu-titre").textContent = pct >= 90 ? "Gardien de la sécurité" : pct >= 60 ? "Vigilant, mais quelques angles morts" : "À revoir : la sécurité commence par l'observation";
+  $("jeu-resultat").textContent = "Score : " + jeuScore + " / " + max + " (" + pct + " %)" + (jeuScore > prev ? " 🎊 Nouveau meilleur score !" : "");
+  $("jeu-fin").hidden = false;
+}
+
+$("jeu-zone").addEventListener("click", jeuClic);
+$("jeu-bilan").onclick = jeuBilan;
 $("jeu-suite").onclick = () => {
   if(jeuIdx < JEU_SCENES.length - 1){ jeuIdx++; jeuAfficher(); }
   else jeuFinir();
 };
-function jeuFinir(){
-  const max = JEU_SCENES.reduce((s, sc) => s + Object.keys(sc.dangers).length * 10, 0);
-  const prev = +(localStorage.getItem(JEU_BEST) || 0);
-  if(jeuTotal > prev) localStorage.setItem(JEU_BEST, jeuTotal);
-  $("jeu-zone").innerHTML = "";
-  $("jeu-regle").hidden = true;
-  $("jeu-suite").hidden = true;
-  $("jeu-badge").textContent = jeuTotal >= max ? "🏆" : jeuTotal >= max / 2 ? "🌟" : "📚";
-  $("jeu-resultat").textContent = `Tu as trouvé ${jeuTotal / 10} danger(s) sur ${max / 10}. ` + (jeuTotal > prev ? "🎊 Nouveau meilleur score !" : "");
-  $("jeu-fin").hidden = false;
-}
+
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
