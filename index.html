@@ -114,8 +114,9 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 <div class="tabs" style="grid-template-columns:1fr; margin-top:-8px; margin-bottom:16px;">
   <button class="tab" data-t="qrcode" aria-pressed="false" style="border-color:var(--blue); color:var(--blue);">📱 Afficher le QR Code</button>
 </div>
+<button onclick="if(navigator.share){navigator.share({title:'Sud Industrie ELE',text:'Espace salarié : droits, victoires, sondage et quiz',url:location.href})}else{navigator.clipboard.writeText(location.href).then(()=>alert('Lien copié !'))}">📤 Partager l'espace</button>
 
-<!-- ONGLET 1 : MES DROITS -->
+ <!-- ONGLET 1 : MES DROITS -->
 <section id="droits">
   <div class="card">
     <h2>Connaître ses droits</h2>
