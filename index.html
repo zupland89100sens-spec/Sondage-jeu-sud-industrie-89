@@ -119,6 +119,12 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <div class="card">
     <h2>Connaître ses droits</h2>
     <input type="search" id="recherche-droits" placeholder="🔍 Rechercher : arrêt maladie, chariot, congés…" style="width:100%; padding:12px; border:2px solid var(--line); border-radius:8px; font:inherit; margin-bottom:16px; background:var(--surface); color:var(--ink);">
+    <div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
+    <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
+    <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
+    <button onclick="document.querySelector('.tab[data-t=quiz]').click()">🎮 Le quiz</button>
+    <button onclick="document.querySelector('.tab[data-t=sondage]').click()">📊 Le sondage</button>
+    </div>
 
     <div class="droit-item">
       <h3>🚨 Convocation par la direction</h3>
