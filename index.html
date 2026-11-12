@@ -539,6 +539,19 @@ section:not([hidden]){animation:fadeUp .5s ease both}
     </div>
   </div>
 </section>
+<!-- ONGLET QUESTIONS -->
+<section id="questions" hidden>
+  <div class="card">
+    <h2>💬 Poser une question</h2>
+    <p style="font-size:.9rem; color:var(--mute); margin-bottom:10px;">Écris ta question ci-dessous. Elle est envoyée sans nom ni numéro de téléphone. Réponse sous 7 jours.</p>
+    <p style="font-size:.85rem; color:var(--mute); margin-bottom:12px;">⚠️ Ne cite pas de noms de collègues ou de chefs. En cas de danger immédiat, préviens ton responsable ou les secours : ce formulaire ne remplace pas un signalement urgent.</p>
+    <textarea id="question-texte" rows="5" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : quelles sont mes règles pour les congés en juillet ?"></textarea>
+    <button id="btn-question">Envoyer ma question</button>
+    <div id="res-question" style="display:none; background:var(--success); color:#fff; padding:20px; border-radius:8px; text-align:center; font-weight:bold; margin-top:15px;">
+      ✅ Merci ! Ta question a bien été envoyée.
+    </div>
+  </div>
+</section>
 
  <!-- ONGLET QR CODE -->
 <section id="qrcode" hidden>
@@ -576,7 +589,7 @@ updateTimer();
 // Onglets
 document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", x === b));
-  ["droits","victoires","elections","sondage","quiz","photos","videos","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
+  ["droits","victoires","elections","sondage","quiz","photos","videos","questions","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
   if(b.dataset.t === "qrcode") drawQR();
   if(b.dataset.t === "quiz") showStart();
   if(b.dataset.t === "photos") chargerGalerie();
@@ -845,6 +858,32 @@ setInterval(() => {
   const el = $("compteur-accueil");
   if(el) el.textContent = $("timer").textContent;
 }, 1000);
+// ===== QUESTIONS (formulaire Formspree séparé du sondage) =====
+const QUESTIONS_URL = "https://formspree.io/f/xyewzday";
+$("btn-question").onclick = async () => {
+  const btn = $("btn-question");
+  const texte = $("question-texte").value.trim();
+  if(texte.length < 10){ alert("Écris un peu plus ta question, quelques mots suffisent."); return; }
+  btn.disabled = true; btn.textContent = "Envoi en cours...";
+  try{
+    const r = await fetch(QUESTIONS_URL, {
+      method: "POST",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ question: texte })
+    });
+    if(r.ok){
+      $("question-texte").value = "";
+      btn.style.display = "none";
+      $("res-question").style.display = "block";
+    } else {
+      alert("Oups, l'envoi n'a pas abouti. Réessaie.");
+      btn.disabled = false; btn.textContent = "Envoyer ma question";
+    }
+  }catch(err){
+    alert("Oups, erreur de connexion. Réessaie.");
+    btn.disabled = false; btn.textContent = "Envoyer ma question";
+  }
+};
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
