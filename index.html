@@ -982,7 +982,11 @@ $("btn-question").onclick = async () => {
     }
   }catch(err){
     alert("Oups, erreur de connexion. Réessaie.");
-    btn.disabled = false; btn.textContent = "Envoyer ma // ===== MISSION SÉCURITÉ (jeu) =====
+      btn.disabled = false; btn.textContent = "Envoyer ma question";
+  }
+};
+   
+   // ===== MISSION SÉCURITÉ (jeu) =====
 const JEU_SCENES = [
   {
     titre: "1. Prise de poste",
@@ -1277,7 +1281,7 @@ $("jeu-bilan").onclick = jeuBilan;
 $("jeu-suite").onclick = () => {
   if(jeuIdx < JEU_SCENES.length - 1){ jeuIdx++; jeuAfficher(); }
   else jeuFinir();
-}
+};
 
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
