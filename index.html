@@ -246,6 +246,41 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 </svg>
 <p style="margin:4px 0 0 0; font-size:.85rem; color:var(--mute);">🏭 Le transstockeur circule dans l'allée et monte les palettes.</p>
 </div>
+<div class="card" style="text-align:center; padding:14px;">
+<style>
+.wh{position:relative; height:170px; margin:10px 0 4px 0; overflow:hidden}
+.wh-rail{position:absolute; left:2%; right:2%; top:88px; height:6px; background:#8a94a0; border-radius:3px}
+.wh-st{position:absolute; top:58px; transform:translateX(-50%); font-size:1.5rem; line-height:1}
+.wh-mv{position:absolute; top:56px; transform:translateX(-50%); font-size:1.6rem; line-height:1}
+.wh-lab{position:absolute; top:112px; transform:translateX(-50%); width:70px; font-size:.65rem; line-height:1.2; color:var(--mute); text-align:center}
+.wh-cari{left:4%; animation:wh-cari 12s ease-in-out infinite}
+.wh-p1{left:4%; opacity:1; animation:wh-p1 12s linear infinite}
+.wh-p2{left:56%; opacity:0; animation:wh-p2 12s linear infinite; animation-delay:6s}
+.wh-bob{animation:wh-bob 1.6s ease-in-out infinite}
+@keyframes wh-cari{0%{left:4%}20%{left:28%}40%{left:30%}55%{left:30%}75%{left:4%}100%{left:4%}}
+@keyframes wh-p1{0%{left:4%;opacity:1}20%{left:28%;opacity:1}40%{left:30%;opacity:1}52%{left:56%;opacity:1}58%{left:56%;opacity:0}100%{left:56%;opacity:0}}
+@keyframes wh-p2{0%{left:56%;opacity:0}6%{left:56%;opacity:1}30%{left:76%;opacity:1}55%{left:76%;opacity:1}75%{left:92%;opacity:1}85%{left:92%;opacity:0}100%{left:92%;opacity:0}}
+@keyframes wh-bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
+</style>
+<h2 style="border:none; margin:0 0 6px 0; padding:0;">🏭 Une palette, de l'arrivée au départ</h2>
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le camion arrive, la palette est rangée en stock, puis préparée et rechargée.</p>
+<div class="wh">
+  <div class="wh-rail"></div>
+  <span class="wh-st" style="left:4%">🚚</span>
+  <span class="wh-st" style="left:56%">🏗️</span>
+  <span class="wh-st wh-bob" style="left:76%">🧑‍🏭</span>
+  <span class="wh-st" style="left:92%">🚛</span>
+  <span class="wh-mv wh-cari">🚜</span>
+  <span class="wh-mv wh-p1">📦</span>
+  <span class="wh-mv wh-p2">📦</span>
+  <span class="wh-lab" style="left:4%">Camion arrivée</span>
+  <span class="wh-lab" style="left:30%">Convoyeurs</span>
+  <span class="wh-lab" style="left:56%">Stock (transstockeurs)</span>
+  <span class="wh-lab" style="left:76%">Picking (préparateur)</span>
+  <span class="wh-lab" style="left:92%">Camion départ</span>
+</div>
+<p style="font-size:.8rem; color:var(--mute); margin:4px 0 0 0;">🚜 cariste · 🏗️ transstockeur · 🧑‍🏭 préparateur · 📦 palette</p>
+</div>
 <div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
     <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
     <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
