@@ -182,71 +182,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <div id="sit-reponse" class="expl" hidden></div>
   <button id="sit-retour" hidden onclick="sitRetour()">⬅️ Autre situation</button>
 </div>
- <div class="card" style="text-align:center; padding:12px;">
-<style>
-.sv-roule{animation:sv-roule 6s ease-in-out infinite alternate}
-@keyframes sv-roule{from{transform:translateX(0)}to{transform:translateX(110px)}}
-.sv-roue{transform-box:fill-box;transform-origin:center;animation:sv-tourne 1s linear infinite}
-@keyframes sv-tourne{to{transform:rotate(360deg)}}
-.sv-leve{animation:sv-leve 4s ease-in-out infinite}
-@keyframes sv-leve{0%,100%{transform:translateY(0)}50%{transform:translateY(-22px)}}
-.sv-avance{animation:sv-avance 10s ease-in-out infinite alternate}
-@keyframes sv-avance{from{transform:translateX(0)}to{transform:translateX(30px)}}
-.sv-monte{animation:sv-monte 3s ease-in-out infinite}
-@keyframes sv-monte{0%,100%{transform:translateY(0)}50%{transform:translateY(-40px)}}
-</style>
-<svg viewBox="0 0 300 140" width="100%" style="max-width:340px" role="img" aria-label="Chariot élévateur qui roule et lève sa charge">
-  <line x1="0" y1="127" x2="300" y2="127" stroke="#9aa1ab" stroke-width="2"/>
-  <g class="sv-roule">
-    <rect x="60" y="72" width="70" height="40" rx="4" fill="#004aad"/>
-    <rect x="46" y="72" width="14" height="40" fill="#004aad"/>
-    <rect x="70" y="40" width="4" height="34" fill="#333"/>
-    <rect x="116" y="40" width="4" height="34" fill="#333"/>
-    <rect x="68" y="36" width="56" height="6" rx="2" fill="#333"/>
-    <circle cx="92" cy="58" r="8" fill="#ffcc00"/>
-    <rect x="40" y="30" width="6" height="90" fill="#555"/>
-    <g class="sv-leve">
-      <rect x="12" y="104" width="34" height="4" fill="#333"/>
-      <rect x="40" y="96" width="8" height="12" fill="#333"/>
-      <rect x="10" y="84" width="36" height="12" rx="1" fill="#c9a46a"/>
-      <rect x="12" y="66" width="16" height="18" fill="#e0bd7f"/>
-      <rect x="30" y="66" width="16" height="18" fill="#f0d29a"/>
-    </g>
-    <g class="sv-roue"><circle cx="76" cy="116" r="10" fill="#111"/><line x1="76" y1="108" x2="76" y2="124" stroke="#aaa" stroke-width="2"/></g>
-    <g class="sv-roue"><circle cx="122" cy="116" r="10" fill="#111"/><line x1="122" y1="108" x2="122" y2="124" stroke="#aaa" stroke-width="2"/></g>
-  </g>
-</svg>
-<p style="margin:4px 0 14px 0; font-size:.85rem; color:var(--mute);">🚜 Le chariot élévateur roule et lève sa charge.</p>
-<svg viewBox="0 0 300 140" width="100%" style="max-width:340px" role="img" aria-label="Transstockeur qui circule dans l'allée et monte une palette">
-  <line x1="0" y1="127" x2="300" y2="127" stroke="#9aa1ab" stroke-width="2"/>
-  <rect x="10" y="20" width="90" height="106" fill="#e6e9ed" stroke="#9aa1ab"/>
-  <line x1="10" y1="52" x2="100" y2="52" stroke="#9aa1ab"/>
-  <line x1="10" y1="84" x2="100" y2="84" stroke="#9aa1ab"/>
-  <rect x="14" y="28" width="24" height="22" fill="#d9b87c"/>
-  <rect x="70" y="24" width="24" height="26" fill="#d9b87c"/>
-  <rect x="14" y="60" width="24" height="22" fill="#e8c98f"/>
-  <rect x="14" y="92" width="24" height="22" fill="#d9b87c"/>
-  <rect x="42" y="92" width="24" height="22" fill="#e8c98f"/>
-  <rect x="200" y="20" width="90" height="106" fill="#e6e9ed" stroke="#9aa1ab"/>
-  <line x1="200" y1="52" x2="290" y2="52" stroke="#9aa1ab"/>
-  <line x1="200" y1="84" x2="290" y2="84" stroke="#9aa1ab"/>
-  <rect x="206" y="92" width="24" height="22" fill="#d9b87c"/>
-  <rect x="206" y="60" width="24" height="22" fill="#d9b87c"/>
-  <rect x="236" y="60" width="24" height="22" fill="#e8c98f"/>
-  <rect x="262" y="28" width="24" height="22" fill="#e8c98f"/>
-  <g class="sv-avance">
-    <rect x="126" y="12" width="44" height="5" fill="#004aad"/>
-    <rect x="126" y="12" width="6" height="110" fill="#333"/>
-    <rect x="164" y="12" width="6" height="110" fill="#333"/>
-    <g class="sv-monte">
-      <rect x="132" y="92" width="32" height="6" fill="#ffcc00"/>
-      <rect x="136" y="70" width="24" height="22" fill="#d9b87c"/>
-    </g>
-  </g>
-</svg>
-<p style="margin:4px 0 0 0; font-size:.85rem; color:var(--mute);">🏭 Le transstockeur circule dans l'allée et monte les palettes.</p>
-</div>
-<div class="card" style="text-align:center; padding:14px;">
+ <div class="card" style="text-align:center; padding:14px;">
 <style>
 .wh{position:relative; height:170px; margin:10px 0 4px 0; overflow:hidden}
 .wh-rail{position:absolute; left:2%; right:2%; top:88px; height:6px; background:#8a94a0; border-radius:3px}
@@ -281,8 +217,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 </div>
 <p style="font-size:.8rem; color:var(--mute); margin:4px 0 0 0;">🚜 cariste · 🏗️ transstockeur · 🧑‍🏭 préparateur · 📦 palette</p>
 </div>
-<div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
-    <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
+<div class="card" style="background:var(--bg); margin-bottom:16px; text-align:907749  <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
     <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
     <button onclick="document.querySelector('.tab[data-t=quiz]').click()">🎮 Le quiz</button>
     <button onclick="document.querySelector('.tab[data-t=sondage]').click()">📊 Le sondage</button>
