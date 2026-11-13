@@ -642,6 +642,18 @@ section:not([hidden]){animation:fadeUp .5s ease both}
       ✅ Merci ! Ta question a bien été envoyée.
     </div>
   </div>
+<div class="card" style="margin-top:16px;">
+  <h2>🤖 Assistant informatif</h2>
+  <div style="background:var(--bg); border-left:4px solid var(--acc); padding:12px; border-radius:8px; margin-bottom:12px;">
+    <p style="margin:0 0 6px 0; font-weight:700;">ℹ️ Information à titre indicatif uniquement</p>
+    <p style="margin:0 0 6px 0; font-size:.9rem;">Cet assistant donne des informations générales. Ses réponses peuvent être incomplètes ou inexactes, et ne remplacent ni un conseil juridique ni l'avis du syndicat.</p>
+    <p style="margin:0; font-size:.9rem;"><strong>Pour votre situation personnelle, rapprochez-vous de Sud Industrie ELE</strong> : bouton « Écrire au syndicat » ou appel au 06 26 71 16 87.</p>
+  </div>
+  <textarea id="ia-question" rows="3" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : combien de jours de congés payés par mois ?"></textarea>
+  <button id="ia-btn">Poser ma question</button>
+  <div id="ia-reponse" class="expl" hidden></div>
+  <p class="note">Pour une situation personnelle, utilise le bouton « Écrire au syndicat » ou appelle le 06 26 71 16 87.</p>
+</div>
 </section>
 
 <!-- ONGLET JEU -->
@@ -1361,6 +1373,29 @@ function afficherResultats(){
 }
 afficherResultats();
 
+// ===== ASSISTANT INFORMATIF =====
+const IA_URL = "https://assistant-sud.kg4fnd86k2-c01.workers.dev/";
+$("ia-btn").onclick = async () => {
+  const btn = $("ia-btn");
+  const q = $("ia-question").value.trim();
+  if(q.length < 10){ alert("Écris une question un peu plus précise."); return; }
+  btn.disabled = true; btn.textContent = "Réponse en cours...";
+  const zone = $("ia-reponse");
+  zone.hidden = false;
+  zone.textContent = "…";
+  try{
+    const r = await fetch(IA_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question: q })
+    });
+    const d = await r.json();
+    zone.textContent = d.reponse || "Désolé, réponse indisponible. Contacte le syndicat.";
+  }catch(err){
+    zone.textContent = "Erreur de connexion. Réessaie plus tard ou contacte le syndicat.";
+  }
+  btn.disabled = false; btn.textContent = "Poser ma question";
+};
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
