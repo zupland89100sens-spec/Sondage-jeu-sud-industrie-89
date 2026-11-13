@@ -1401,12 +1401,27 @@ function sitCategorie(cat){
   $("sit-reponse").hidden = true;
   $("sit-retour").hidden = false;
 }
+function sitVoirFiche(i){
+  const titre = SITUATIONS[sitCat].items[i].f;
+  if(rechercheDroits.value !== ""){
+    rechercheDroits.value = "";
+    rechercheDroits.dispatchEvent(new Event("input"));
+  }
+  const cible = [...document.querySelectorAll("#droits .droit-item")].find(el => {
+    const h3 = el.querySelector("h3");
+    return h3 && h3.textContent.includes(titre);
+  });
+  if(!cible) return;
+  cible.scrollIntoView({behavior: "smooth", block: "center"});
+  cible.style.outline = "3px solid var(--acc)";
+  setTimeout(() => { cible.style.outline = ""; }, 2500);
+}
 function sitReponse(i){
   const it = SITUATIONS[sitCat].items[i];
   const zone = $("sit-reponse");
   zone.innerHTML = '<strong>💡 ' + it.q + '</strong><br><br>' + it.r +
     '<br><br><em>ℹ️ Information à titre indicatif. Pour ta situation, consulte un élu du personnel ou le syndicat.</em>' +
-    '<br><a class="lf-link" href="#" onclick="document.querySelector(\'.tab[data-t=droits]\').click(); return false;">📖 Voir la fiche « ' + it.f + ' »</a>' +
+    '<br><a class="lf-link" href="#" onclick="sitVoirFiche(' + i + '); return false;">📖 Voir la fiche « ' + it.f + ' »</a>' +
     '<br><br><a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:6px;">✉️ Écrire au syndicat</a>';
   zone.hidden = false;
 }
