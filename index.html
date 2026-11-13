@@ -1423,7 +1423,8 @@ function sitReponse(i){
     '<br><br><em>ℹ️ Information à titre indicatif. Pour ta situation, consulte un élu du personnel ou le syndicat.</em>' +
     '<br><a class="lf-link" href="#" onclick="sitVoirFiche(' + i + '); return false;">📖 Voir la fiche « ' + it.f + ' »</a>' +
     '<br><br><a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:6px;">✉️ Écrire au syndicat</a>';
-  zone.hidden = false;
+    '<br><br><button onclick="sitCategorie(sitCat)" style="margin-top:6px; background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue);">⬅️ Autre question dans cette catégorie</button>' +
+zone.hidden = false;
 }
 function sitRetour(){
   $("sit-etape1").hidden = false;
