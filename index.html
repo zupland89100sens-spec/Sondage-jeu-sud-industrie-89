@@ -164,7 +164,25 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <div class="card">
     <h2>Connaître ses droits</h2>
     <input type="search" id="recherche-droits" placeholder="🔍 Rechercher : arrêt maladie, chariot, congés…" style="width:100%; padding:12px; border:2px solid var(--line); border-radius:8px; font:inherit; margin-bottom:16px; background:var(--surface); color:var(--ink);">
-    <div class="card" style="text-align:center; padding:12px;">
+   <div class="card" style="border-left:6px solid var(--blue); margin-bottom:16px;">
+  <h2 style="border:none; margin:0 0 8px 0; padding:0;">🧭 Quelle est ma situation ?</h2>
+  <div style="background:var(--bg); border-left:4px solid var(--acc); padding:10px 12px; border-radius:8px; margin-bottom:12px; font-size:.9rem;">
+    <strong>ℹ️ Information à titre indicatif.</strong> Ces réponses sont générales et peuvent ne pas correspondre à ta situation. Le mieux est de consulter un élu du personnel ou le syndicat avant d'agir.
+  </div>
+
+  <div id="sit-etape1">
+    <p style="font-weight:700; margin:0 0 8px 0;">Choisis une catégorie :</p>
+    <button class="opt" onclick="sitCategorie('securite')">🦺 Sécurité</button>
+    <button class="opt" onclick="sitCategorie('conges')">✈️ Congés et temps de travail</button>
+    <button class="opt" onclick="sitCategorie('droits')">⚖️ Droits et sanctions</button>
+  </div>
+
+  <div id="sit-etape2" hidden></div>
+
+  <div id="sit-reponse" class="expl" hidden></div>
+  <button id="sit-retour" hidden onclick="sitRetour()">⬅️ Autre situation</button>
+</div>
+ <div class="card" style="text-align:center; padding:12px;">
 <style>
 .sv-roule{animation:sv-roule 6s ease-in-out infinite alternate}
 @keyframes sv-roule{from{transform:translateX(0)}to{transform:translateX(110px)}}
@@ -1400,6 +1418,64 @@ $("ia-btn").onclick = async () => {
   }
   btn.disabled = false; btn.textContent = "Poser ma question";
 };
+// ===== PARCOURS « QUELLE EST MA SITUATION ? » =====
+const SITUATIONS = {
+  securite: {
+    titre: "🦺 Sécurité",
+    items: [
+      { q: "Mon chariot a un défaut : que faire ?", r: "Ne l'utilise pas. Signale le défaut par écrit à ta hiérarchie (main courante ou cahier de consignes) et demande la mise hors service de l'engin. Un chariot défectueux doit être consigné par l'employeur.", f: "Vérification et anomalies des chariots" },
+      { q: "Je vois une personne dans une zone de manœuvre : que faire ?", r: "Ne bouge pas l'engin. Fais un signe clair au chauffeur ou au responsable, et attends que la zone soit dégagée. Signale la situation à ta hiérarchie et, si besoin, au CSE.", f: "Circulation et signalétique en entrepôt" },
+      { q: "Je suis en danger immédiat : que faire ?", r: "Arrête ton poste et préviens immédiatement ton employeur ou son représentant. Tu peux exercer ton droit de retrait sans sanction. En cas de blessure, appelle les secours.", f: "Danger grave et imminent" },
+      { q: "On m'a demandé de conduire sans formation : que faire ?", r: "Refuse de conduire tant que tu n'as pas reçu la formation et l'autorisation de conduite écrite. Sans cette autorisation, tu ne dois pas utiliser l'engin.", f: "Prise de poste avec un chariot automoteur" }
+    ]
+  },
+  conges: {
+    titre: "✈️ Congés et temps de travail",
+    items: [
+      { q: "Combien de congés payés j'acquiers ?", r: "Tu acquiers 2,5 jours ouvrables par mois travaillé, soit 5 semaines par an. Les règles précises peuvent être améliorées par un accord ou la convention collective.", f: "Congés payés" },
+      { q: "Combien de temps de repos entre deux journées ?", r: "En principe, tu dois avoir 11 heures consécutives de repos entre deux journées de travail.", f: "Heures supplémentaires" },
+      { q: "Droit à une pause : quand ?", r: "Au-delà de 6 heures de travail par jour, une pause d'au moins 20 minutes est obligatoire. Les modalités exactes peuvent être précisées par la convention collective.", f: "Heures supplémentaires" },
+      { q: "Mon employeur me demande de rester sans être payé : est-ce permis ?", r: "Non. Le temps de travail effectif doit être rémunéré. Note les dates et heures, et demande une régularisation par écrit.", f: "Heures supplémentaires" }
+    ]
+  },
+  droits: {
+    titre: "⚖️ Droits et sanctions",
+    items: [
+      { q: "Je suis convoqué à un entretien : que faire ?", r: "Tu as droit à un délai minimum de 5 jours ouvrables entre la convocation et l'entretien. Tu peux te faire accompagner par un élu du personnel ou un salarié de l'entreprise.", f: "Convocation par la direction" },
+      { q: "On me remet un courrier en main propre : que faire ?", r: "Demande un exemplaire daté et signé, et garde une copie. Une lettre de licenciement doit toujours être envoyée en recommandé avec accusé de réception.", f: "Remise en main propre d'un courrier" },
+      { q: "Je suis en arrêt maladie : que faire ?", r: "Préviens l'employeur dans les 48 heures. Tu peux être contrôlé par la Sécurité sociale pendant ton arrêt.", f: "Arrêt maladie" },
+      { q: "Je subis du harcèlement : que faire ?", r: "Ce comportement est interdit. Tu peux alerter le CSE, l'inspection du travail, ou contacter le syndicat directement. Garde trace des faits (dates, messages, témoins).", f: "Harcèlement moral ou sexuel" }
+    ]
+  }
+};
+
+let sitCat = null;
+function sitCategorie(cat){
+  sitCat = cat;
+  const box = $("sit-etape2");
+  const items = SITUATIONS[cat].items;
+  box.innerHTML = '<p style="font-weight:700; margin:0 0 8px 0;">' + SITUATIONS[cat].titre + ' : quelle est ta situation ?</p>' +
+    items.map((it, i) => '<button class="opt" onclick="sitReponse(' + i + ')">' + it.q + '</button>').join("");
+  box.hidden = false;
+  $("sit-etape1").hidden = true;
+  $("sit-reponse").hidden = true;
+  $("sit-retour").hidden = false;
+}
+function sitReponse(i){
+  const it = SITUATIONS[sitCat].items[i];
+  const zone = $("sit-reponse");
+  zone.innerHTML = '<strong>💡 ' + it.q + '</strong><br><br>' + it.r +
+    '<br><br><em>ℹ️ Information à titre indicatif. Pour ta situation, consulte un élu du personnel ou le syndicat.</em>' +
+    '<br><a class="lf-link" href="#" onclick="document.querySelector(\'.tab[data-t=droits]\').click(); return false;">📖 Voir la fiche « ' + it.f + ' »</a>' +
+    '<br><br><a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:6px;">✉️ Écrire au syndicat</a>';
+  zone.hidden = false;
+}
+function sitRetour(){
+  $("sit-etape1").hidden = false;
+  $("sit-etape2").hidden = true;
+  $("sit-reponse").hidden = true;
+  $("sit-retour").hidden = true;
+}
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
