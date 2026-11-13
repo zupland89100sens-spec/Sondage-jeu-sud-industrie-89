@@ -399,8 +399,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
     <h2>Sondage Sécurité et Conditions de travail</h2>
     <p style="font-size:.9rem; color:var(--mute); margin-bottom:15px;">Ce sondage est anonyme. Tes réponses seront analysées et transmises à la direction pour exiger des changements. Un seul vote par téléphone.</p>
   <div style="background:#fff3cd; border:2px solid #ffcc00; border-radius:12px; padding:14px; margin-bottom:16px; text-align:center;">
-  <p style="margin:0 0 6px 0; font-size:1.2rem; font-weight:700; color:#000;">⚠️ Résultats provisoires</p>
-  <p style="margin:0; font-size:1rem; font-weight:600; color:#000;">Ces chiffres sont mis à jour à chaque palier de 20 réponses.</p>
 </div>
 <div id="resultats" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-bottom:16px;"></div>
 
@@ -1336,64 +1334,6 @@ $("jeu-suite").onclick = () => {
   if(jeuIdx < JEU_SCENES.length - 1){ jeuIdx++; jeuAfficher(); }
   else jeuFinir();
 };
-
-// ===== RÉSULTATS DU SONDAGE (camemberts) =====
-// Pour mettre à jour : modifiez seulement les nombres ci-dessous.
-const RESULTATS = [
-  { titre: "Sécurité à ton poste", choix: { "Très bien": 2, "Correct": 4, "Insuffisant": 5, "Dangereux": 0 } },
-  { titre: "Accident ou presque-accident", choix: { "Oui": 4, "Non": 7 } },
-  { titre: "EPI suffisants et en bon état", choix: { "Oui": 8, "Il en manque ou usés": 2, "Il faut toujours réclamer": 1 } },
-  { titre: "Formation sécurité", choix: { "Oui": 5, "Partiellement": 4, "Non": 2 } },
-  { titre: "Conditions matérielles", choix: { "Oui": 4, "Partiellement": 6, "Non": 1 } },
-  { titre: "Cadence dangereuse", choix: { "Jamais": 3, "Parfois": 6, "Souvent": 2 } },
-  { titre: "Pression de la hiérarchie", choix: { "Jamais": 2, "Parfois": 9 } },
-  { titre: "Ambiance entre collègues", choix: { "Très bonne": 1, "Correcte": 7, "Tendue": 3 } },
-  { titre: "Crainte de représailles", choix: { "Oui": 4, "Parfois": 5, "Non": 2 } },
-  { titre: "Respect par l'encadrement", choix: { "Oui": 3, "Parfois": 4, "Non": 4 } },
-  { titre: "Charge de travail tenable", choix: { "Oui": 7, "Difficilement": 4 } },
-  { titre: "Planning communiqué à l'avance", choix: { "Oui": 10, "Parfois": 1 } },
-  { titre: "Stress ou fatigue", choix: { "Jamais": 1, "Parfois": 8, "Souvent": 2 } },
-  { titre: "Signalements traités", choix: { "Oui": 2, "Parfois": 3, "Non": 6 } },
-  { titre: "Validation de dépose à quai (9 réponses)", choix: { "Oui, efficace": 2, "Correcte": 4, "Peu fiable": 2, "Inefficace": 1 } },
-  { titre: "Signalétique et chemin de préparation (9 réponses)", choix: { "Oui": 2, "Partiellement": 4, "Non": 3 } },
-  { titre: "Positionnement en fin de commande (9 réponses)", choix: { "Oui": 2, "Parfois difficile": 6, "Souvent difficile": 1 } },
-  { titre: "Signalétique visible en allée (9 réponses)", choix: { "Oui": 1, "Partiellement": 5, "Non": 3 } },
-  { titre: "Stationnement des chariots (9 réponses)", choix: { "Non": 5, "Parfois dangereux": 2, "Souvent dangereux": 2 } },
-  { titre: "Anomalies récurrentes sur les chariots (9 réponses)", choix: { "Parfois": 7, "Non": 2 } }
-];
-
-function camembert(d){
-  const couleurs = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#7b1fa2"];
-  const total = Object.values(d.choix).reduce((a, b) => a + b, 0);
-  if(total === 0) return "";
-  let angle = -Math.PI / 2, parts = "", legende = "", i = 0;
-  for(const label of Object.keys(d.choix)){
-    const n = d.choix[label];
-    const c = couleurs[i % couleurs.length];
-    const pct = Math.round(n / total * 100);
-    if(n === total){
-      parts += '<circle cx="90" cy="90" r="80" fill="' + c + '"/>';
-    } else if(n > 0){
-      const a2 = angle + n / total * 2 * Math.PI;
-      const x1 = 90 + 80 * Math.cos(angle), y1 = 90 + 80 * Math.sin(angle);
-      const x2 = 90 + 80 * Math.cos(a2), y2 = 90 + 80 * Math.sin(a2);
-      const grand = (a2 - angle) > Math.PI ? 1 : 0;
-      parts += '<path d="M90,90 L' + x1 + ',' + y1 + ' A80,80 0 ' + grand + ' 1 ' + x2 + ',' + y2 + ' Z" fill="' + c + '" stroke="#fff" stroke-width="2"/>';
-      angle = a2;
-    }
-    legende += '<div style="display:flex; align-items:center; gap:8px; font-size:.9rem; margin:3px 0;"><span style="width:12px; height:12px; border-radius:2px; background:' + c + '; display:inline-block;"></span>' + label + " : " + n + " (" + pct + " %)</div>";
-    i++;
-  }
-  return '<div class="card" style="padding:14px; margin:0;">' +
-    '<p style="font-weight:700; margin:0 0 8px 0;">' + d.titre + '</p>' +
-    '<svg viewBox="0 0 180 180" width="160" height="160" style="display:block; margin:0 auto;">' + parts + '</svg>' +
-    legende +
-    '<p class="note">Sur ' + total + ' réponses</p></div>';
-}
-function afficherResultats(){
-  $("resultats").innerHTML = RESULTATS.map(camembert).join("");
-}
-afficherResultats();
 
 // ===== ASSISTANT INFORMATIF =====
 const IA_URL = "https://assistant-sud.kg4fnd86k2-c01.workers.dev/";
