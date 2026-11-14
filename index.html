@@ -164,56 +164,60 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes dkFk{0%,2%{transform:translateX(40px)}5%,6%{transform:translateX(-110px)}9%,12%{transform:translateX(40px)}15%,16%{transform:translateX(-110px)}19%,22%{transform:translateX(40px)}25%,26%{transform:translateX(-110px)}29%,32%{transform:translateX(40px)}35%,36%{transform:translateX(-110px)}39%,42%{transform:translateX(40px)}45%,46%{transform:translateX(-110px)}49%,52%{transform:translateX(40px)}55%,56%{transform:translateX(-110px)}59%,62%{transform:translateX(40px)}65%,66%{transform:translateX(-110px)}69%,72%{transform:translateX(40px)}75%,76%{transform:translateX(-110px)}79%,82%{transform:translateX(40px)}85%,86%{transform:translateX(-110px)}89%,92%{transform:translateX(40px)}95%,96%{transform:translateX(-110px)}99%,100%{transform:translateX(40px)}}
-@keyframes dkCar{0%,1.9%{opacity:0}2%,5.9%{opacity:1}6%,11.9%{opacity:0}12%,15.9%{opacity:1}16%,21.9%{opacity:0}22%,25.9%{opacity:1}26%,31.9%{opacity:0}32%,35.9%{opacity:1}36%,41.9%{opacity:0}42%,45.9%{opacity:1}46%,51.9%{opacity:0}52%,55.9%{opacity:1}56%,61.9%{opacity:0}62%,65.9%{opacity:1}66%,71.9%{opacity:0}72%,75.9%{opacity:1}76%,81.9%{opacity:0}82%,85.9%{opacity:1}86%,91.9%{opacity:0}92%,95.9%{opacity:1}96%,100%{opacity:0}}
-@keyframes dkT1{0%,1.9%{opacity:1}2%,100%{opacity:0}}
-@keyframes dkT2{0%,11.9%{opacity:1}12%,100%{opacity:0}}
-@keyframes dkT3{0%,21.9%{opacity:1}22%,100%{opacity:0}}
-@keyframes dkT4{0%,31.9%{opacity:1}32%,100%{opacity:0}}
-@keyframes dkT5{0%,41.9%{opacity:1}42%,100%{opacity:0}}
-@keyframes dkT6{0%,51.9%{opacity:1}52%,100%{opacity:0}}
-@keyframes dkT7{0%,61.9%{opacity:1}62%,100%{opacity:0}}
-@keyframes dkT8{0%,71.9%{opacity:1}72%,100%{opacity:0}}
-@keyframes dkT9{0%,81.9%{opacity:1}82%,100%{opacity:0}}
-@keyframes dkT10{0%,91.9%{opacity:1}92%,100%{opacity:0}}
-@keyframes dkC1{0%,5.9%{opacity:0}6%,100%{opacity:1}}
-@keyframes dkC2{0%,15.9%{opacity:0}16%,100%{opacity:1}}
-@keyframes dkC3{0%,25.9%{opacity:0}26%,100%{opacity:1}}
-@keyframes dkC4{0%,35.9%{opacity:0}36%,100%{opacity:1}}
-@keyframes dkC5{0%,45.9%{opacity:0}46%,100%{opacity:1}}
-@keyframes dkC6{0%,55.9%{opacity:0}56%,100%{opacity:1}}
-@keyframes dkC7{0%,65.9%{opacity:0}66%,100%{opacity:1}}
-@keyframes dkC8{0%,75.9%{opacity:0}76%,100%{opacity:1}}
-@keyframes dkC9{0%,85.9%{opacity:0}86%,100%{opacity:1}}
-@keyframes dkC10{0%,95.9%{opacity:0}96%,100%{opacity:1}}
-@keyframes dkWh{to{transform:rotate(360deg)}}
-.d-fk{animation:dkFk 40s linear infinite}
-.d-car{animation:dkCar 40s linear infinite}
-.d-t1{animation:dkT1 40s linear infinite}
-.d-t2{animation:dkT2 40s linear infinite}
-.d-t3{animation:dkT3 40s linear infinite}
-.d-t4{animation:dkT4 40s linear infinite}
-.d-t5{animation:dkT5 40s linear infinite}
-.d-t6{animation:dkT6 40s linear infinite}
-.d-t7{animation:dkT7 40s linear infinite}
-.d-t8{animation:dkT8 40s linear infinite}
-.d-t9{animation:dkT9 40s linear infinite}
-.d-t10{animation:dkT10 40s linear infinite}
-.d-c1{animation:dkC1 40s linear infinite}
-.d-c2{animation:dkC2 40s linear infinite}
-.d-c3{animation:dkC3 40s linear infinite}
-.d-c4{animation:dkC4 40s linear infinite}
-.d-c5{animation:dkC5 40s linear infinite}
-.d-c6{animation:dkC6 40s linear infinite}
-.d-c7{animation:dkC7 40s linear infinite}
-.d-c8{animation:dkC8 40s linear infinite}
-.d-c9{animation:dkC9 40s linear infinite}
-.d-c10{animation:dkC10 40s linear infinite}
-.d-wh{transform-box:fill-box;transform-origin:center;animation:dkWh .8s linear infinite}
+@keyframes eCam{0%{transform:translateX(160px)}9%,90%{transform:translateX(0)}100%{transform:translateX(160px)}}
+@keyframes eFk{0%,9%{transform:translateX(-110px)}10%,11%{transform:translateX(40px)}13.5%,15%{transform:translateX(-110px)}17.5%,19%{transform:translateX(40px)}21.5%,23%{transform:translateX(-110px)}25.5%,27%{transform:translateX(40px)}29.5%,31%{transform:translateX(-110px)}33.5%,35%{transform:translateX(40px)}37.5%,39%{transform:translateX(-110px)}41.5%,43%{transform:translateX(40px)}45.5%,47%{transform:translateX(-110px)}49.5%,51%{transform:translateX(40px)}53.5%,55%{transform:translateX(-110px)}57.5%,59%{transform:translateX(40px)}61.5%,63%{transform:translateX(-110px)}65.5%,67%{transform:translateX(40px)}69.5%,71%{transform:translateX(-110px)}73.5%,75%{transform:translateX(40px)}77.5%,79%{transform:translateX(-110px)}81.5%,83%{transform:translateX(40px)}85.5%,100%{transform:translateX(-110px)}}
+@keyframes eCar{0%,11%{opacity:0}11.1%,15%{opacity:1}15.1%,19%{opacity:0}19.1%,23%{opacity:1}23.1%,27%{opacity:0}27.1%,31%{opacity:1}31.1%,35%{opacity:0}35.1%,39%{opacity:1}39.1%,43%{opacity:0}43.1%,47%{opacity:1}47.1%,51%{opacity:0}51.1%,55%{opacity:1}55.1%,59%{opacity:0}59.1%,63%{opacity:1}63.1%,67%{opacity:0}67.1%,71%{opacity:1}71.1%,75%{opacity:0}75.1%,79%{opacity:1}79.1%,83%{opacity:0}83.1%,87%{opacity:1}87.1%,100%{opacity:0}}
+@keyframes eT1{0%,10.9%{opacity:1}11%,100%{opacity:0}}
+@keyframes eT2{0%,18.9%{opacity:1}19%,100%{opacity:0}}
+@keyframes eT3{0%,26.9%{opacity:1}27%,100%{opacity:0}}
+@keyframes eT4{0%,34.9%{opacity:1}35%,100%{opacity:0}}
+@keyframes eT5{0%,42.9%{opacity:1}43%,100%{opacity:0}}
+@keyframes eT6{0%,50.9%{opacity:1}51%,100%{opacity:0}}
+@keyframes eT7{0%,58.9%{opacity:1}59%,100%{opacity:0}}
+@keyframes eT8{0%,66.9%{opacity:1}67%,100%{opacity:0}}
+@keyframes eT9{0%,74.9%{opacity:1}75%,100%{opacity:0}}
+@keyframes eT10{0%,82.9%{opacity:1}83%,100%{opacity:0}}
+@keyframes eC1{0%,15%{opacity:0}15.1%,100%{opacity:1}}
+@keyframes eC2{0%,23%{opacity:0}23.1%,100%{opacity:1}}
+@keyframes eC3{0%,31%{opacity:0}31.1%,100%{opacity:1}}
+@keyframes eC4{0%,39%{opacity:0}39.1%,100%{opacity:1}}
+@keyframes eC5{0%,47%{opacity:0}47.1%,100%{opacity:1}}
+@keyframes eC6{0%,55%{opacity:0}55.1%,100%{opacity:1}}
+@keyframes eC7{0%,63%{opacity:0}63.1%,100%{opacity:1}}
+@keyframes eC8{0%,71%{opacity:0}71.1%,100%{opacity:1}}
+@keyframes eC9{0%,79%{opacity:0}79.1%,100%{opacity:1}}
+@keyframes eC10{0%,87%{opacity:0}87.1%,100%{opacity:1}}
+@keyframes eBelt{0%,60%{transform:translateX(0)}70%,100%{transform:translateX(-20px)}}
+@keyframes eWh{to{transform:rotate(360deg)}}
+.e-cam{animation:eCam 40s linear infinite}
+.e-fk{animation:eFk 40s linear infinite}
+.e-car{animation:eCar 40s linear infinite}
+.e-belt{animation:eBelt 40s linear infinite}
+.e-t1{animation:eT1 40s linear infinite}
+.e-t2{animation:eT2 40s linear infinite}
+.e-t3{animation:eT3 40s linear infinite}
+.e-t4{animation:eT4 40s linear infinite}
+.e-t5{animation:eT5 40s linear infinite}
+.e-t6{animation:eT6 40s linear infinite}
+.e-t7{animation:eT7 40s linear infinite}
+.e-t8{animation:eT8 40s linear infinite}
+.e-t9{animation:eT9 40s linear infinite}
+.e-t10{animation:eT10 40s linear infinite}
+.e-c1{animation:eC1 40s linear infinite}
+.e-c2{animation:eC2 40s linear infinite}
+.e-c3{animation:eC3 40s linear infinite}
+.e-c4{animation:eC4 40s linear infinite}
+.e-c5{animation:eC5 40s linear infinite}
+.e-c6{animation:eC6 40s linear infinite}
+.e-c7{animation:eC7 40s linear infinite}
+.e-c8{animation:eC8 40s linear infinite}
+.e-c9{animation:eC9 40s linear infinite}
+.e-c10{animation:eC10 40s linear infinite}
+.e-wh{transform-box:fill-box;transform-origin:center;animation:eWh .8s linear infinite}
 </style>
 <h2 style="border:none; margin:0 0 6px 0; padding:0;">🚚 Zone réception</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le réceptionnaire décharge les 10 palettes une à une et les pose sur le convoyeur, qui les mène vers le stock.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Chariot qui décharge 10 palettes du camion une à une sur le convoyeur">
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le camion recule au quai, le réceptionnaire décharge les 10 palettes une à une et les pose sur le convoyeur, qui avance vers le stock.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Camion qui recule au quai, chariot qui décharge 10 palettes sur le convoyeur, qui avance vers le stock">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="172" width="320" height="28" fill="#c5cad1"/>
 <rect x="0" y="30" width="150" height="142" fill="#b8bec6"/>
@@ -224,46 +228,54 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 <rect x="150" y="110" width="8" height="62" fill="#7b8794"/>
 <rect x="158" y="142" width="38" height="8" fill="#55606c"/>
 <text x="177" y="136" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">NIVELEUR</text>
-<rect x="200" y="62" width="112" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
-<text x="256" y="56" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION</text>
-<circle cx="222" cy="170" r="7" fill="#111"/><circle cx="246" cy="170" r="7" fill="#111"/><circle cx="296" cy="170" r="7" fill="#111"/>
-<rect class="d-t1" x="218" y="136" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t2" x="248" y="136" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t3" x="218" y="122" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t4" x="248" y="122" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t5" x="218" y="108" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t6" x="248" y="108" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t7" x="218" y="94" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t8" x="248" y="94" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t9" x="218" y="80" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-t10" x="248" y="80" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<g class="d-fk">
+<g class="e-cam">
+  <rect x="200" y="62" width="112" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
+  <rect x="222" y="72" width="70" height="80" fill="#3a4550" opacity=".3"/>
+  <text x="256" y="56" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION</text>
+  <circle cx="222" cy="170" r="7" fill="#111"/><circle cx="246" cy="170" r="7" fill="#111"/><circle cx="296" cy="170" r="7" fill="#111"/>
+  <rect class="e-t1" x="218" y="136" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t2" x="248" y="136" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t3" x="218" y="122" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t4" x="248" y="122" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t5" x="218" y="108" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t6" x="248" y="108" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t7" x="218" y="94" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t8" x="248" y="94" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t9" x="218" y="80" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-t10" x="248" y="80" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+</g>
+<g class="e-fk">
   <rect x="172" y="126" width="22" height="3" fill="#333"/>
   <rect x="190" y="112" width="4" height="34" fill="#555"/>
   <rect x="194" y="118" width="22" height="22" rx="3" fill="#ffcc00"/>
   <rect x="196" y="108" width="16" height="10" fill="#333"/>
   <circle cx="204" cy="112" r="4" fill="#f0c08a"/>
-  <rect class="d-car" x="172" y="124" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <circle class="d-wh" cx="199" cy="144" r="4" fill="#111"/>
-  <circle class="d-wh" cx="212" cy="144" r="4" fill="#111"/>
+  <g class="e-car">
+    <rect x="172" y="124" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  </g>
+  <circle class="e-wh" cx="199" cy="144" r="4" fill="#111"/>
+  <circle class="e-wh" cx="212" cy="144" r="4" fill="#111"/>
 </g>
 <rect x="30" y="140" width="110" height="6" fill="#55606c"/>
 <rect x="32" y="146" width="4" height="14" fill="#55606c"/>
 <rect x="134" y="146" width="4" height="14" fill="#55606c"/>
 <text x="85" y="122" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">CONVOYEUR → STOCK</text>
-<rect class="d-c1" x="34" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c2" x="43" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c3" x="52" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c4" x="61" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c5" x="70" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c6" x="79" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c7" x="88" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c8" x="97" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c9" x="106" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="d-c10" x="115" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Réception : 10 palettes déchargées une à une</text>
+<g class="e-belt">
+  <rect class="e-c1" x="34" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c2" x="43" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c3" x="52" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c4" x="61" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c5" x="70" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c6" x="79" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c7" x="88" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c8" x="97" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c9" x="106" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="e-c10" x="115" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+</g>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Réception : 10 palettes déchargées, puis envoyées au stock</text>
 </svg>
 </div>
+
 
  <div id="sit-etape2" hidden></div>
       <div id="sit-reponse" class="expl" hidden></div>
