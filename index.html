@@ -5,6 +5,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sud Industrie ELE – Espace Salarié</title>
+<meta name="theme-color" content="#004aad">
+<meta name="description" content="Tes droits, nos victoires, un sondage anonyme et un quiz.">
+<!-- Balises de partage (WhatsApp, SMS, réseaux) -->
+<meta property="og:title" content="Sud Industrie ELE – Espace Salarié">
+<meta property="og:description" content="Tes droits, nos victoires, un sondage anonyme et un quiz.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="">
+<meta property="og:image" content="logo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<!-- Favicon généré en data-URI (pas de fichier séparé) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23004aad'/%3E%3Ctext x='50%25' y='54%25' font-family='Arial,sans-serif' font-size='30' font-weight='bold' fill='%23ffcc00' text-anchor='middle' dominant-baseline='middle'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23004aad'/%3E%3Ctext x='50%25' y='54%25' font-family='Arial,sans-serif' font-size='90' font-weight='bold' fill='%23ffcc00' text-anchor='middle' dominant-baseline='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -88,6 +100,9 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 .opt.ko{background:var(--acc);color:#fff;border-color:var(--acc)}
 .expl{margin-top:12px;padding:12px;background:var(--bg);border-left:4px solid var(--blue);border-radius:6px;text-align:left;font-size:.95rem}
 .final-emoji{font-size:5rem;animation:bob 1s ease-in-out infinite}
+.msg-err{display:block;margin-top:10px;padding:10px 12px;border-radius:6px;background:#fdecea;color:#b71c1c;font-size:.9rem;font-weight:600;border-left:4px solid #b71c1c}
+.msg-err[hidden]{display:none}
+@media (prefers-color-scheme:dark){.msg-err{background:#3a1210;color:#ffb4b4;border-left-color:#ff6b6b}}
 /* GALERIE PHOTOS */
 .galerie{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
 .galerie a{display:block;position:relative;overflow:hidden;border-radius:8px;border:2px solid var(--line);background:var(--bg);aspect-ratio:1/1}
@@ -106,6 +121,12 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 .hs:focus-visible{filter:drop-shadow(0 0 6px #004aad)}
 .hs.trouve{opacity:.35;filter:drop-shadow(0 0 4px #2e7d32)}
 .hs.rate *{stroke:#c8102e;stroke-width:3px;stroke-dasharray:4 3}
+/* Badges */
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;font-size:.85rem;font-weight:700;background:var(--bg);border:2px solid var(--line);opacity:.35;transition:all .3s}
+.badge.obtenu{opacity:1;background:var(--yellow);border-color:#b8860b;color:#000;transform:scale(1.05)}
+.btn-partage{display:flex;gap:8px;margin-top:10px}
+.btn-partage button{flex:1;margin-top:0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -126,20 +147,23 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 
 <div class="card" style="text-align:center; padding:12px;">
   <p style="margin:0 0 8px 0; font-weight:700;">🔊 Message d'accueil</p>
-  <button id="vo-play" onclick="voixOff()">▶️ Écouter le message</button>
+  <button id="vo-play" onclick="voixOff(false)">▶️ Écouter le message</button>
   <button id="vo-mute" onclick="voixStop()" style="background:var(--blue); display:none;">🔇 Couper la voix</button>
+  <button id="vo-long" onclick="voixOff(true)" style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue); margin-top:6px;">📜 Version longue</button>
   <p id="vo-etat" class="note"></p>
 </div>
 <script>
-const VOIX_TEXTE = "Bonjour chère collègue. Nous développons en ce moment une application pour améliorer la communication entre vous et le syndicat Sud Industrie E.L.E. Vous y trouverez vos droits, un parcours pour trouver votre situation, des photos et des vidéos pour vous guidez et vous orientez aux mieux, et une boîte pour poser vos questions. Nous sommes ouverts à toutes vos suggestions. Ce site est là pour vous aider, mais il ne remplace ni les échanges avec les élus, ni le syndicat, ni le Code du travail. Pour votre situation personnelle, contactez-nous directement. Merci pour votre confiance.";
+const VOIX_COURT = "Bonjour. Bienvenue sur l'espace salarié de Sud Industrie E.L.E. Tu y trouveras tes droits, un sondage anonyme et un quiz. Pour ta situation personnelle, contacte-nous en cliquant sur les liens pour nous envoyer un mail ou nous appeler.";
+const VOIX_LONG = "Bonjour chère collègue. Nous développons en ce moment une application pour améliorer la communication entre vous et le syndicat Sud Industrie E.L.E. Vous y trouverez vos droits, un parcours pour trouver votre situation, des photos et des vidéos pour vous guidez et vous orientez aux mieux, et une boîte pour poser vos questions. Nous sommes ouverts à toutes vos suggestions. Ce site est là pour vous aider, mais il ne remplace ni les échanges avec les élus, ni le syndicat, ni le Code du travail. Pour votre situation personnelle, contactez-nous directement. Merci pour votre confiance.";
+const VOIX_TEXTE = VOIX_COURT;
 
-// Préchauffe la liste des voix (certains navigateurs renvoient [] au premier appel)
 if("speechSynthesis" in window) speechSynthesis.getVoices();
 
 function voixMaj(etat, actif){
   document.getElementById("vo-etat").textContent = etat;
   document.getElementById("vo-mute").style.display = actif ? "block" : "none";
   document.getElementById("vo-play").style.display = actif ? "none" : "block";
+  document.getElementById("vo-long").style.display = actif ? "none" : "block";
 }
 
 function voixChoisir(){
@@ -153,13 +177,13 @@ function voixStop(){
   voixMaj("", false);
 }
 
-function voixOff(){
+function voixOff(long){
   if(!("speechSynthesis" in window)){
     document.getElementById("vo-etat").textContent = "Ton téléphone ne permet pas la lecture vocale.";
     return;
   }
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(VOIX_TEXTE);
+  const u = new SpeechSynthesisUtterance(long ? VOIX_LONG : VOIX_COURT);
   u.lang = "fr-FR";
   u.rate = 0.9;
   u.pitch = 1.15;
@@ -171,16 +195,14 @@ function voixOff(){
   speechSynthesis.speak(u);
 }
 
-// Coupe la voix dès qu'une vidéo se lance
 document.addEventListener("play", (e) => {
   if(e.target.tagName === "VIDEO") voixStop();
 }, true);
 
-// Premier toucher de l'écran : lance le message une seule fois par téléphone
 if(!localStorage.getItem("sudVoixVue")){
   document.addEventListener("click", function premierClic(){
     localStorage.setItem("sudVoixVue", "1");
-    voixOff();
+    voixOff(false);
   }, { once: true });
 }
 </script>
@@ -735,31 +757,27 @@ body.grand{font-size:19px}
 <!-- ============================================================ -->
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-/* Convoyeur qui tourne : tapis + rouleaux */
 @keyframes apRouleau{to{transform:rotate(360deg)}}
-/* Palette qui avance sur le convoyeur : 3 palettes décalées */
 @keyframes apPal1{0%,4%{transform:translateX(0px);opacity:1}28%,32%{transform:translateX(140px);opacity:1}34%,100%{transform:translateX(140px);opacity:0}}
 @keyframes apPal2{0%,28%{transform:translateX(0px);opacity:1}52%,56%{transform:translateX(140px);opacity:1}58%,100%{transform:translateX(140px);opacity:0}}
 @keyframes apPal3{0%,52%{transform:translateX(0px);opacity:1}76%,80%{transform:translateX(140px);opacity:1}82%,100%{transform:translateX(140px);opacity:0}}
-/* Cariste : va chercher en bout, recule, monte au niveau 1, dépose, redescend, niveau 2, dépose, revient */
 @keyframes apCariste{
   0%{transform:translate(0px,0px)}
   8%{transform:translate(0px,0px)}
-  18%{transform:translate(150px,0px)}    /* arrive au bout du convoyeur */
-  22%{transform:translate(150px,0px)}    /* prend la palette */
-  30%{transform:translate(100px,-20px)}  /* monte vers N1 (au-dessus du picking) */
-  36%{transform:translate(100px,-20px)}  /* dépose N1 */
-  44%{transform:translate(100px,0px)}    /* redescend */
-  50%{transform:translate(100px,0px)}    /* revient au convoyeur */
+  18%{transform:translate(150px,0px)}
+  22%{transform:translate(150px,0px)}
+  30%{transform:translate(100px,-20px)}
+  36%{transform:translate(100px,-20px)}
+  44%{transform:translate(100px,0px)}
+  50%{transform:translate(100px,0px)}
   58%{transform:translate(150px,0px)}
   62%{transform:translate(150px,0px)}
-  70%{transform:translate(100px,-40px)}  /* monte vers N2 */
-  76%{transform:translate(100px,-40px)}  /* dépose N2 */
+  70%{transform:translate(100px,-40px)}
+  76%{transform:translate(100px,-40px)}
   84%{transform:translate(100px,0px)}
   92%{transform:translate(0px,0px)}
   100%{transform:translate(0px,0px)}
 }
-/* Palette portée par le cariste */
 @keyframes apPalPortee{
   0%,20%{opacity:0}
   22%,28%{opacity:1;transform:translate(0,0)}
@@ -769,7 +787,6 @@ body.grand{font-size:19px}
   70%,76%{opacity:1;transform:translate(0,0)}
   84%,100%{opacity:0}
 }
-/* Palettes qui apparaissent sur le picking */
 @keyframes apStockN1{0%,35%{opacity:0}36%,100%{opacity:1}}
 @keyframes apStockN2{0%,75%{opacity:0}76%,100%{opacity:1}}
 .ap-rouleau{transform-box:fill-box;transform-origin:center;animation:apRouleau .8s linear infinite}
@@ -786,13 +803,11 @@ body.grand{font-size:19px}
 <svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Convoyeur animé qui amène les palettes, cariste qui les récupère et les range sur les deux niveaux du picking">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="172" width="320" height="28" fill="#c5cad1"/>
-<!-- Convoyeur : structure -->
 <rect x="4" y="140" width="150" height="8" fill="#3a4550" rx="2"/>
 <rect x="4" y="148" width="150" height="4" fill="#55606c"/>
 <rect x="8" y="152" width="4" height="14" fill="#55606c"/>
 <rect x="146" y="152" width="4" height="14" fill="#55606c"/>
 <text x="79" y="134" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">CONVOYEUR D'ALIMENTATION</text>
-<!-- Rouleaux du convoyeur -->
 <g fill="#8a94a0">
   <circle class="ap-rouleau" cx="16" cy="144" r="2.5"/>
   <circle class="ap-rouleau" cx="28" cy="144" r="2.5"/>
@@ -807,11 +822,9 @@ body.grand{font-size:19px}
   <circle class="ap-rouleau" cx="136" cy="144" r="2.5"/>
   <circle class="ap-rouleau" cx="148" cy="144" r="2.5"/>
 </g>
-<!-- 3 palettes qui avancent sur le convoyeur -->
 <g class="ap-pal1"><rect x="10" y="132" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/></g>
 <g class="ap-pal2"><rect x="10" y="132" width="20" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/></g>
 <g class="ap-pal3"><rect x="10" y="132" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/></g>
-<!-- Picking : structure 2 niveaux -->
 <rect x="196" y="60" width="4" height="100" fill="#55606c"/>
 <rect x="290" y="60" width="4" height="100" fill="#55606c"/>
 <rect x="196" y="60" width="98" height="4" fill="#55606c"/>
@@ -820,24 +833,16 @@ body.grand{font-size:19px}
 <text x="245" y="52" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">PICKING · 2 NIVEAUX</text>
 <text x="245" y="96" text-anchor="middle" font-size="7" font-weight="700" fill="#004aad">NIVEAU 2</text>
 <text x="245" y="136" text-anchor="middle" font-size="7" font-weight="700" fill="#004aad">NIVEAU 1</text>
-<!-- Palettes stockées sur le picking (apparaissent une par une) -->
 <rect class="ap-stock-n1" x="210" y="122" width="20" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
 <rect class="ap-stock-n2" x="240" y="82" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<!-- Cariste : groupe animé -->
 <g class="ap-cariste">
-  <!-- roues -->
   <circle cx="30" cy="162" r="4" fill="#111"/>
   <circle cx="50" cy="162" r="4" fill="#111"/>
-  <!-- châssis -->
   <rect x="24" y="138" width="30" height="14" fill="#004aad" rx="2"/>
-  <!-- conducteur -->
   <circle cx="34" cy="130" r="5" fill="#f0c08a"/>
   <rect x="30" y="135" width="8" height="5" fill="#ffcc00"/>
-  <!-- mât -->
   <rect x="56" y="108" width="4" height="44" fill="#555"/>
-  <!-- fourches -->
   <rect x="58" y="150" width="20" height="3" fill="#333"/>
-  <!-- palette portée par le cariste -->
   <rect class="ap-pal-portee" x="58" y="138" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
 </g>
 <text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Approvisionnement : le cariste récupère et range les palettes</text>
@@ -849,28 +854,25 @@ body.grand{font-size:19px}
 <!-- ============================================================ -->
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-/* Le préparateur roule dans une allée, s'arrête, prélève, va dans la suivante, etc., puis sort à droite */
 @keyframes pkTrajet{
   0%{transform:translate(0px,0px)}
-  8%{transform:translate(0px,0px)}          /* démarre allée A */
-  18%{transform:translate(70px,0px)}        /* arrive allée A */
-  26%{transform:translate(70px,0px)}        /* prélève dans A */
-  36%{transform:translate(140px,0px)}       /* va vers allée B */
-  44%{transform:translate(140px,0px)}       /* prélève dans B */
-  54%{transform:translate(210px,0px)}       /* va vers allée C */
-  62%{transform:translate(210px,0px)}       /* prélève dans C */
-  72%{transform:translate(280px,0px)}       /* va vers allée D */
-  80%{transform:translate(280px,0px)}       /* prélève dans D */
+  8%{transform:translate(0px,0px)}
+  18%{transform:translate(70px,0px)}
+  26%{transform:translate(70px,0px)}
+  36%{transform:translate(140px,0px)}
+  44%{transform:translate(140px,0px)}
+  54%{transform:translate(210px,0px)}
+  62%{transform:translate(210px,0px)}
+  72%{transform:translate(280px,0px)}
+  80%{transform:translate(280px,0px)}
   88%{transform:translate(280px,0px)}
-  92%{transform:translate(280px,0px)}       /* sort tout à droite */
+  92%{transform:translate(280px,0px)}
   100%{transform:translate(280px,0px)}
 }
-/* Produits qui disparaissent des étagères quand le préparateur prélève */
 @keyframes pkProdA{0%,20%{opacity:1}22%,100%{opacity:0}}
 @keyframes pkProdB{0%,40%{opacity:1}42%,100%{opacity:0}}
 @keyframes pkProdC{0%,58%{opacity:1}60%,100%{opacity:0}}
 @keyframes pkProdD{0%,76%{opacity:1}78%,100%{opacity:0}}
-/* Produits qui apparaissent sur la palette du chariot */
 @keyframes pkPalA{0%,22%{opacity:0}23%,100%{opacity:1}}
 @keyframes pkPalB{0%,42%{opacity:0}43%,100%{opacity:1}}
 @keyframes pkPalC{0%,60%{opacity:0}61%,100%{opacity:1}}
@@ -890,7 +892,6 @@ body.grand{font-size:19px}
 <svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Préparateur qui passe dans quatre allées de picking, prélève des produits et sort à droite avec sa palette complète">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="146" width="320" height="26" fill="#c5cad1"/>
-<!-- Allée A -->
 <rect x="20" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
 <rect x="20" y="60" width="60" height="3" fill="#55606c"/>
 <rect x="20" y="100" width="60" height="3" fill="#55606c"/>
@@ -899,7 +900,6 @@ body.grand{font-size:19px}
 <rect x="38" y="48" width="9" height="12" fill="#2a78d6"/>
 <rect class="pk-prod-a" x="50" y="88" width="9" height="12" fill="#eb6834"/>
 <rect x="62" y="88" width="9" height="12" fill="#7b1fa2"/>
-<!-- Allée B -->
 <rect x="90" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
 <rect x="90" y="60" width="60" height="3" fill="#55606c"/>
 <rect x="90" y="100" width="60" height="3" fill="#55606c"/>
@@ -908,7 +908,6 @@ body.grand{font-size:19px}
 <rect x="108" y="48" width="9" height="12" fill="#eb6834"/>
 <rect class="pk-prod-b" x="120" y="88" width="9" height="12" fill="#ffcc00"/>
 <rect x="132" y="88" width="9" height="12" fill="#2a78d6"/>
-<!-- Allée C -->
 <rect x="160" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
 <rect x="160" y="60" width="60" height="3" fill="#55606c"/>
 <rect x="160" y="100" width="60" height="3" fill="#55606c"/>
@@ -917,7 +916,6 @@ body.grand{font-size:19px}
 <rect x="178" y="48" width="9" height="12" fill="#2a78d6"/>
 <rect class="pk-prod-c" x="190" y="88" width="9" height="12" fill="#2e7d32"/>
 <rect x="202" y="88" width="9" height="12" fill="#eb6834"/>
-<!-- Allée D -->
 <rect x="230" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
 <rect x="230" y="60" width="60" height="3" fill="#55606c"/>
 <rect x="230" y="100" width="60" height="3" fill="#55606c"/>
@@ -926,29 +924,20 @@ body.grand{font-size:19px}
 <rect x="248" y="48" width="9" height="12" fill="#2e7d32"/>
 <rect class="pk-prod-d" x="260" y="88" width="9" height="12" fill="#2a78d6"/>
 <rect x="272" y="88" width="9" height="12" fill="#eb6834"/>
-<!-- Préparateur et son chariot -->
 <g class="pk-chariot">
-  <!-- roues -->
   <circle cx="12" cy="158" r="4" fill="#111"/>
   <circle cx="32" cy="158" r="4" fill="#111"/>
-  <!-- châssis -->
   <rect x="6" y="134" width="30" height="14" fill="#004aad" rx="2"/>
-  <!-- conducteur -->
   <circle cx="16" cy="126" r="5" fill="#f0c08a"/>
   <rect x="12" y="131" width="8" height="5" fill="#ffcc00"/>
-  <!-- mât -->
   <rect x="38" y="104" width="4" height="44" fill="#555"/>
-  <!-- fourches -->
   <rect x="40" y="146" width="20" height="3" fill="#333"/>
-  <!-- palette du chariot -->
   <rect x="40" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <!-- produits prélevés qui apparaissent sur la palette -->
   <rect class="pk-pal-a" x="42" y="124" width="7" height="10" fill="#ffcc00"/>
   <rect class="pk-pal-b" x="50" y="124" width="7" height="10" fill="#2e7d32"/>
   <rect class="pk-pal-c" x="46" y="114" width="7" height="10" fill="#7b1fa2"/>
   <rect class="pk-pal-d" x="54" y="114" width="7" height="10" fill="#eb6834"/>
 </g>
-<!-- Flèche de sortie vers la droite -->
 <polygon points="296,140 306,146 296,152" fill="#2e7d32"/>
 <text x="290" y="170" text-anchor="middle" font-size="7" font-weight="700" fill="#2e7d32">SORTIE →</text>
 <text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Picking : le préparateur prélève dans 4 allées puis sort à droite</text>
@@ -960,95 +949,77 @@ body.grand{font-size:19px}
 <!-- ============================================================ -->
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-/* Camion qui recule au quai au début */
 @keyframes exCamion{
   0%{transform:translateX(120px)}
   8%{transform:translateX(0px)}
   100%{transform:translateX(0px)}
 }
-/* Niveleur qui se déploie après le camion */
 @keyframes exNiveleur{
   0%,10%{transform:scaleX(0)}
   14%,100%{transform:scaleX(1)}
 }
 .ex-niveleur{transform-box:fill-box;transform-origin:left center;animation:exNiveleur 40s linear infinite}
 .ex-camion{animation:exCamion 40s linear infinite}
-/* Film qui tourne autour de la palette sur la filmeuse */
 @keyframes exFilm{to{transform:rotate(360deg)}}
 .ex-film{transform-box:fill-box;transform-origin:center;animation:exFilm 1.2s linear infinite}
-/* Palette qui tourne sur la filmeuse */
 @keyframes exPalTourne{to{transform:rotate(360deg)}}
 .ex-pal-tourne{transform-box:fill-box;transform-origin:center;animation:exPalTourne 2.4s linear infinite}
-/* Cycle du chargeur : 10 allers-retours (convoyeur -> filmeuse -> camion) */
 @keyframes exChargeur{
-  /* Boucle de 40 s pour 10 palettes = 4 s par palette */
   0%{transform:translate(0px,0px)}
-  /* Palette 1 */
   2%{transform:translate(0px,0px)}
-  4%{transform:translate(60px,0px)}   /* va à la filmeuse */
-  6%{transform:translate(60px,0px)}   /* filmeuse */
-  8%{transform:translate(140px,0px)}  /* va au camion */
-  10%{transform:translate(140px,0px)} /* dépose */
-  12%{transform:translate(0px,0px)}   /* retour */
-  /* Palette 2 */
+  4%{transform:translate(60px,0px)}
+  6%{transform:translate(60px,0px)}
+  8%{transform:translate(140px,0px)}
+  10%{transform:translate(140px,0px)}
+  12%{transform:translate(0px,0px)}
   14%{transform:translate(60px,0px)}
   16%{transform:translate(60px,0px)}
   18%{transform:translate(140px,0px)}
   20%{transform:translate(140px,0px)}
   22%{transform:translate(0px,0px)}
-  /* Palette 3 */
   24%{transform:translate(60px,0px)}
   26%{transform:translate(60px,0px)}
   28%{transform:translate(140px,0px)}
   30%{transform:translate(140px,0px)}
   32%{transform:translate(0px,0px)}
-  /* Palette 4 */
   34%{transform:translate(60px,0px)}
   36%{transform:translate(60px,0px)}
   38%{transform:translate(140px,0px)}
   40%{transform:translate(140px,0px)}
   42%{transform:translate(0px,0px)}
-  /* Palette 5 */
   44%{transform:translate(60px,0px)}
   46%{transform:translate(60px,0px)}
   48%{transform:translate(140px,0px)}
   50%{transform:translate(140px,0px)}
   52%{transform:translate(0px,0px)}
-  /* Palette 6 */
   54%{transform:translate(60px,0px)}
   56%{transform:translate(60px,0px)}
   58%{transform:translate(140px,0px)}
   60%{transform:translate(140px,0px)}
   62%{transform:translate(0px,0px)}
-  /* Palette 7 */
   64%{transform:translate(60px,0px)}
   66%{transform:translate(60px,0px)}
   68%{transform:translate(140px,0px)}
   70%{transform:translate(140px,0px)}
   72%{transform:translate(0px,0px)}
-  /* Palette 8 */
   74%{transform:translate(60px,0px)}
   76%{transform:translate(60px,0px)}
   78%{transform:translate(140px,0px)}
   80%{transform:translate(140px,0px)}
   82%{transform:translate(0px,0px)}
-  /* Palette 9 */
   84%{transform:translate(60px,0px)}
   86%{transform:translate(60px,0px)}
   88%{transform:translate(140px,0px)}
   90%{transform:translate(140px,0px)}
   92%{transform:translate(0px,0px)}
-  /* Palette 10 */
   94%{transform:translate(60px,0px)}
   96%{transform:translate(60px,0px)}
   98%{transform:translate(140px,0px)}
   100%{transform:translate(140px,0px)}
 }
 .ex-chargeur{animation:exChargeur 40s linear infinite}
-/* Palette portée par le chargeur */
 @keyframes exPalPortee{0%,2%{opacity:0}3%,10%{opacity:1}11%,100%{opacity:0}}
 .ex-pal-portee{animation:exPalPortee 4s linear infinite}
-/* Les 10 palettes apparaissent une par une dans le camion (5 en bas, 5 en haut) */
 @keyframes exT1{0%,10%{opacity:0}11%,100%{opacity:1}}
 @keyframes exT2{0%,20%{opacity:0}21%,100%{opacity:1}}
 @keyframes exT3{0%,30%{opacity:0}31%,100%{opacity:1}}
@@ -1075,36 +1046,29 @@ body.grand{font-size:19px}
 <svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Camion qui recule au quai, niveleur qui se déploie, chargeur qui filme 10 palettes et les charge dans le camion">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="172" width="320" height="28" fill="#c5cad1"/>
-<!-- Quai -->
 <rect x="0" y="60" width="50" height="112" fill="#b8bec6"/>
 <rect x="0" y="56" width="50" height="4" fill="#9aa1ab"/>
 <text x="25" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">QUAI</text>
-<!-- Niveleur (se déploie après le camion) -->
 <g class="ex-niveleur">
   <rect x="50" y="148" width="30" height="6" fill="#7b8794"/>
   <rect x="50" y="144" width="30" height="4" fill="#55606c"/>
 </g>
-<!-- Filmeuse réaliste : socle, mât, bras rotatif avec 3 anneaux de film -->
 <rect x="96" y="150" width="34" height="10" fill="#55606c"/>
 <rect x="110" y="108" width="4" height="44" fill="#3a4550"/>
-<!-- anneau de film qui tourne autour de la palette -->
 <g class="ex-film">
   <ellipse cx="130" cy="136" rx="22" ry="6" fill="none" stroke="#e8ecf0" stroke-width="3"/>
   <ellipse cx="130" cy="136" rx="22" ry="6" fill="none" stroke="#c0c8d0" stroke-width="1" stroke-dasharray="3 3"/>
 </g>
 <text x="113" y="104" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">FILMEUSE</text>
-<!-- Palette en cours de filmage sur la filmeuse -->
 <g class="ex-pal-tourne">
   <rect x="118" y="130" width="18" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
 </g>
-<!-- Camion qui recule au quai puis reste fixe -->
 <g class="ex-camion">
   <rect x="208" y="62" width="104" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
   <text x="260" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION DE DÉPART</text>
   <circle cx="226" cy="166" r="6" fill="#111"/>
   <circle cx="250" cy="166" r="6" fill="#111"/>
   <circle cx="290" cy="166" r="6" fill="#111"/>
-  <!-- 10 palettes qui apparaissent côte à côte (5 en bas, 5 en haut) -->
   <rect class="ex-t1" x="216" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
   <rect class="ex-t2" x="234" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
   <rect class="ex-t3" x="252" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
@@ -1116,7 +1080,6 @@ body.grand{font-size:19px}
   <rect class="ex-t9" x="270" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
   <rect class="ex-t10" x="288" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
 </g>
-<!-- Chargeur (chariot) qui fait les 10 allers-retours -->
 <g class="ex-chargeur">
   <circle cx="16" cy="158" r="4" fill="#111"/>
   <circle cx="36" cy="158" r="4" fill="#111"/>
@@ -1125,7 +1088,6 @@ body.grand{font-size:19px}
   <rect x="16" y="131" width="8" height="5" fill="#ffcc00"/>
   <rect x="42" y="104" width="4" height="44" fill="#555"/>
   <rect x="44" y="146" width="20" height="3" fill="#333"/>
-  <!-- palette portée par le chargeur -->
   <rect class="ex-pal-portee" x="44" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
 </g>
 <text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Expédition : 10 palettes filmées puis chargées côte à côte</text>
@@ -1451,6 +1413,7 @@ body.grand{font-size:19px}
         <textarea id="message-libre" name="Q22_Remarque_Libre" rows="4" maxlength="1000" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : une situation qui t'a inquiété..."></textarea>
       </div>
       <button type="submit" id="btn-submit" style="margin-top:20px; background:var(--success);">Envoyer mes réponses anonymement</button>
+      <p id="err-sondage" class="msg-err" hidden></p>
     </form>
 
     <div id="res-sondage" style="display:none; background:var(--success); color:#fff; padding:20px; border-radius:8px; text-align:center; font-weight:bold; margin-top:15px;">
@@ -1484,6 +1447,10 @@ body.grand{font-size:19px}
       <p class="note" id="fbest"></p>
       <button id="quiz-again">🔄 Rejouer</button>
       <button onclick="document.querySelector('.tab[data-t=droits]').click()">📚 Revoir mes droits</button>
+      <div class="btn-partage">
+        <button onclick="partagerScore('wa')" style="background:#25D366; margin-top:10px;">💬 WhatsApp</button>
+        <button onclick="partagerScore('sms')" style="background:var(--blue); margin-top:10px;">✉️ SMS</button>
+      </div>
     </div>
   </div>
 </section>
@@ -1517,6 +1484,7 @@ body.grand{font-size:19px}
     <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
     <textarea id="question-texte" rows="5" maxlength="1000" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : quelles sont mes règles pour les congés en juillet ?"></textarea>
     <button id="btn-question">Envoyer ma question</button>
+    <p id="err-question" class="msg-err" hidden></p>
     <div id="res-question" style="display:none; background:var(--success); color:#fff; padding:20px; border-radius:8px; text-align:center; font-weight:bold; margin-top:15px;">
       ✅ Merci ! Ta question a bien été envoyée.
     </div>
@@ -1538,8 +1506,14 @@ body.grand{font-size:19px}
 <section id="jeu" hidden>
   <div class="card" style="text-align:center;">
     <h2>🎯 Mission sécurité</h2>
-    <p style="font-size:.95rem; color:var(--mute);">Quatre scènes de ta journée à l'entrepôt. Repère les dangers, puis choisis la bonne décision. Chaque erreur te montre ce qu'elle peut provoquer.</p>
+    <p style="font-size:.95rem; color:var(--mute);">Six scènes de ta journée à l'entrepôt. Repère les dangers, puis choisis la bonne décision. Chaque erreur te montre ce qu'elle peut provoquer.</p>
     <p class="note">Scène <span id="jeu-scene">1</span> · Score : <strong id="jeu-score">0</strong> · Meilleur : <strong id="jeu-best">0</strong></p>
+    <div class="badges" id="jeu-badges">
+      <span class="badge" data-badge="premier">🥇 Premier danger repéré</span>
+      <span class="badge" data-badge="sansfaute">🎯 Sans faute sur une scène</span>
+      <span class="badge" data-badge="moitie">⚡ 50 % du jeu</span>
+      <span class="badge" data-badge="gardien">🛡️ Gardien de la sécurité</span>
+    </div>
     <div id="jeu-zone"></div>
     <div id="jeu-regle" class="expl" hidden></div>
     <button id="jeu-bilan">✋ J'ai fini de chercher</button>
@@ -1573,9 +1547,6 @@ body.grand{font-size:19px}
 </main>
 
 <script>
-// ==== CONFIGURATION ====
-// ⚠️ Remplace "" par l'URL publique de ton site (ex. "https://sud-industrie-ele.github.io/espace/")
-// Sans cela, le QR code pointe vers le chemin local du fichier ouvert, inutilisable sur un autre téléphone.
 const APP_URL = "";
 const FORMSPREE_URL = "https://formspree.io/f/xljbejjl";
 const QUESTIONS_URL = "https://formspree.io/f/xyewzday";
@@ -1583,7 +1554,7 @@ const IA_URL = "https://assistant-sud.kg4fnd86k2-c01.workers.dev/";
 const LEGI = "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/";
 const $ = id => document.getElementById(id);
 
-// ==== COMPTEURS (élections) ====
+// ==== COMPTEURS ====
 function majCompteurs(){
   const fin = new Date("Oct 1, 2027 08:00:00").getTime();
   const d = fin - Date.now();
@@ -1605,6 +1576,18 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   if(b.dataset.t === "jeu") jeuLancer();
   if(window.goatcounter) goatcounter.count({ path: "onglet-" + b.dataset.t, title: "Onglet " + b.dataset.t, event: true });
 });
+
+// ==== PARTAGE SCORE QUIZ (WhatsApp + SMS) ====
+function partagerScore(canal){
+  const s = qScore, n = qDeck.length;
+  const txt = `J'ai fait ${s}/${n} au quiz droits du travail de Sud Industrie ELE ! Et toi ? ${location.href}`;
+  if(canal === "wa"){
+    window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank");
+  } else {
+    window.open("sms:?&body=" + encodeURIComponent(txt), "_blank");
+  }
+  if(window.goatcounter) goatcounter.count({ path: "partage-quiz-" + canal, event: true });
+}
 
 // ==== QUIZ ====
 const QUIZ = [
@@ -1690,16 +1673,19 @@ function endQuiz(){
   $("fe").textContent = s >= 9 ? "🏆" : s >= 6 ? "🌟" : s >= 3 ? "😊" : "📚";
   $("fscore").textContent = `Tu as ${s} / ${qDeck.length} bonnes réponses`;
   $("fbest").textContent = s > prev ? "🎊 Nouveau meilleur score !" : `Meilleur score : ${Math.max(prev, s)}/10`;
+  if(window.goatcounter) goatcounter.count({ path: "quiz-fini", title: "Quiz fini", event: true });
 }
 $("quiz-go").onclick = startQuiz;
 $("quiz-again").onclick = startQuiz;
 $("best").textContent = bestScore();
 
-// ==== SONDAGE ====
+// ==== SONDAGE (message d'erreur propre) ====
 $("form-sondage").onsubmit = async function(e){
   e.preventDefault();
   const btn = $("btn-submit");
-  if(localStorage.getItem("sudVote")){ alert("Tu as déjà voté avec ce téléphone. Merci !"); return; }
+  const err = $("err-sondage");
+  err.hidden = true;
+  if(localStorage.getItem("sudVote")){ err.textContent = "Tu as déjà voté avec ce téléphone. Merci !"; err.hidden = false; return; }
   const reponses = {};
   new FormData(this).forEach((v, k) => { reponses[k] = v; });
   btn.textContent = "Envoi en cours..."; btn.disabled = true;
@@ -1715,11 +1701,13 @@ $("form-sondage").onsubmit = async function(e){
       $("res-sondage").style.display = "block";
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      alert("Oups, l'envoi n'a pas abouti. Réessaie.");
+      err.textContent = "Oups, l'envoi n'a pas abouti. Réessaie dans un instant.";
+      err.hidden = false;
       btn.textContent = "Envoyer mes réponses anonymement"; btn.disabled = false;
     }
-  }catch(err){
-    alert("Oups, erreur de connexion. Réessaie.");
+  }catch(err2){
+    err.textContent = "Erreur de connexion. Vérifie ton réseau et réessaie.";
+    err.hidden = false;
     btn.textContent = "Envoyer mes réponses anonymement"; btn.disabled = false;
   }
 };
@@ -1732,116 +1720,68 @@ function drawQR(){
   new QRCode(el, {text: url, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M});
 }
 
-// ==== GALERIE PHOTOS (noms de fichiers inchangés) ====
+// ==== GALERIE PHOTOS ====
 const PHOTOS = [
-  "photo1.jpg",
-  "Photo2.jpg",
-  "photo3.jpg",
-  "photo4.jpg",
-  "photo5.jpg",
+  "photo1.jpg","Photo2.jpg","photo3.jpg","photo4.jpg","photo5.jpg",
   "temp_image_02E74C43-B742-45E3-AB63-A073B888BD0F.webp",
-  "photo7.jpg",
-  "photo8.jpg",
+  "photo7.jpg","photo8.jpg",
   "temp_image_867EFF3D-2EC8-4DEE-9249-7054622BEBFD.jpeg",
   "photo10.jpg"
 ];
-
 let galerieChargee = false;
 function chargerGalerie(){
   if(galerieChargee) return;
   galerieChargee = true;
-  const box = $("galerie");
-  box.innerHTML = "";
-  if(PHOTOS.length === 0){
-    box.innerHTML = '<div class="vide">📷 Aucune photo pour le moment.</div>';
-    return;
-  }
+  const box = $("galerie"); box.innerHTML = "";
+  if(PHOTOS.length === 0){ box.innerHTML = '<div class="vide">📷 Aucune photo pour le moment.</div>'; return; }
   PHOTOS.forEach(nom => {
     const chemin = "photos/" + nom;
     const a = document.createElement("a");
-    a.href = chemin;
-    a.target = "_blank";
-    a.rel = "noopener";
+    a.href = chemin; a.target = "_blank"; a.rel = "noopener";
     a.onclick = (e) => { e.preventDefault(); ouvrirLightbox(chemin); };
     const img = document.createElement("img");
-    img.src = chemin;
-    img.alt = "Photo terrain Sud Industrie";
-    img.loading = "lazy";
+    img.src = chemin; img.alt = "Photo terrain Sud Industrie"; img.loading = "lazy";
     img.onerror = () => { a.style.border = "2px solid red"; a.title = "Image introuvable : " + nom; };
-    a.appendChild(img);
-    box.appendChild(a);
+    a.appendChild(img); box.appendChild(a);
   });
 }
-
 function ouvrirLightbox(src){
-  const lb = document.createElement("div");
-  lb.className = "lightbox";
+  const lb = document.createElement("div"); lb.className = "lightbox";
   lb.onclick = () => lb.remove();
-  const img = document.createElement("img");
-  img.src = src;
-  const btn = document.createElement("button");
-  btn.className = "fermer";
-  btn.textContent = "✕";
+  const img = document.createElement("img"); img.src = src;
+  const btn = document.createElement("button"); btn.className = "fermer"; btn.textContent = "✕";
   btn.onclick = (e) => { e.stopPropagation(); lb.remove(); };
-  lb.appendChild(img);
-  lb.appendChild(btn);
-  document.body.appendChild(lb);
+  lb.appendChild(img); lb.appendChild(btn); document.body.appendChild(lb);
 }
 
-// ==== VIDÉOS (liste inchangée) ====
-const VIDEOS = [
-  "video1.mp4",
-  "video2.mp4",
-  "video3.mp4",
-  "video4.mov"
-];
-
+// ==== VIDÉOS ====
+const VIDEOS = ["video1.mp4","video2.mp4","video3.mp4","video4.mov"];
 let videosChargees = false;
 function chargerVideos(){
   if(videosChargees) return;
   videosChargees = true;
-  const box = $("galerie-videos");
-  box.innerHTML = "";
-  if(VIDEOS.length === 0){
-    box.innerHTML = '<div class="vide">🎬 Aucune vidéo pour le moment.</div>';
-    return;
-  }
+  const box = $("galerie-videos"); box.innerHTML = "";
+  if(VIDEOS.length === 0){ box.innerHTML = '<div class="vide">🎬 Aucune vidéo pour le moment.</div>'; return; }
   VIDEOS.forEach(nom => {
     const chemin = "videos/" + nom;
-    const a = document.createElement("a");
-    a.href = chemin;
+    const a = document.createElement("a"); a.href = chemin;
     a.onclick = (e) => { e.preventDefault(); ouvrirVideo(chemin); };
-    const v = document.createElement("video");
-    v.src = chemin;
-    v.muted = true;
-    v.playsInline = true;
-    v.preload = "metadata";
+    const v = document.createElement("video"); v.src = chemin; v.muted = true; v.playsInline = true; v.preload = "metadata";
     v.onerror = () => { a.style.border = "2px solid red"; a.title = "Vidéo introuvable : " + nom; };
-    a.appendChild(v);
-    box.appendChild(a);
+    a.appendChild(v); box.appendChild(a);
   });
 }
-
 function ouvrirVideo(src){
-  const lb = document.createElement("div");
-  lb.className = "lightbox";
+  const lb = document.createElement("div"); lb.className = "lightbox";
   lb.onclick = () => lb.remove();
-  const v = document.createElement("video");
-  v.src = src;
-  v.controls = true;
-  v.autoplay = true;
-  v.playsInline = true;
+  const v = document.createElement("video"); v.src = src; v.controls = true; v.autoplay = true; v.playsInline = true;
   v.onclick = (e) => e.stopPropagation();
-  const btn = document.createElement("button");
-  btn.className = "fermer";
-  btn.textContent = "✕";
+  const btn = document.createElement("button"); btn.className = "fermer"; btn.textContent = "✕";
   btn.onclick = (e) => { e.stopPropagation(); lb.remove(); };
-  lb.appendChild(v);
-  lb.appendChild(btn);
-  document.body.appendChild(lb);
+  lb.appendChild(v); lb.appendChild(btn); document.body.appendChild(lb);
 }
 
-// ==== RECHERCHE DANS MES DROITS (protégée) ====
+// ==== RECHERCHE ====
 const rechercheDroits = $("recherche-droits");
 if (rechercheDroits) {
   rechercheDroits.addEventListener("input", () => {
@@ -1852,20 +1792,17 @@ if (rechercheDroits) {
   });
 }
 
-// ==== MESSAGE DE BIENVENUE (une seule fois) ====
-if(!localStorage.getItem("sudBienvenue")){
-  $("bienvenue").hidden = false;
-}
-function fermerBienvenue(){
-  localStorage.setItem("sudBienvenue", "1");
-  $("bienvenue").hidden = true;
-}
+// ==== BIENVENUE ====
+if(!localStorage.getItem("sudBienvenue")){ $("bienvenue").hidden = false; }
+function fermerBienvenue(){ localStorage.setItem("sudBienvenue", "1"); $("bienvenue").hidden = true; }
 
-// ==== QUESTIONS ====
+// ==== QUESTIONS (message d'erreur propre) ====
 $("btn-question").onclick = async () => {
   const btn = $("btn-question");
+  const err = $("err-question");
+  err.hidden = true;
   const texte = $("question-texte").value.trim();
-  if(texte.length < 10){ alert("Écris un peu plus ta question, quelques mots suffisent."); return; }
+  if(texte.length < 10){ err.textContent = "Écris un peu plus ta question, quelques mots suffisent."; err.hidden = false; return; }
   btn.disabled = true; btn.textContent = "Envoi en cours...";
   try{
     const r = await fetch(QUESTIONS_URL, {
@@ -1878,17 +1815,18 @@ $("btn-question").onclick = async () => {
       btn.style.display = "none";
       $("res-question").style.display = "block";
     } else {
-      alert("Oups, l'envoi n'a pas abouti. Réessaie.");
+      err.textContent = "Oups, l'envoi n'a pas abouti. Réessaie dans un instant.";
+      err.hidden = false;
       btn.disabled = false; btn.textContent = "Envoyer ma question";
     }
-  }catch(err){
-    alert("Oups, erreur de connexion. Réessaie.");
+  }catch(err2){
+    err.textContent = "Erreur de connexion. Vérifie ton réseau et réessaie.";
+    err.hidden = false;
     btn.disabled = false; btn.textContent = "Envoyer ma question";
   }
 };
 
-// ==== MISSION SÉCURITÉ (jeu) ====
-// Les <g class="hs"> sont maintenant accessibles au clavier via tabindex + role + aria-label
+// ==== MISSION SÉCURITÉ (6 scènes, badges) ====
 const JEU_SCENES = [
   {
     titre: "1. Prise de poste",
@@ -1928,12 +1866,7 @@ const JEU_SCENES = [
       ceinture: { nom: "Ceinture de sécurité non attachée", regle: "Sur un engin avec protection, la ceinture maintient le conducteur dans l'habitacle en cas de renversement.", risque: "Éjection ou écrasement lors d'un basculement." },
       controle: { nom: "Contrôle de prise de poste non fait", regle: "Avant chaque prise de poste, freins, direction, avertisseur et fourches sont contrôlés, et le contrôle est tracé.", risque: "Un engin défectueux n'est pas repéré avant qu'il ne cause un accident." }
     },
-    decision: {
-      q: "Le frein d'un chariot tire d'un côté. Que fais-tu ?",
-      a: ["Je l'utilise prudemment jusqu'à la fin du poste", "Je signale le défaut et je ne l'utilise pas", "Je le répare moi-même vite fait"],
-      c: 1,
-      e: "Un engin défectueux se signale et se met hors service jusqu'à sa réparation. Aucun gain de temps ne vaut un risque de renversement."
-    }
+    decision: { q: "Le frein d'un chariot tire d'un côté. Que fais-tu ?", a: ["Je l'utilise prudemment jusqu'à la fin du poste", "Je signale le défaut et je ne l'utilise pas", "Je le répare moi-même vite fait"], c: 1, e: "Un engin défectueux se signale et se met hors service jusqu'à sa réparation." }
   },
   {
     titre: "2. Allée de préparation",
@@ -1976,12 +1909,7 @@ const JEU_SCENES = [
       palette: { nom: "Palette qui déborde sur l'allée", regle: "Une charge qui déborde gêne la circulation et peut accrocher un engin ou tomber.", risque: "Chute de la charge sur un passant ou choc avec un chariot." },
       issue: { nom: "Sortie de secours encombrée", regle: "Les issues de secours doivent toujours rester dégagées.", risque: "Évacuation bloquée en cas d'incendie ou d'urgence." }
     },
-    decision: {
-      q: "Tu vois un collègue marcher sur la voie d'un chariot qui approche. Que fais-tu ?",
-      a: ["Je continue, il va bien se pousser", "J'interpelle le collègue et je préviens le conducteur", "Je ne dis rien, ce n'est pas mon affaire"],
-      c: 1,
-      e: "Interpeller et prévenir évite la collision. Un conducteur ne voit pas toujours une personne à pied : la sécurité du groupe repose sur la vigilance de chacun."
-    }
+    decision: { q: "Tu vois un collègue marcher sur la voie d'un chariot qui approche. Que fais-tu ?", a: ["Je continue, il va bien se pousser", "J'interpelle le collègue et je préviens le conducteur", "Je ne dis rien, ce n'est pas mon affaire"], c: 1, e: "Interpeller et prévenir évite la collision." }
   },
   {
     titre: "3. Quai de dépose",
@@ -2016,12 +1944,7 @@ const JEU_SCENES = [
       cale: { nom: "Camion non calé", regle: "Le camion doit être calé avant d'utiliser un pont de quai ou de charger.", risque: "Le camion peut s'éloigner du quai et provoquer une chute." },
       barriere: { nom: "Bord de quai non protégé", regle: "Un bord de quai ouvert doit être protégé par une barrière ou un dispositif équivalent.", risque: "Chute de hauteur d'une personne ou d'un engin." }
     },
-    decision: {
-      q: "Le chauffeur te fait signe d'avancer le chariot alors qu'une personne se trouve encore entre le camion et le quai. Que fais-tu ?",
-      a: ["J'avance, il faut aller vite", "Je ne bouge pas, je fais signe et j'attends que la zone soit libre", "Je démarre sans regarder"],
-      c: 1,
-      e: "Une zone de manœuvre doit être dégagée avant tout mouvement. Attendre et signaler un danger est une règle de sécurité, pas un manque de coopération."
-    }
+    decision: { q: "Le chauffeur te fait signe d'avancer alors qu'une personne est entre le camion et le quai. Que fais-tu ?", a: ["J'avance, il faut aller vite", "Je ne bouge pas et j'attends que la zone soit libre", "Je démarre sans regarder"], c: 1, e: "Une zone de manœuvre doit être dégagée avant tout mouvement." }
   },
   {
     titre: "4. Fin de poste",
@@ -2052,15 +1975,98 @@ const JEU_SCENES = [
 </svg>`,
     dangers: {
       passage: { nom: "Engin garé dans le passage", regle: "Le stationnement ne doit jamais gêner une issue, un passage ou une zone de circulation.", risque: "Passage bloqué, et obstacle en cas d'évacuation." },
-      cle: { nom: "Engin laissé avec la clé en place", regle: "Un engin non surveillé est arrêté, moteur coupé, clé retirée, et stationné à l'emplacement prévu.", risque: "Mise en mouvement par une personne non formée." },
+      cle: { nom: "Engin laissé avec la clé en place", regle: "Un engin non surveillé est arrêté, moteur coupé, clé retirée.", risque: "Mise en mouvement par une personne non formée." },
       fourches: { nom: "Fourches laissées en hauteur", regle: "En fin de poste, les fourches sont abaissées au sol.", risque: "Chute de la fourche sur une personne qui passe dessous." }
     },
-    decision: {
-      q: "Ton engin tombe en panne à côté d'une allée, et ta fin de poste approche. Que fais-tu ?",
-      a: ["Je le laisse là, je le signalerai demain", "Je le sécurise (fourches abaissées, clé retirée) et je préviens ma hiérarchie", "Je le pousse à la main jusqu'à la zone de charge"],
-      c: 1,
-      e: "Sécuriser l'engin et prévenir la hiérarchie protège les autres. Un engin laissé sans précaution, ou déplacé sans contrôle, peut blesser quelqu'un qui n'y pense pas."
-    }
+    decision: { q: "Ton engin tombe en panne à côté d'une allée. Que fais-tu ?", a: ["Je le laisse là, je le signalerai demain", "Je le sécurise et je préviens ma hiérarchie", "Je le pousse à la main jusqu'à la zone de charge"], c: 1, e: "Sécuriser l'engin et prévenir la hiérarchie protège les autres." }
+  },
+  {
+    titre: "5. Chargement du camion",
+    intro: "Un camion est à quai, prêt à être chargé. Repère ce qui n'est pas sécurisé.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Chargement du camion">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect y="172" width="320" height="28" fill="#c5cad1"/>
+<rect x="0" y="60" width="50" height="112" fill="#b8bec6"/>
+<text x="25" y="52" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">QUAI</text>
+<rect x="50" y="146" width="30" height="8" fill="#7b8794"/>
+<rect x="208" y="62" width="104" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
+<text x="260" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION</text>
+<circle cx="226" cy="166" r="6" fill="#111"/>
+<circle cx="250" cy="166" r="6" fill="#111"/>
+<circle cx="290" cy="166" r="6" fill="#111"/>
+<rect x="216" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect x="234" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect x="252" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect x="270" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect x="288" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<g class="hs" data-id="cale5" tabindex="0" role="button" aria-label="Danger : camion non calé avant chargement">
+<rect x="180" y="148" width="30" height="38" fill="transparent"/>
+<polygon points="188,184 202,184 202,164" fill="none" stroke="#c8102e" stroke-dasharray="3 2"/>
+</g>
+<g class="hs" data-id="zone5" tabindex="0" role="button" aria-label="Danger : personne dans la zone de chargement">
+<rect x="120" y="60" width="50" height="110" fill="transparent"/>
+<circle cx="150" cy="88" r="8" fill="#f0c08a"/>
+<rect x="141" y="97" width="18" height="34" rx="3" fill="#ffcc00"/>
+<rect x="142" y="130" width="6" height="28" fill="#333"/>
+<rect x="152" y="130" width="6" height="28" fill="#333"/>
+</g>
+<g class="hs" data-id="sangle5" tabindex="0" role="button" aria-label="Danger : charge non sanglée dans le camion">
+<rect x="280" y="112" width="30" height="20" fill="transparent"/>
+<line x1="284" y1="116" x2="306" y2="128" stroke="#c8102e" stroke-width="2" stroke-dasharray="4 2"/>
+</g>
+</svg>`,
+    dangers: {
+      cale5: { nom: "Camion non calé avant chargement", regle: "Le camion doit être calé avant d'être chargé, pour éviter qu'il s'éloigne du quai.", risque: "Le camion peut avancer et provoquer une chute de hauteur." },
+      zone5: { nom: "Personne dans la zone de chargement", regle: "Personne ne doit se trouver dans la zone de chargement pendant la manœuvre.", risque: "Écrasement par un engin ou par une charge." },
+      sangle5: { nom: "Charge non sanglée dans le camion", regle: "Les charges doivent être sanglées avant le départ du camion.", risque: "Chute de la charge sur la route, ou sur un salarié au déchargement." }
+    },
+    decision: { q: "Le camion est chargé, mais le chauffeur veut partir sans sangler. Que fais-tu ?", a: ["Je le laisse partir, c'est son problème", "Je lui demande de sangler avant de partir", "Je ne dis rien, ce n'est pas mon rôle"], c: 1, e: "Une charge non sanglée peut tomber sur la route. C'est un risque pour le chauffeur et pour les autres." }
+  },
+  {
+    titre: "6. Travail en hauteur",
+    intro: "Un collègue doit changer une ampoule en haut d'un rayon. Repère ce qui n'est pas sécurisé.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Travail en hauteur">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect y="172" width="320" height="28" fill="#c5cad1"/>
+<rect x="20" y="30" width="4" height="142" fill="#55606c"/>
+<rect x="110" y="30" width="4" height="142" fill="#55606c"/>
+<rect x="240" y="30" width="4" height="142" fill="#55606c"/>
+<rect x="20" y="30" width="90" height="4" fill="#55606c"/>
+<rect x="20" y="100" width="90" height="4" fill="#55606c"/>
+<rect x="20" y="150" width="90" height="4" fill="#55606c"/>
+<rect x="250" y="30" width="4" height="142" fill="#55606c"/>
+<rect x="250" y="60" width="60" height="4" fill="#55606c"/>
+<rect x="250" y="120" width="60" height="4" fill="#55606c"/>
+<rect x="30" y="80" width="18" height="12" fill="#d9b87c"/>
+<rect x="52" y="80" width="18" height="12" fill="#e8c98f"/>
+<rect x="30" y="130" width="18" height="12" fill="#e8c98f"/>
+<rect x="76" y="80" width="18" height="12" fill="#d9b87c"/>
+<g class="hs" data-id="echelle" tabindex="0" role="button" aria-label="Danger : échelle non stabilisée">
+<rect x="128" y="60" width="60" height="120" fill="transparent"/>
+<line x1="140" y1="60" x2="140" y2="180" stroke="#c8102e" stroke-width="2"/>
+<line x1="160" y1="60" x2="160" y2="180" stroke="#c8102e" stroke-width="2"/>
+<line x1="140" y1="80" x2="160" y2="80" stroke="#c8102e" stroke-width="2"/>
+<line x1="140" y1="100" x2="160" y2="100" stroke="#c8102e" stroke-width="2"/>
+<line x1="140" y1="120" x2="160" y2="120" stroke="#c8102e" stroke-width="2"/>
+<line x1="140" y1="140" x2="160" y2="140" stroke="#c8102e" stroke-width="2"/>
+</g>
+<g class="hs" data-id="casque6" tabindex="0" role="button" aria-label="Danger : pas de casque en hauteur">
+<rect x="130" y="30" width="40" height="34" fill="transparent"/>
+<circle cx="150" cy="46" r="8" fill="#f0c08a"/>
+<rect x="142" y="30" width="16" height="4" fill="#8a5a3c"/>
+</g>
+<g class="hs" data-id="harnais" tabindex="0" role="button" aria-label="Danger : pas de harnais ni de protection contre la chute">
+<rect x="130" y="60" width="40" height="50" fill="transparent"/>
+<rect x="140" y="66" width="20" height="30" rx="3" fill="#ffcc00"/>
+<line x1="150" y1="66" x2="150" y2="60" stroke="#c8102e" stroke-width="2" stroke-dasharray="3 2"/>
+</g>
+</svg>`,
+    dangers: {
+      echelle: { nom: "Échelle non stabilisée", regle: "Une échelle doit être stable, calée et dépasser d'au moins 1 m le point d'appui.", risque: "Chute de hauteur si l'échelle glisse ou bascule." },
+      casque6: { nom: "Pas de casque en hauteur", regle: "Le casque est obligatoire pour les travaux en hauteur, surtout s'il y a un risque de chute d'objet.", risque: "Choc à la tête par un outil ou un objet qui tombe." },
+      harnais: { nom: "Pas de protection contre la chute", regle: "Au-delà de 3 mètres, un harnais ou un dispositif antichute est nécessaire.", risque: "Chute grave ou mortelle en cas de déséquilibre." }
+    },
+    decision: { q: "Tu dois changer une ampoule en haut d'un rayon. Que fais-tu ?", a: ["Je monte sur une chaise, ça suffit", "J'utilise un escabeau stable ou je demande un moyen d'accès adapté", "Je monte sur une palette posée sur des cartons"], c: 1, e: "Un moyen d'accès stable et adapté évite la chute. La rapidité ne vaut pas un accident." }
   }
 ];
 
@@ -2068,17 +2074,14 @@ const JEU_BEST_KEY = "sudMissionBest";
 let jeuIdx = 0, jeuScore = 0, jeuTrouves = [], jeuFini = false, jeuChoisi = false;
 
 function jeuLancer(){
-  jeuIdx = 0;
-  jeuScore = 0;
+  jeuIdx = 0; jeuScore = 0;
+  document.querySelectorAll("#jeu-badges .badge").forEach(b => b.classList.remove("obtenu"));
   $("jeu-fin").hidden = true;
   jeuAfficher();
 }
-
 function jeuAfficher(){
   const sc = JEU_SCENES[jeuIdx];
-  jeuTrouves = [];
-  jeuFini = false;
-  jeuChoisi = false;
+  jeuTrouves = []; jeuFini = false; jeuChoisi = false;
   $("jeu-scene").textContent = (jeuIdx + 1) + " / " + JEU_SCENES.length;
   $("jeu-score").textContent = jeuScore;
   $("jeu-best").textContent = localStorage.getItem(JEU_BEST_KEY) || 0;
@@ -2090,7 +2093,6 @@ function jeuAfficher(){
   $("jeu-bilan").hidden = false;
   $("jeu-fin").hidden = true;
 }
-
 function jeuClic(e){
   if(jeuFini) return;
   const sc = JEU_SCENES[jeuIdx];
@@ -2103,26 +2105,30 @@ function jeuClic(e){
   hs.classList.add("trouve");
   jeuScore += 10;
   $("jeu-score").textContent = jeuScore;
+  const badge = document.querySelector('#jeu-badges .badge[data-badge="premier"]');
+  if(badge) badge.classList.add("obtenu");
   $("jeu-regle").innerHTML = "<strong>✅ " + d.nom + "</strong><br>" + d.regle + "<br><em>Risque évité : " + d.risque + "</em>";
   $("jeu-regle").hidden = false;
   if(jeuTrouves.length === Object.keys(sc.dangers).length) jeuBilan();
 }
-
-// Accessibilité clavier : Entrée ou Espace sur les zones cliquables
 document.addEventListener("keydown", (e) => {
   if(e.key !== "Enter" && e.key !== " ") return;
   const hs = document.activeElement && document.activeElement.closest ? document.activeElement.closest(".hs") : null;
   if(hs && document.getElementById("jeu") && !document.getElementById("jeu").hidden){
-    e.preventDefault();
-    hs.click();
+    e.preventDefault(); hs.click();
   }
 });
-
 function jeuBilan(){
   if(jeuFini) return;
   jeuFini = true;
   const sc = JEU_SCENES[jeuIdx];
   const manques = Object.keys(sc.dangers).filter(id => jeuTrouves.indexOf(id) === -1);
+  if(manques.length === 0){
+    jeuScore += 10;
+    $("jeu-score").textContent = jeuScore;
+    const b = document.querySelector('#jeu-badges .badge[data-badge="sansfaute"]');
+    if(b) b.classList.add("obtenu");
+  }
   document.querySelectorAll("#jeu-zone .hs").forEach(el => {
     if(manques.indexOf(el.dataset.id) !== -1) el.classList.add("rate");
   });
@@ -2138,21 +2144,16 @@ function jeuBilan(){
   }
   $("jeu-regle").innerHTML = html;
   $("jeu-regle").hidden = false;
-
   const dec = sc.decision;
   const box = $("jeu-decision");
   box.innerHTML = '<p style="font-weight:700;margin:0 0 8px 0">🤔 ' + dec.q + '</p>';
   dec.a.forEach((t, i) => {
-    const b = document.createElement("button");
-    b.className = "opt";
-    b.textContent = t;
-    b.onclick = () => jeuChoisir(i, b);
-    box.appendChild(b);
+    const b = document.createElement("button"); b.className = "opt"; b.textContent = t;
+    b.onclick = () => jeuChoisir(i, b); box.appendChild(b);
   });
   box.hidden = false;
   $("jeu-bilan").hidden = true;
 }
-
 function jeuChoisir(i, btn){
   if(jeuChoisi) return;
   jeuChoisi = true;
@@ -2174,20 +2175,21 @@ function jeuChoisir(i, btn){
   $("jeu-suite").textContent = jeuIdx === JEU_SCENES.length - 1 ? "🏁 Voir mon résultat" : "Scène suivante ➡️";
   $("jeu-suite").hidden = false;
 }
-
 function jeuFinir(){
-  const max = JEU_SCENES.reduce((s, sc) => s + (Object.keys(sc.dangers).length + 1) * 10, 0);
+  const max = JEU_SCENES.reduce((s, sc) => s + (Object.keys(sc.dangers).length + 2) * 10, 0);
   const pct = Math.round(jeuScore / max * 100);
   const prev = +(localStorage.getItem(JEU_BEST_KEY) || 0);
   if(jeuScore > prev) localStorage.setItem(JEU_BEST_KEY, jeuScore);
+  if(pct >= 50){ const b = document.querySelector('#jeu-badges .badge[data-badge="moitie"]'); if(b) b.classList.add("obtenu"); }
+  if(pct >= 90){ const b = document.querySelector('#jeu-badges .badge[data-badge="gardien"]'); if(b) b.classList.add("obtenu"); }
   $("jeu-zone").innerHTML = "";
   ["jeu-regle", "jeu-decision", "jeu-suite", "jeu-bilan"].forEach(id => $(id).hidden = true);
   $("jeu-badge").textContent = pct >= 90 ? "🛡️" : pct >= 60 ? "🌟" : "📚";
   $("jeu-titre").textContent = pct >= 90 ? "Gardien de la sécurité" : pct >= 60 ? "Vigilant, mais quelques angles morts" : "À revoir : la sécurité commence par l'observation";
   $("jeu-resultat").textContent = "Score : " + jeuScore + " / " + max + " (" + pct + " %)" + (jeuScore > prev ? " 🎊 Nouveau meilleur score !" : "");
   $("jeu-fin").hidden = false;
+  if(window.goatcounter) goatcounter.count({ path: "jeu-fini", title: "Jeu fini", event: true });
 }
-
 $("jeu-zone").addEventListener("click", jeuClic);
 $("jeu-bilan").onclick = jeuBilan;
 $("jeu-suite").onclick = () => {
@@ -2202,12 +2204,10 @@ $("ia-btn").onclick = async () => {
   if(q.length < 10){ alert("Écris une question un peu plus précise."); return; }
   btn.disabled = true; btn.textContent = "Réponse en cours...";
   const zone = $("ia-reponse");
-  zone.hidden = false;
-  zone.textContent = "…";
+  zone.hidden = false; zone.textContent = "…";
   try{
     const r = await fetch(IA_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question: q })
     });
     const d = await r.json();
@@ -2220,35 +2220,25 @@ $("ia-btn").onclick = async () => {
 
 // ==== PARCOURS « QUELLE EST MA SITUATION ? » ====
 const SITUATIONS = {
-  securite: {
-    titre: "🦺 Sécurité",
-    items: [
-      { q: "Mon chariot a un défaut : que faire ?", r: "Ne l'utilise pas. Signale le défaut par écrit à ta hiérarchie (main courante ou cahier de consignes) et demande la mise hors service de l'engin. Un chariot défectueux doit être consigné par l'employeur.", f: "Vérification et anomalies des chariots" },
-      { q: "Je vois une personne dans une zone de manœuvre : que faire ?", r: "Ne bouge pas l'engin. Fais un signe clair au chauffeur ou au responsable, et attends que la zone soit dégagée. Signale la situation à ta hiérarchie et, si besoin, au CSE.", f: "Circulation et signalétique en entrepôt" },
-      { q: "Je suis en danger immédiat : que faire ?", r: "Arrête ton poste et préviens immédiatement ton employeur ou son représentant. Tu peux exercer ton droit de retrait sans sanction. En cas de blessure, appelle les secours.", f: "Danger grave et imminent" },
-      { q: "On m'a demandé de conduire sans formation : que faire ?", r: "Refuse de conduire tant que tu n'as pas reçu la formation et l'autorisation de conduite écrite. Sans cette autorisation, tu ne dois pas utiliser l'engin.", f: "Prise de poste avec un chariot automoteur" }
-    ]
-  },
-  conges: {
-    titre: "✈️ Congés et temps de travail",
-    items: [
-      { q: "Combien de congés payés j'acquiers ?", r: "Tu acquiers 2,5 jours ouvrables par mois travaillé, soit 5 semaines par an. Les règles précises peuvent être améliorées par un accord ou la convention collective.", f: "Congés payés" },
-      { q: "Combien de temps de repos entre deux journées ?", r: "En principe, tu dois avoir 11 heures consécutives de repos entre deux journées de travail.", f: "Heures supplémentaires" },
-      { q: "Droit à une pause : quand ?", r: "Au-delà de 6 heures de travail par jour, une pause d'au moins 20 minutes est obligatoire. Les modalités exactes peuvent être précisées par la convention collective.", f: "Heures supplémentaires" },
-      { q: "Mon employeur me demande de rester sans être payé : est-ce permis ?", r: "Non. Le temps de travail effectif doit être rémunéré. Note les dates et heures, et demande une régularisation par écrit.", f: "Heures supplémentaires" }
-    ]
-  },
-  droits: {
-    titre: "⚖️ Droits et sanctions",
-    items: [
-      { q: "Je suis convoqué à un entretien : que faire ?", r: "Tu as droit à un délai minimum de 5 jours ouvrables entre la convocation et l'entretien. Tu peux te faire accompagner par un élu du personnel ou un salarié de l'entreprise.", f: "Convocation par la direction" },
-      { q: "On me remet un courrier en main propre : que faire ?", r: "Demande un exemplaire daté et signé, et garde une copie. Une lettre de licenciement doit toujours être envoyée en recommandé avec accusé de réception.", f: "Remise en main propre d'un courrier" },
-      { q: "Je suis en arrêt maladie : que faire ?", r: "Préviens l'employeur dans les 48 heures. Tu peux être contrôlé par la Sécurité sociale pendant ton arrêt.", f: "Arrêt maladie" },
-      { q: "Je subis du harcèlement : que faire ?", r: "Ce comportement est interdit. Tu peux alerter le CSE, l'inspection du travail, ou contacter le syndicat directement. Garde trace des faits (dates, messages, témoins).", f: "Harcèlement moral ou sexuel" }
-    ]
-  }
+  securite: { titre: "🦺 Sécurité", items: [
+    { q: "Mon chariot a un défaut : que faire ?", r: "Ne l'utilise pas. Signale le défaut par écrit à ta hiérarchie et demande la mise hors service de l'engin.", f: "Vérification et anomalies des chariots" },
+    { q: "Je vois une personne dans une zone de manœuvre : que faire ?", r: "Ne bouge pas l'engin. Fais un signe clair au chauffeur ou au responsable, et attends que la zone soit dégagée.", f: "Circulation et signalétique en entrepôt" },
+    { q: "Je suis en danger immédiat : que faire ?", r: "Arrête ton poste et préviens immédiatement ton employeur. Tu peux exercer ton droit de retrait sans sanction.", f: "Danger grave et imminent" },
+    { q: "On m'a demandé de conduire sans formation : que faire ?", r: "Refuse de conduire tant que tu n'as pas reçu la formation et l'autorisation de conduite écrite.", f: "Prise de poste avec un chariot automoteur" }
+  ]},
+  conges: { titre: "✈️ Congés et temps de travail", items: [
+    { q: "Combien de congés payés j'acquiers ?", r: "Tu acquiers 2,5 jours ouvrables par mois travaillé, soit 5 semaines par an.", f: "Congés payés" },
+    { q: "Combien de temps de repos entre deux journées ?", r: "En principe, tu dois avoir 11 heures consécutives de repos entre deux journées.", f: "Heures supplémentaires" },
+    { q: "Droit à une pause : quand ?", r: "Au-delà de 6 heures de travail par jour, une pause d'au moins 20 minutes est obligatoire.", f: "Heures supplémentaires" },
+    { q: "Mon employeur me demande de rester sans être payé : est-ce permis ?", r: "Non. Le temps de travail effectif doit être rémunéré.", f: "Heures supplémentaires" }
+  ]},
+  droits: { titre: "⚖️ Droits et sanctions", items: [
+    { q: "Je suis convoqué à un entretien : que faire ?", r: "Tu as droit à un délai minimum de 5 jours ouvrables. Tu peux te faire accompagner par un élu.", f: "Convocation par la direction" },
+    { q: "On me remet un courrier en main propre : que faire ?", r: "Demande un exemplaire daté et signé, et garde une copie.", f: "Remise en main propre d'un courrier" },
+    { q: "Je suis en arrêt maladie : que faire ?", r: "Préviens l'employeur dans les 48 heures.", f: "Arrêt maladie" },
+    { q: "Je subis du harcèlement : que faire ?", r: "Ce comportement est interdit. Tu peux alerter le CSE, l'inspection du travail, ou le syndicat.", f: "Harcèlement moral ou sexuel" }
+  ]}
 };
-
 let sitCat = null;
 function sitCategorie(cat){
   sitCat = cat;
@@ -2293,6 +2283,6 @@ function sitRetour(){
   $("sit-retour").hidden = true;
 }
 </script>
-<button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(24px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
 </html>
