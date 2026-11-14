@@ -1850,103 +1850,220 @@ const JEU_SCENES = [
   }
 ];
 
-// ===== MISSION SÉCURITÉ : VERSION AMÉLIORÉE =====
-const JEU_BEST_KEY = "sudMissionBest";
-let jeuIdx = 0, jeuScore = 0, jeuTrouves = [], jeuFini = false, jeuChoisi = false;
-let jeuErreurs = 0, jeuOublis = [], jeuMode = "score", jeuChrono = false, jeuDebut = 0, jeuTimer = null;
+// ===== MISSION SÉCURITÉ : VERSION 2 =====
 
-// 4. Décisions plus proches du terrain (une par scène, dans l'ordre)
-const JEU_DECISIONS_TERRAIN = [
+// ---- Deux nouvelles scènes ----
+JEU_SCENES.push(
+  {
+    titre: "7. Sol mouillé",
+    intro: "Un sol vient d'être lavé. Repère ce qui met en danger.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Sol mouillé dans un entrepôt">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect y="120" width="320" height="80" fill="#c5cad1"/>
+<circle cx="60" cy="100" r="8" fill="#f0c08a"/>
+<rect x="51" y="109" width="18" height="30" rx="3" fill="#2a78d6"/>
+<g class="hs" data-id="flaque" tabindex="0" role="button" aria-label="Flaque au sol">
+<rect x="60" y="140" width="120" height="40" fill="transparent"/>
+<ellipse cx="120" cy="160" rx="50" ry="12" fill="#7fb3e0" opacity=".8"/>
+</g>
+<g class="hs" data-id="cable" tabindex="0" role="button" aria-label="Câble au sol non protégé">
+<rect x="180" y="136" width="90" height="30" fill="transparent"/>
+<line x1="185" y1="152" x2="265" y2="152" stroke="#333" stroke-width="3"/>
+</g>
+<g class="hs" data-id="signal" tabindex="0" role="button" aria-label="Absence de signalisation">
+<rect x="200" y="60" width="60" height="50" fill="transparent"/>
+<rect x="205" y="70" width="50" height="40" fill="none" stroke="#c8102e" stroke-dasharray="4 3" stroke-width="2"/>
+</g>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Sol mouillé : que vois-tu ?</text>
+</svg>`,
+    dangers: {
+      flaque: { nom: "Flaque non signalée", regle: "Un sol mouillé doit être signalé, séché ou balisé.", risque: "Chute de plain-pied." },
+      cable: { nom: "Câble au sol non protégé", regle: "Les câbles qui traversent une zone de circulation doivent être fixés ou protégés.", risque: "Trébuchement et chute." },
+      signal: { nom: "Absence de signalisation", regle: "Une zone dangereuse doit être balisée (panneau ou cône) pour prévenir les passants.", risque: "Une personne qui ne voit pas le danger." }
+    },
+    decision: { q: "Tu vois une flaque au sol sans panneau, et un collègue passe avec un chariot. Que fais-tu ?", a: ["Je continue, il fera attention", "Je pose un cône ou un panneau et je préviens la hiérarchie", "Je passe la serpillière plus tard"], c: 1, e: "On balise d'abord pour protéger le passage, puis on nettoie et on prévient la hiérarchie." }
+  },
+  {
+    titre: "8. Manutention",
+    intro: "Un rayon doit être réapprovisionné. Repère les gestes et les risques.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Réapprovisionnement d'un rayon">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect y="172" width="320" height="28" fill="#c5cad1"/>
+<rect x="20" y="30" width="4" height="142" fill="#55606c"/>
+<rect x="110" y="30" width="4" height="142" fill="#55606c"/>
+<rect x="20" y="30" width="94" height="4" fill="#55606c"/>
+<rect x="20" y="90" width="94" height="4" fill="#55606c"/>
+<g class="hs" data-id="haut" tabindex="0" role="button" aria-label="Charge placée trop haut">
+<rect x="28" y="36" width="78" height="40" fill="transparent"/>
+<rect x="34" y="42" width="30" height="28" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+</g>
+<circle cx="200" cy="100" r="9" fill="#f0c08a"/>
+<rect x="190" y="110" width="20" height="40" rx="3" fill="#2a78d6"/>
+<g class="hs" data-id="seul" tabindex="0" role="button" aria-label="Charge lourde portée seul">
+<rect x="160" y="128" width="50" height="34" fill="transparent"/>
+<rect x="164" y="132" width="42" height="28" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+</g>
+<g class="hs" data-id="gants" tabindex="0" role="button" aria-label="Gants absents">
+<rect x="206" y="124" width="26" height="22" fill="transparent"/>
+<rect x="208" y="128" width="20" height="12" rx="3" fill="#f0c08a"/>
+</g>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Rayon : repère les gestes et les risques</text>
+</svg>`,
+    dangers: {
+      seul: { nom: "Charge lourde portée seul", regle: "Pour une charge lourde, il faut demander de l'aide ou utiliser un moyen mécanique.", risque: "Lombalgie, accident de manutention." },
+      gants: { nom: "Gants de protection absents", regle: "Les gants adaptés doivent être disponibles et portés lors des manutentions.", risque: "Coupures et écrasements des doigts." },
+      haut: { nom: "Charge placée trop haut", regle: "Les charges lourdes se rangent à hauteur d'épaule ou plus bas, pour éviter de forcer.", risque: "Chute de la charge ou effort dangereux." }
+    },
+    decision: { q: "Une charge lourde doit être déplacée, et un collègue propose de la porter seul pour gagner du temps. Que fais-tu ?", a: ["Je la porte seul, on gagne du temps", "Je demande de l'aide ou un engin, et je mets mes gants", "Je la laisse là pour plus tard"], c: 1, e: "Demander de l'aide ou un engin évite les lombalgies et les accidents." }
+  }
+);
+
+// ---- Décisions « terrain » des scènes 1 à 6 (la bonne réponse est mélangée à l'affichage) ----
+const DECISIONS_TERRAIN = [
   { q: "Le frein d'un chariot tire d'un côté, et ton chef te demande de finir la tournée. Que fais-tu ?", a: ["Je finis prudemment, le frein tiendra", "Je signale le défaut et je mets l'engin hors service", "Je change d'engin sans prévenir personne"], c: 1, e: "Un engin défectueux se signale et se met hors service. Changer d'engin sans prévenir laisse le défaut en place." },
-  { q: "Tu vois un collègue marcher sur la voie d'un chariot qui approche, et le conducteur a le nez sur son écran. Que fais-tu ?", a: ["Je continue, il va bien se pousser", "J'interpelle le collègue et je préviens le conducteur", "Je ne dis rien, ce n'est pas mon affaire"], c: 1, e: "Le conducteur ne voit pas toujours une personne à pied. Interpeller et prévenir évite la collision." },
+  { q: "Tu vois un collègue marcher sur la voie d'un chariot qui approche, et le conducteur regarde son écran. Que fais-tu ?", a: ["Je continue, il va bien se pousser", "J'interpelle le collègue et je préviens le conducteur", "Je ne dis rien, ce n'est pas mon affaire"], c: 1, e: "Le conducteur ne voit pas toujours une personne à pied. Interpeller et prévenir évite la collision." },
   { q: "Le chauffeur te fait signe d'avancer alors qu'un collègue est encore entre le camion et le quai. Le planning est serré. Que fais-tu ?", a: ["J'avance, le planning est serré", "Je ne bouge pas, je fais signe et j'attends que la zone soit libre", "Je démarre sans regarder"], c: 1, e: "Une zone de manœuvre doit être dégagée avant tout mouvement, même quand le planning presse." },
   { q: "Ton chariot tombe en panne à côté d'une allée, et ta fin de poste approche. Le collègue suivant attend. Que fais-tu ?", a: ["Je le laisse là, le collègue s'en occupera", "Je le sécurise (fourches baissées, clé retirée) et je préviens ma hiérarchie", "Je le pousse à la main jusqu'à la zone de charge"], c: 1, e: "Sécuriser l'engin et prévenir la hiérarchie protège le collègue suivant et les autres." },
   { q: "Le chauffeur veut partir alors que la charge n'est pas sanglée, il est déjà en retard. Que fais-tu ?", a: ["Je le laisse partir, c'est son problème", "Je lui demande de sangler la charge avant de partir", "Je ne dis rien, ce n'est pas mon rôle"], c: 1, e: "Une charge non sanglée peut tomber sur la route ou sur une personne au déchargement." },
   { q: "Un collègue te demande de l'aider à changer une ampoule en haut d'un rayon, sans attendre l'équipe sécurité. Que fais-tu ?", a: ["Je le tiens par le bas de l'échelle pendant qu'il monte", "Je lui propose un moyen d'accès stable et je préviens le responsable", "Je monte moi-même sur une palette"], c: 1, e: "Un moyen d'accès stable et adapté évite la chute. La rapidité ne vaut pas un accident." }
 ];
-JEU_SCENES.forEach((sc, i) => { if(JEU_DECISIONS_TERRAIN[i]) sc.decision = JEU_DECISIONS_TERRAIN[i]; });
+JEU_SCENES.forEach((sc, i) => { if(DECISIONS_TERRAIN[i]) sc.decision = DECISIONS_TERRAIN[i]; });
 
-// Affichage d'un message dans la zone de règles
+// ---- Style de l'animation de réussite ----
+(function(){
+  const st = document.createElement("style");
+  st.textContent = "@keyframes jeuFlash{0%{filter:none}50%{filter:drop-shadow(0 0 10px #2e7d32)}100%{filter:none}} .hs.flash{animation:jeuFlash .6s ease 2}";
+  document.head.appendChild(st);
+})();
+
+// ---- Variables ----
+const JEU_BEST_KEY = "sudMissionBest";
+const JEU_DEFI_PREFIX = "sudDefi_";
+const JEU_MODES = ["normal", "entrainement", "defi"];
+const JEU_MODE_LABEL = { normal: "🎯 Normal", entrainement: "🎓 Entraînement", defi: "📅 Défi du jour" };
+let jeuMode = "normal";
+let jeuChrono = false;
+let jeuSon = localStorage.getItem("sudJeuSon") !== "0";
+let jeuOrdre = [], jeuIdx = 0, jeuScore = 0, jeuErreurs = 0, jeuOublis = [];
+let jeuTrouves = [], jeuFini = false, jeuChoisi = false, jeuDebut = 0, jeuTimer = null;
+
+function scEnCours(){ return JEU_SCENES[jeuOrdre[jeuIdx]]; }
+function jeuEnCours(){ return jeuIdx > 0 || jeuTrouves.length > 0 || jeuChoisi; }
+function jeuDateDuJour(){ const d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+
+// Défi du jour : même tirage pour tout le monde ce jour-là
+function jeuAleatoire(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function jeuOrdreDefi(){
+  const d = new Date();
+  const rnd = jeuAleatoire(d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate());
+  const idx = JEU_SCENES.map((_, i) => i);
+  for(let i = idx.length - 1; i > 0; i--){
+    const j = Math.floor(rnd() * (i + 1));
+    [idx[i], idx[j]] = [idx[j], idx[i]];
+  }
+  return idx.slice(0, 6);
+}
+
+// Son court (bip) à chaque réussite
+function jeuBip(freq){
+  if(!jeuSon) return;
+  try{
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new Ctx();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.value = freq || 880;
+    g.gain.value = 0.12;
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.15);
+  }catch(e){}
+}
+
+// Messages dans la zone d'explication
 function jeuMessage(html, erreur){
   const r = $("jeu-regle");
   r.innerHTML = html;
   r.style.borderLeftColor = erreur ? "var(--acc)" : "var(--blue)";
   r.hidden = false;
 }
+function jeuAjouter(html){
+  const r = $("jeu-regle");
+  r.innerHTML += "<br><br>" + html;
+  r.hidden = false;
+}
 
-// 5/6. Barre de réglages (mode entraînement et chrono)
-function jeuBarreOptions(){
-  let bar = $("jeu-options");
-  if(!bar){
-    bar = document.createElement("div");
+// Barre de réglages (mode, chrono, son) et ligne de statut
+function jeuBarre(){
+  if(!$("jeu-options")){
+    const bar = document.createElement("div");
     bar.id = "jeu-options";
     bar.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0";
+    const style = "width:auto;margin:0;padding:8px 12px;min-height:0;font-size:.85rem;background:var(--bg);color:var(--ink);box-shadow:none;border:2px solid var(--blue)";
     bar.innerHTML =
-      '<button id="jeu-btn-mode" onclick="jeuToggleMode()" style="width:auto;margin:0;padding:8px 12px;min-height:0;font-size:.85rem;background:var(--bg);color:var(--ink);box-shadow:none;border:2px solid var(--blue)"></button>' +
-      '<button id="jeu-btn-chrono" onclick="jeuToggleChrono()" style="width:auto;margin:0;padding:8px 12px;min-height:0;font-size:.85rem;background:var(--bg);color:var(--ink);box-shadow:none;border:2px solid var(--blue)"></button>';
+      '<button id="jeu-btn-mode" onclick="jeuChangerMode()" style="' + style + '"></button>' +
+      '<button id="jeu-btn-chrono" onclick="jeuChangerChrono()" style="' + style + '"></button>' +
+      '<button id="jeu-btn-son" onclick="jeuChangerSon()" style="' + style + '"></button>';
     $("jeu-zone").before(bar);
-  }
-  $("jeu-btn-mode").textContent = jeuMode === "entrainement" ? "🎓 Entraînement : ON" : "🎓 Entraînement : OFF";
-  $("jeu-btn-chrono").textContent = jeuChrono ? "⏱️ Chrono : ON" : "⏱️ Chrono : OFF";
-}
-function jeuToggleMode(){
-  if(jeuIdx > 0 || jeuTrouves.length > 0){
-    if(!confirm("Changer ce réglage recommence le jeu. Continuer ?")) return;
-  }
-  jeuMode = jeuMode === "score" ? "entrainement" : "score";
-  jeuLancer();
-}
-function jeuToggleChrono(){
-  if(jeuIdx > 0 || jeuTrouves.length > 0){
-    if(!confirm("Changer ce réglage recommence le jeu. Continuer ?")) return;
-  }
-  jeuChrono = !jeuChrono;
-  jeuLancer();
-}
-
-// 1. Compteur de dangers restants et chronomètre
-function jeuStatut(){
-  let st = $("jeu-statut");
-  if(!st){
-    st = document.createElement("p");
+    const st = document.createElement("p");
     st.id = "jeu-statut";
     st.className = "note";
     $("jeu-zone").before(st);
   }
-  return st;
+  $("jeu-btn-mode").textContent = JEU_MODE_LABEL[jeuMode];
+  $("jeu-btn-chrono").textContent = jeuChrono ? "⏱️ Chrono : ON" : "⏱️ Chrono : OFF";
+  $("jeu-btn-son").textContent = jeuSon ? "🔊 Son : ON" : "🔇 Son : OFF";
+}
+function jeuChangerMode(){
+  if(jeuEnCours() && !confirm("Changer de mode recommence le jeu. Continuer ?")) return;
+  jeuMode = JEU_MODES[(JEU_MODES.indexOf(jeuMode) + 1) % JEU_MODES.length];
+  jeuLancer();
+}
+function jeuChangerChrono(){
+  if(jeuEnCours() && !confirm("Changer ce réglage recommence le jeu. Continuer ?")) return;
+  jeuChrono = !jeuChrono;
+  jeuLancer();
+}
+function jeuChangerSon(){
+  jeuSon = !jeuSon;
+  localStorage.setItem("sudJeuSon", jeuSon ? "1" : "0");
+  jeuBarre();
 }
 function jeuMajStatut(){
-  const sc = JEU_SCENES[jeuIdx];
-  const restants = Object.keys(sc.dangers).length - jeuTrouves.length;
+  const restants = Object.keys(scEnCours().dangers).length - jeuTrouves.length;
   let txt = "🔎 Dangers restants : " + restants;
   if(jeuChrono && !jeuFini) txt += " · ⏱️ " + Math.floor((Date.now() - jeuDebut) / 1000) + " s";
-  jeuStatut().textContent = txt;
+  $("jeu-statut").textContent = txt;
 }
 function jeuArreterChrono(){ clearInterval(jeuTimer); jeuTimer = null; }
-function jeuDemarrerChrono(){
-  jeuArreterChrono();
-  jeuDebut = Date.now();
-  jeuTimer = setInterval(jeuMajStatut, 1000);
+
+function meilleurAffiche(){
+  if(jeuMode === "defi") return localStorage.getItem(JEU_DEFI_PREFIX + jeuDateDuJour()) || 0;
+  if(jeuMode === "entrainement") return "—";
+  return localStorage.getItem(JEU_BEST_KEY) || 0;
 }
 
 function jeuLancer(){
+  jeuOrdre = jeuMode === "defi" ? jeuOrdreDefi() : JEU_SCENES.map((_, i) => i);
   jeuIdx = 0; jeuScore = 0; jeuErreurs = 0; jeuOublis = []; jeuFini = false;
-  jeuArreterChrono();
   document.querySelectorAll("#jeu-badges .badge").forEach(b => b.classList.remove("obtenu"));
   $("jeu-fin").hidden = true;
   jeuAfficher();
 }
 
 function jeuAfficher(){
-  const sc = JEU_SCENES[jeuIdx];
+  const sc = scEnCours();
   jeuTrouves = []; jeuFini = false; jeuChoisi = false;
-  $("jeu-scene").textContent = (jeuIdx + 1) + " / " + JEU_SCENES.length;
+  jeuBarre();
+  $("jeu-scene").textContent = (jeuIdx + 1) + " / " + jeuOrdre.length;
   $("jeu-score").textContent = jeuScore;
-  $("jeu-best").textContent = jeuMode === "score" ? (localStorage.getItem(JEU_BEST_KEY) || 0) : "—";
-  jeuBarreOptions();
+  $("jeu-best").textContent = meilleurAffiche();
   $("jeu-zone").innerHTML = '<p style="font-weight:700;margin:0 0 4px 0">' + sc.titre + '</p><p style="font-size:.9rem;color:var(--mute);margin:0 0 8px 0">' + sc.intro + '</p>' + sc.svg;
-
-  // 6. En mode entraînement, les règles de la scène sont affichées dès le départ
   if(jeuMode === "entrainement"){
     jeuMessage("<strong>🎓 Règles de cette scène :</strong>" + Object.values(sc.dangers).map(d => "<br>• <strong>" + d.nom + "</strong> : " + d.regle).join(""), false);
   } else {
@@ -1957,82 +2074,87 @@ function jeuAfficher(){
   $("jeu-decision").innerHTML = "";
   $("jeu-suite").hidden = true;
   $("jeu-bilan").hidden = false;
+  $("jeu-bilan").textContent = "✋ J'ai fini de chercher";
   $("jeu-fin").hidden = true;
-
+  jeuArreterChrono();
+  if(jeuChrono){ jeuDebut = Date.now(); jeuTimer = setInterval(jeuMajStatut, 1000); }
   jeuMajStatut();
-  if(jeuChrono) jeuDemarrerChrono(); else jeuArreterChrono();
 }
 
-// 2. Retour sur les zones sans danger
+// Clic sur la scène
 function jeuClic(e){
   if(jeuFini) return;
-  const sc = JEU_SCENES[jeuIdx];
+  const sc = scEnCours();
   const hs = e.target.closest(".hs");
   if(!hs){
     if(e.target.closest("svg")) jeuMessage("👀 Rien à signaler ici. Continue de chercher.", false);
     return;
   }
-  const id = hs.dataset.id;
-  const d = sc.dangers[id];
-  if(!d){
-    jeuErreurs++;
-    jeuMessage("⚠️ Ce n'est pas un danger. Rien à signaler ici.", true);
-    return;
-  }
-  if(jeuTrouves.indexOf(id) !== -1){
-    jeuMessage("✅ Déjà repéré, continue de chercher.", false);
-    return;
-  }
+  const id = hs.dataset.id, d = sc.dangers[id];
+  if(!d){ jeuErreurs++; jeuMessage("⚠️ Ce n'est pas un danger. Rien à signaler ici.", true); return; }
+  if(jeuTrouves.indexOf(id) !== -1){ jeuMessage("✅ Déjà repéré, continue de chercher.", false); return; }
+
   jeuTrouves.push(id);
-  hs.classList.add("trouve");
+  hs.classList.add("trouve", "flash");
   jeuScore += 10;
   $("jeu-score").textContent = jeuScore;
-  if(jeuMode === "score"){
-    const badge = document.querySelector('#jeu-badges .badge[data-badge="premier"]');
-    if(badge) badge.classList.add("obtenu");
+  jeuBip(990);
+  if(jeuMode !== "entrainement"){
+    const b = document.querySelector('#jeu-badges .badge[data-badge="premier"]');
+    if(b) b.classList.add("obtenu");
   }
   jeuMessage("<strong>✅ " + d.nom + "</strong><br>" + d.regle + "<br><em>Risque évité : " + d.risque + "</em>", false);
   jeuMajStatut();
-  if(jeuTrouves.length === Object.keys(sc.dangers).length) jeuBilan();
+
+  // Toutes les zones trouvées : l'explication reste affichée, le bouton passe à la question
+  if(jeuTrouves.length === Object.keys(sc.dangers).length){
+    $("jeu-bilan").textContent = "➡️ Question de décision";
+    jeuAjouter("🎉 Toutes les zones sont repérées. Appuie sur le bouton pour répondre à la question.");
+  }
 }
 $("jeu-zone").addEventListener("click", jeuClic);
 
-// Accessibilité clavier (Entrée ou Espace sur une zone)
 document.addEventListener("keydown", e => {
   if(e.key !== "Enter" && e.key !== " ") return;
   const hs = document.activeElement && document.activeElement.closest ? document.activeElement.closest(".hs") : null;
   if(hs && !$("jeu").hidden){ e.preventDefault(); hs.click(); }
 });
 
-// 3. Bilan de la scène avec la liste des oublis
+// Fin de la recherche sur la scène : oublis, puis question de décision
 function jeuBilan(){
   if(jeuFini) return;
   jeuFini = true;
   jeuArreterChrono();
-  const sc = JEU_SCENES[jeuIdx];
+  const sc = scEnCours();
   const manques = Object.keys(sc.dangers).filter(id => jeuTrouves.indexOf(id) === -1);
   manques.forEach(id => jeuOublis.push("scène " + (jeuIdx + 1) + " : " + sc.dangers[id].nom));
   document.querySelectorAll("#jeu-zone .hs").forEach(el => {
     if(manques.indexOf(el.dataset.id) !== -1) el.classList.add("rate");
   });
-  let html;
   if(manques.length){
-    html = "<strong>⚠️ Dangers que tu n'as pas repérés :</strong>";
+    let html = "<strong>⚠️ Dangers que tu n'as pas repérés :</strong>";
     manques.forEach(id => {
       const d = sc.dangers[id];
       html += "<br><br><strong>" + d.nom + "</strong> : " + d.regle + "<br><em>Risque : " + d.risque + "</em>";
     });
-  } else {
-    html = "<strong>🎉 Tu as repéré tous les dangers de cette scène !</strong>";
+    jeuAjouter(html);
+    $("jeu-regle").style.borderLeftColor = "var(--acc)";
   }
-  jeuMessage(html, manques.length > 0);
+  jeuAfficherDecision();
+}
 
-  const dec = sc.decision, box = $("jeu-decision");
+// Question de décision : réponses mélangées à chaque affichage
+function jeuAfficherDecision(){
+  const dec = scEnCours().decision;
+  const melange = dec.a.map((t, i) => ({ t, ok: i === dec.c })).sort(() => Math.random() - 0.5);
+  const box = $("jeu-decision");
   box.innerHTML = '<p style="font-weight:700;margin:0 0 8px 0">🤔 ' + dec.q + '</p>';
-  dec.a.forEach((t, i) => {
+  melange.forEach(o => {
     const b = document.createElement("button");
-    b.className = "opt"; b.textContent = t;
-    b.onclick = () => jeuChoisir(i, b);
+    b.className = "opt";
+    b.textContent = o.t;
+    b.dataset.ok = o.ok ? "1" : "0";
+    b.onclick = () => jeuChoisir(o.ok, b);
     box.appendChild(b);
   });
   box.hidden = false;
@@ -2040,38 +2162,32 @@ function jeuBilan(){
   jeuMajStatut();
 }
 
-function jeuChoisir(i, btn){
+function jeuChoisir(ok, btn){
   if(jeuChoisi) return;
   jeuChoisi = true;
-  const dec = JEU_SCENES[jeuIdx].decision;
-  document.querySelectorAll("#jeu-decision button").forEach((b, k) => {
+  document.querySelectorAll("#jeu-decision button").forEach(b => {
     b.disabled = true;
-    if(k === dec.c) b.classList.add("ok");
+    if(b.dataset.ok === "1") b.classList.add("ok");
   });
-  if(i === dec.c){
-    jeuScore += 10;
-  } else {
-    jeuErreurs++;
-    btn.classList.add("ko");
-  }
+  if(ok){ jeuScore += 10; jeuBip(1320); }
+  else { jeuErreurs++; btn.classList.add("ko"); }
   $("jeu-score").textContent = jeuScore;
   const p = document.createElement("p");
   p.style.margin = "10px 0 0 0";
-  p.innerHTML = "<strong>💡 " + (i === dec.c ? "Bonne décision. " : "Pas tout à fait. ") + "</strong>" + dec.e;
+  p.innerHTML = "<strong>💡 " + (ok ? "Bonne décision. " : "Pas tout à fait. ") + "</strong>" + scEnCours().decision.e;
   $("jeu-decision").appendChild(p);
-  $("jeu-suite").textContent = jeuIdx === JEU_SCENES.length - 1 ? "🏁 Voir mon résultat" : "Scène suivante ➡️";
+  $("jeu-suite").textContent = jeuIdx === jeuOrdre.length - 1 ? "🏁 Voir mon résultat" : "Scène suivante ➡️";
   $("jeu-suite").hidden = false;
 }
 
-// 3 + 7. Fin de partie : récapitulatif, badges et « Sans faute » réel
+// Fin de partie : récapitulatif, badges, record (normal ou du jour)
 function jeuFinir(){
-  const max = JEU_SCENES.reduce((s, sc) => s + (Object.keys(sc.dangers).length + 1) * 10, 0);
+  const max = jeuOrdre.reduce((s, i) => s + (Object.keys(JEU_SCENES[i].dangers).length + 1) * 10, 0);
   const pct = Math.round(jeuScore / max * 100);
-  const entrainement = jeuMode === "entrainement";
-  let prev = +(localStorage.getItem(JEU_BEST_KEY) || 0);
-
-  if(!entrainement){
-    if(jeuScore > prev) localStorage.setItem(JEU_BEST_KEY, jeuScore);
+  const cle = jeuMode === "defi" ? JEU_DEFI_PREFIX + jeuDateDuJour() : JEU_BEST_KEY;
+  const prev = +(localStorage.getItem(cle) || 0);
+  if(jeuMode !== "entrainement"){
+    if(jeuScore > prev) localStorage.setItem(cle, jeuScore);
     if(pct >= 50){ const b = document.querySelector('#jeu-badges .badge[data-badge="moitie"]'); if(b) b.classList.add("obtenu"); }
     if(pct >= 90){ const b = document.querySelector('#jeu-badges .badge[data-badge="gardien"]'); if(b) b.classList.add("obtenu"); }
     if(jeuOublis.length === 0 && jeuErreurs === 0){
@@ -2079,30 +2195,28 @@ function jeuFinir(){
       if(b){ b.classList.add("obtenu"); b.textContent = "🎯 Sans faute"; }
     }
   }
-
+  jeuArreterChrono();
   $("jeu-zone").innerHTML = "";
   ["jeu-regle", "jeu-decision", "jeu-suite", "jeu-bilan"].forEach(id => $(id).hidden = true);
-  if($("jeu-statut")) $("jeu-statut").textContent = "";
+  $("jeu-statut").textContent = "";
   $("jeu-badge").textContent = pct >= 90 ? "🛡️" : pct >= 60 ? "🌟" : "📚";
   $("jeu-titre").textContent = pct >= 90 ? "Gardien de la sécurité" : pct >= 60 ? "Vigilant, mais quelques angles morts" : "À revoir : la sécurité commence par l'observation";
-
   let res = "Score : " + jeuScore + " / " + max + " (" + pct + " %)";
-  if(entrainement) res += " · mode entraînement, score non enregistré";
-  else if(jeuScore > prev) res += " 🎊 Nouveau meilleur score !";
+  if(jeuMode === "entrainement") res += " · mode entraînement, score non enregistré";
+  else if(jeuScore > prev) res += " 🎊 Nouveau record" + (jeuMode === "defi" ? " du jour" : "") + " !";
   res += "<br><br><strong>Récapitulatif :</strong><br>";
   res += jeuOublis.length ? "Dangers oubliés : " + jeuOublis.join(", ") + "." : "Aucun danger oublié, bravo.";
   res += "<br>Erreurs : " + jeuErreurs;
   $("jeu-resultat").innerHTML = res;
   $("jeu-fin").hidden = false;
-  if(window.goatcounter) goatcounter.count({ path: "jeu-fini", title: "Jeu fini", event: true });
+  if(window.goatcounter) goatcounter.count({ path: "jeu-fini-" + jeuMode, event: true });
 }
 
 $("jeu-bilan").onclick = jeuBilan;
 $("jeu-suite").onclick = () => {
-  if(jeuIdx < JEU_SCENES.length - 1){ jeuIdx++; jeuAfficher(); }
+  if(jeuIdx < jeuOrdre.length - 1){ jeuIdx++; jeuAfficher(); }
   else jeuFinir();
 };
-
 
 // ==== ASSISTANT INFORMATIF ====
 $("ia-btn").onclick = async () => {
