@@ -135,6 +135,50 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 .jd-scenario-choix button.ok{background:var(--success);color:#fff;border-color:var(--success)}
 .jd-scenario-choix button.ko{background:var(--acc);color:#fff;border-color:var(--acc)}
 .jd-scenario-feedback{margin-top:12px;padding:12px;background:var(--bg);border-left:4px solid var(--blue);border-radius:6px;text-align:left;font-size:.95rem}
+/* ==== EFFET VISUEL POUR ATTIRER L'ŒIL SUR LE JEU ==== */
+.card-jeu-attire {
+  border: 3px solid transparent;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              linear-gradient(45deg, #004aad, #c8102e, #ffcc00, #2e7d32, #004aad) border-box;
+  background-size: 100% 100%, 300% 300%;
+  animation: bordureArcEnCiel 4s ease infinite;
+  box-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
+  position: relative;
+}
+@keyframes bordureArcEnCiel {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.btn-attire {
+  animation: pulseBouton 2s infinite;
+  background: linear-gradient(135deg, #ffcc00, #ff9900) !important;
+  color: #000 !important;
+  font-size: 1.1rem !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+}
+@keyframes pulseBouton {
+  0% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(255, 204, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
+}
+.legende-profils {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+.legende-item {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 99px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -301,12 +345,18 @@ body.grand{font-size:19px}
     <button id="sit-retour" onclick="sitRetour()" hidden style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue);">⬅️ Retour aux catégories</button>
   </div>
 
-  <!-- ============================================================ -->
-  <!-- JEU — TON QUOTIDIEN (remplace les 6 SVG)                     -->
-  <!-- ============================================================ -->
-  <div class="card" style="padding:16px;">
-    <h2 style="border:none; margin:0 0 10px 0; padding:0;">🎯 Ton quotidien</h2>
-    <p style="font-size:.9rem; color:var(--mute); margin:0 0 12px 0;">Réponds à 4 questions, découvre ton profil, et vois ce que le syndicat peut faire pour toi. Anonyme.</p>
+  <!-- JEU — TON QUOTIDIEN -->
+  <div class="card card-jeu-attire" style="padding:16px;">
+    <h2 style="border:none; margin:0 0 6px 0; padding:0; color:#c8102e; font-size:1.4rem; text-align:center;">🎯 Ton quotidien</h2>
+    
+    <p style="text-align:center; font-size:.9rem; color:var(--ink); margin:0 0 8px 0;">Découvre ton profil et les solutions du syndicat.</p>
+    <div class="legende-profils">
+      <span class="legende-item" style="color:#c8102e;">🔴 Le pressé (cadence)</span>
+      <span class="legende-item" style="color:#eb6834;">🟠 L'épuisé (horaires)</span>
+      <span class="legende-item" style="color:#b8860b;">🟡 L'inquiet (sécurité)</span>
+      <span class="legende-item" style="color:#2e7d32;">🟢 Le seul (ambiance)</span>
+      <span class="legende-item" style="color:#004aad;">🔵 Le révolté (salaire)</span>
+    </div>
 
     <div id="jd-accueil">
       <div id="jd-dernier-bilan-box" style="display:none; background:var(--bg); border-left:4px solid var(--success); padding:12px; border-radius:8px; margin-bottom:12px;">
@@ -314,8 +364,8 @@ body.grand{font-size:19px}
         <p style="margin:0 0 8px 0; font-size:.9rem;">Profil : <strong id="jd-dernier-profil"></strong></p>
         <button onclick="jdVoirDernierBilan()" style="background:var(--success); margin-top:0;">👁️ Voir mon dernier bilan</button>
       </div>
-      <button onclick="jdCommencer()">🚀 Commencer le jeu</button>
-      <p class="note" style="margin-top:12px;">⏱️ 2 minutes · 🔒 Anonyme · 📱 Sans inscription</p>
+      <button class="btn-attire" onclick="jdCommencer()">🚀 Commencer le jeu (2 min)</button>
+      <p class="note" style="margin-top:12px;">🔒 Anonyme · 📱 Sans inscription</p>
     </div>
 
     <div id="jd-questions" hidden>
@@ -860,7 +910,7 @@ const LEGI = "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050
 const $ = id => document.getElementById(id);
 
 // ==== JEU QUOTIDIEN ====
-const JD_FORMSPREE = "https://formspree.io/f/xwlovwav"; // <-- CORRIGÉ ICI
+const JD_FORMSPREE = "https://formspree.io/f/xwlovwav"; 
 const JD_KEY = "sudJeuQuotidien";
 
 const JD_PROFILS = {
@@ -871,76 +921,77 @@ const JD_PROFILS = {
   salaire:  { nom: "Le révolté", emoji: "🔵", titre: "Tu es Le révolté", couleur: "#004aad" }
 };
 
+// J'ai mélangé les positions des bonnes réponses pour que ce ne soit pas toujours la 3ème
 const JD_SCENARIOS = {
   cadence: [
     { question: "Ce matin, ton chef te dit : « On a 20 palettes de plus, pas de pause aujourd'hui. » Que fais-tu ?",
       choix: ["Je saute ma pause, je ne veux pas d'histoires", "Je prends ma pause quand même, c'est mon droit", "Je préviens le CSE que la pause n'est pas respectée"],
-      bonne: 1,
+      bonne: 1, // 2ème bouton
       explications: ["❌ Tu accumules de la fatigue, et personne ne sait que tu as un problème.", "✅ Bravo. La pause de 20 minutes est obligatoire au-delà de 6h de travail.", "✅ Excellent. Le CSE peut intervenir pour faire respecter le droit."] },
     { question: "Ton chef te demande de rester 30 minutes après l'heure pour finir la commande. « On te rattrapera. » Que fais-tu ?",
       choix: ["Je reste, ça arrange tout le monde", "Je reste, mais je note mes heures", "Je refuse, je finis à l'heure prévue"],
-      bonne: 1,
+      bonne: 2, // 3ème bouton
       explications: ["❌ Le temps de travail effectif doit être payé. Sans trace, tu ne pourras pas réclamer.", "✅ Bien. Note les dates et heures, et demande une régularisation écrite.", "✅ Bien. Ton contrat prévoit des horaires, tu peux refuser les heures supplémentaires non prévues."] },
     { question: "La cadence augmente chaque semaine. Tu tiens, mais tu sens que ça ne va pas durer. Que fais-tu ?",
-      choix: ["Je tiens, je ne dis rien", "Je dis à mon chef que c'est trop", "Je demande un rendez-vous avec le CSE"],
-      bonne: 2,
-      explications: ["❌ Le silence laisse la cadence augmenter. Les accidents arrivent quand on est épuisé.", "✅ Bien. Dire les choses, c'est la première étape.", "✅ Excellent. Le CSE peut demander un audit des cadences."] }
+      choix: ["Je tiens, je ne dis rien", "Je demande un rendez-vous avec le CSE", "Je dis à mon chef que c'est trop"],
+      bonne: 1, // 2ème bouton (CSE)
+      explications: ["❌ Le silence laisse la cadence augmenter. Les accidents arrivent quand on est épuisé.", "✅ Excellent. Le CSE peut demander un audit des cadences.", "✅ Bien. Dire les choses, c'est la première étape."] }
   ],
   horaires: [
     { question: "Ton planning de la semaine prochaine arrive le dimanche soir. Tu avais prévu quelque chose. Que fais-tu ?",
-      choix: ["Je m'adapte, ce n'est pas grave", "Je demande un délai de prévenance plus long", "Je préviens le CSE que les plannings arrivent trop tard"],
-      bonne: 2,
-      explications: ["❌ Tu ne pourras jamais organiser ta vie personnelle.", "✅ Bien. La convention collective prévoit souvent un délai de prévenance.", "✅ Excellent. Le CSE peut négocier un délai minimum."] },
+      choix: ["Je préviens le CSE que les plannings arrivent trop tard", "Je m'adapte, ce n'est pas grave", "Je demande un délai de prévenance plus long"],
+      bonne: 0, // 1er bouton (CSE)
+      explications: ["✅ Excellent. Le CSE peut négocier un délai minimum.", "❌ Tu ne pourras jamais organiser ta vie personnelle.", "✅ Bien. La convention collective prévoit souvent un délai de prévenance."] },
     { question: "Tu es du matin cette semaine, de l'après-midi la semaine prochaine, de nuit la suivante. Tu ne sais jamais à quelle heure tu finis. Que fais-tu ?",
-      choix: ["Je m'adapte, c'est le métier", "Je demande un planning fixe", "Je demande au CSE de négocier des horaires plus stables"],
-      bonne: 2,
-      explications: ["❌ L'alternance permanente fatigue et désorganise la vie.", "✅ Bien. Un planning fixe est possible dans beaucoup d'entrepôts.", "✅ Excellent. Le CSE peut porter cette demande collectivement."] },
+      choix: ["Je demande un planning fixe", "Je m'adapte, c'est le métier", "Je demande au CSE de négocier des horaires plus stables"],
+      bonne: 2, // 3ème bouton
+      explications: ["✅ Bien. Un planning fixe est possible dans beaucoup d'entrepôts.", "❌ L'alternance permanente fatigue et désorganise la vie.", "✅ Excellent. Le CSE peut porter cette demande collectivement."] },
     { question: "Ton chef t'annonce que tu feras 2 heures supplémentaires tous les soirs cette semaine. « C'est obligatoire. » Que fais-tu ?",
-      choix: ["J'accepte, je n'ai pas le choix", "Je demande si c'est prévu par mon contrat", "Je préviens le CSE que les heures supplémentaires sont imposées sans préavis"],
-      bonne: 2,
-      explications: ["❌ Les heures supplémentaires ont des limites (contingent annuel).", "✅ Bien. Vérifie ton contrat et le contingent annuel.", "✅ Excellent. Le CSE peut vérifier si les règles sont respectées."] }
+      choix: ["Je préviens le CSE que les heures supplémentaires sont imposées sans préavis", "J'accepte, je n'ai pas le choix", "Je demande si c'est prévu par mon contrat"],
+      bonne: 0, // 1er bouton (CSE)
+      explications: ["✅ Excellent. Le CSE peut vérifier si les règles sont respectées.", "❌ Les heures supplémentaires ont des limites (contingent annuel).", "✅ Bien. Vérifie ton contrat et le contingent annuel."] }
   ],
   securite: [
     { question: "Ton chariot a un frein qui tire d'un côté. Tu dois commencer ta tournée. Que fais-tu ?",
-      choix: ["Je l'utilise prudemment", "Je signale le défaut et je ne l'utilise pas", "Je le répare moi-même vite fait"],
-      bonne: 1,
-      explications: ["❌ Un engin défectueux peut causer un accident grave.", "✅ Bravo. Un engin défectueux se signale et se met hors service.", "❌ Tu n'es pas mécanicien, et l'engin doit être consigné."] },
+      choix: ["Je l'utilise prudemment", "Je le répare moi-même vite fait", "Je signale le défaut et je ne l'utilise pas"],
+      bonne: 2, // 3ème bouton
+      explications: ["❌ Un engin défectueux peut causer un accident grave.", "❌ Tu n'es pas mécanicien, et l'engin doit être consigné.", "✅ Bravo. Un engin défectueux se signale et se met hors service."] },
     { question: "Tu vois un collègue travailler sans casque dans une zone où circulent des engins. Que fais-tu ?",
-      choix: ["Je ne dis rien, ce n'est pas mon affaire", "Je lui dis de mettre son casque", "Je préviens le CSE"],
-      bonne: 2,
-      explications: ["❌ Le silence laisse le danger s'installer.", "✅ Bien. Un rappel entre collègues peut suffire.", "✅ Excellent. Le CSE peut faire un rappel collectif."] },
+      choix: ["Je lui dis de mettre son casque", "Je ne dis rien, ce n'est pas mon affaire", "Je préviens le CSE"],
+      bonne: 0, // 1er bouton
+      explications: ["✅ Bien. Un rappel entre collègues peut suffire.", "❌ Le silence laisse le danger s'installer.", "✅ Excellent. Le CSE peut faire un rappel collectif."] },
     { question: "Une palette déborde sur l'allée de circulation des engins. Personne ne l'a enlevée. Que fais-tu ?",
-      choix: ["Je passe à côté, ça va", "Je signale l'encombrement à mon chef", "Je dégage l'allée moi-même"],
-      bonne: 1,
-      explications: ["❌ Une palette qui déborde peut accrocher un engin ou tomber.", "✅ Bien. Signaler, c'est déjà protéger.", "⚠️ Attention, ne te mets pas en danger. Signale plutôt."] }
+      choix: ["Je passe à côté, ça va", "Je dégage l'allée moi-même", "Je signale l'encombrement à mon chef"],
+      bonne: 2, // 3ème bouton
+      explications: ["❌ Une palette qui déborde peut accrocher un engin ou tomber.", "⚠️ Attention, ne te mets pas en danger. Signale plutôt.", "✅ Bien. Signaler, c'est déjà protéger."] }
   ],
   ambiance: [
     { question: "Un nouveau collègue est arrivé il y a 3 semaines. Personne ne lui parle vraiment. Il mange seul. Que fais-tu ?",
-      choix: ["Ce n'est pas mon problème", "Je vais lui parler à la pause", "J'en parle au CSE pour proposer un accueil des nouveaux"],
-      bonne: 2,
-      explications: ["❌ L'isolement est un vrai risque (mal-être, démission).", "✅ Bien. Un geste simple peut tout changer.", "✅ Excellent. Un accueil structuré évite les isolements."] },
+      choix: ["Je vais lui parler à la pause", "Ce n'est pas mon problème", "J'en parle au CSE pour proposer un accueil des nouveaux"],
+      bonne: 0, // 1er bouton
+      explications: ["✅ Bien. Un geste simple peut tout changer.", "❌ L'isolement est un vrai risque (mal-être, démission).", "✅ Excellent. Un accueil structuré évite les isolements."] },
     { question: "Deux collègues ne se parlent plus depuis une semaine. L'ambiance est tendue. Que fais-tu ?",
-      choix: ["Je reste à l'écart", "J'essaie de comprendre ce qui se passe", "Je préviens le CSE que l'ambiance se dégrade"],
-      bonne: 2,
-      explications: ["❌ Les tensions non dites explosent un jour.", "✅ Bien. Comprendre, c'est déjà apaiser.", "✅ Excellent. Le CSE peut proposer une médiation."] },
+      choix: ["Je reste à l'écart", "Je préviens le CSE que l'ambiance se dégrade", "J'essaie de comprendre ce qui se passe"],
+      bonne: 1, // 2ème bouton
+      explications: ["❌ Les tensions non dites explosent un jour.", "✅ Excellent. Le CSE peut proposer une médiation.", "✅ Bien. Comprendre, c'est déjà apaiser."] },
     { question: "Ton chef te parle mal devant les collègues. Ça fait plusieurs fois. Que fais-tu ?",
-      choix: ["Je ne dis rien, je ne veux pas d'histoires", "Je lui dis calmement que ça ne me convient pas", "Je préviens le CSE et je garde une trace écrite"],
-      bonne: 2,
-      explications: ["❌ Le manque de respect répété est du harcèlement.", "✅ Bien. Dire les choses, c'est un premier pas.", "✅ Excellent. Garde une trace (dates, mots), c'est important."] }
+      choix: ["Je lui dis calmement que ça ne me convient pas", "Je ne dis rien, je ne veux pas d'histoires", "Je préviens le CSE et je garde une trace écrite"],
+      bonne: 2, // 3ème bouton
+      explications: ["✅ Bien. Dire les choses, c'est un premier pas.", "❌ Le manque de respect répété est du harcèlement.", "✅ Excellent. Garde une trace (dates, mots), c'est important."] }
   ],
   salaire: [
     { question: "Tu devais toucher une prime ce mois-ci. Elle n'est pas sur ta fiche de paie. Que fais-tu ?",
-      choix: ["J'attends le mois prochain", "Je demande des explications à mon chef", "Je contacte le CSE pour vérifier mes droits"],
-      bonne: 2,
-      explications: ["❌ Sans réclamation, la prime peut être oubliée définitivement.", "✅ Bien. Demande une explication écrite.", "✅ Excellent. Le CSE peut faire le lien avec la direction."] },
+      choix: ["J'attends le mois prochain", "Je contacte le CSE pour vérifier mes droits", "Je demande des explications à mon chef"],
+      bonne: 1, // 2ème bouton
+      explications: ["❌ Sans réclamation, la prime peut être oubliée définitivement.", "✅ Excellent. Le CSE peut faire le lien avec la direction.", "✅ Bien. Demande une explication écrite."] },
     { question: "Tu as fait 10 heures supplémentaires ce mois-ci. Elles n'apparaissent pas sur ta fiche de paie. Que fais-tu ?",
       choix: ["Je ne dis rien, ça va passer", "Je note les heures et je demande une régularisation", "Je préviens le CSE que les heures ne sont pas payées"],
-      bonne: 2,
+      bonne: 2, // 3ème bouton
       explications: ["❌ Les heures non payées sont un manque à gagner réel.", "✅ Bien. Note tout par écrit.", "✅ Excellent. Le CSE peut vérifier les pointages."] },
     { question: "Tu apprends qu'un collègue qui fait le même travail que toi est payé 100 € de plus. Que fais-tu ?",
-      choix: ["Je ne dis rien, je ne veux pas créer de problèmes", "Je demande un entretien avec mon chef", "Je contacte le CSE pour vérifier l'égalité de traitement"],
-      bonne: 2,
-      explications: ["❌ L'inégalité non dite reste une injustice.", "✅ Bien. Demande une explication écrite.", "✅ Excellent. L'égalité de salaire est un droit."] }
+      choix: ["Je contacte le CSE pour vérifier l'égalité de traitement", "Je ne dis rien, je ne veux pas créer de problèmes", "Je demande un entretien avec mon chef"],
+      bonne: 0, // 1er bouton
+      explications: ["✅ Excellent. L'égalité de salaire est un droit.", "❌ L'inégalité non dite reste une injustice.", "✅ Bien. Demande une explication écrite."] }
   ]
 };
 
@@ -1101,6 +1152,10 @@ function jdAfficherBilan(){
   }).catch(() => {});
 
   if(window.goatcounter) goatcounter.count({ path: "jeu-quotidien-fini", event: true });
+  
+  // Retirer l'effet de bordure une fois au bilan
+  const cardJeu = document.querySelector(".card-jeu-attire");
+  if(cardJeu) cardJeu.classList.remove("card-jeu-attire");
 }
 
 function jdBilanSpecifique(profil){
