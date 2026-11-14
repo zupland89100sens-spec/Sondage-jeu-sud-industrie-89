@@ -335,7 +335,308 @@ body.grand{font-size:19px}
     <input type="text" id="recherche-droits" placeholder="🔎 Rechercher dans mes droits (ex : congés, arrêt maladie)" style="width:100%; padding:14px; border-radius:8px; border:2px solid var(--blue); font:inherit; background:var(--surface); color:var(--ink);">
   </div>
 
- <div class="card" style="padding:16px;">
+// ==== JEU QUOTIDIEN ====
+const JD_FORMSPREE = "https://formspree.io/f/https://formspree.io/f/xwlovwav"; // ← URL Formspree à créer (voir plus bas)
+const JD_KEY = "sudJeuQuotidien";
+
+const JD_PROFILS = {
+  cadence:  { nom: "Le pressé",  emoji: "🔴", titre: "Tu es Le pressé",  couleur: "#c8102e" },
+  horaires: { nom: "L'épuisé",   emoji: "🟠", titre: "Tu es L'épuisé",   couleur: "#eb6834" },
+  securite: { nom: "L'inquiet",  emoji: "🟡", titre: "Tu es L'inquiet",  couleur: "#b8860b" },
+  ambiance: { nom: "Le seul",    emoji: "🟢", titre: "Tu es Le seul",    couleur: "#2e7d32" },
+  salaire:  { nom: "Le révolté", emoji: "🔵", titre: "Tu es Le révolté", couleur: "#004aad" }
+};
+
+const JD_SCENARIOS = {
+  cadence: [
+    { question: "Ce matin, ton chef te dit : « On a 20 palettes de plus, pas de pause aujourd'hui. » Que fais-tu ?",
+      choix: ["Je saute ma pause, je ne veux pas d'histoires", "Je prends ma pause quand même, c'est mon droit", "Je préviens le CSE que la pause n'est pas respectée"],
+      bonne: 1,
+      explications: ["❌ Tu accumules de la fatigue, et personne ne sait que tu as un problème.", "✅ Bravo. La pause de 20 minutes est obligatoire au-delà de 6h de travail.", "✅ Excellent. Le CSE peut intervenir pour faire respecter le droit."] },
+    { question: "Ton chef te demande de rester 30 minutes après l'heure pour finir la commande. « On te rattrapera. » Que fais-tu ?",
+      choix: ["Je reste, ça arrange tout le monde", "Je reste, mais je note mes heures", "Je refuse, je finis à l'heure prévue"],
+      bonne: 1,
+      explications: ["❌ Le temps de travail effectif doit être payé. Sans trace, tu ne pourras pas réclamer.", "✅ Bien. Note les dates et heures, et demande une régularisation écrite.", "✅ Bien. Ton contrat prévoit des horaires, tu peux refuser les heures supplémentaires non prévues."] },
+    { question: "La cadence augmente chaque semaine. Tu tiens, mais tu sens que ça ne va pas durer. Que fais-tu ?",
+      choix: ["Je tiens, je ne dis rien", "Je dis à mon chef que c'est trop", "Je demande un rendez-vous avec le CSE"],
+      bonne: 2,
+      explications: ["❌ Le silence laisse la cadence augmenter. Les accidents arrivent quand on est épuisé.", "✅ Bien. Dire les choses, c'est la première étape.", "✅ Excellent. Le CSE peut demander un audit des cadences."] }
+  ],
+  horaires: [
+    { question: "Ton planning de la semaine prochaine arrive le dimanche soir. Tu avais prévu quelque chose. Que fais-tu ?",
+      choix: ["Je m'adapte, ce n'est pas grave", "Je demande un délai de prévenance plus long", "Je préviens le CSE que les plannings arrivent trop tard"],
+      bonne: 2,
+      explications: ["❌ Tu ne pourras jamais organiser ta vie personnelle.", "✅ Bien. La convention collective prévoit souvent un délai de prévenance.", "✅ Excellent. Le CSE peut négocier un délai minimum."] },
+    { question: "Tu es du matin cette semaine, de l'après-midi la semaine prochaine, de nuit la suivante. Tu ne sais jamais à quelle heure tu finis. Que fais-tu ?",
+      choix: ["Je m'adapte, c'est le métier", "Je demande un planning fixe", "Je demande au CSE de négocier des horaires plus stables"],
+      bonne: 2,
+      explications: ["❌ L'alternance permanente fatigue et désorganise la vie.", "✅ Bien. Un planning fixe est possible dans beaucoup d'entrepôts.", "✅ Excellent. Le CSE peut porter cette demande collectivement."] },
+    { question: "Ton chef t'annonce que tu feras 2 heures supplémentaires tous les soirs cette semaine. « C'est obligatoire. » Que fais-tu ?",
+      choix: ["J'accepte, je n'ai pas le choix", "Je demande si c'est prévu par mon contrat", "Je préviens le CSE que les heures supplémentaires sont imposées sans préavis"],
+      bonne: 2,
+      explications: ["❌ Les heures supplémentaires ont des limites (contingent annuel).", "✅ Bien. Vérifie ton contrat et le contingent annuel.", "✅ Excellent. Le CSE peut vérifier si les règles sont respectées."] }
+  ],
+  securite: [
+    { question: "Ton chariot a un frein qui tire d'un côté. Tu dois commencer ta tournée. Que fais-tu ?",
+      choix: ["Je l'utilise prudemment", "Je signale le défaut et je ne l'utilise pas", "Je le répare moi-même vite fait"],
+      bonne: 1,
+      explications: ["❌ Un engin défectueux peut causer un accident grave.", "✅ Bravo. Un engin défectueux se signale et se met hors service.", "❌ Tu n'es pas mécanicien, et l'engin doit être consigné."] },
+    { question: "Tu vois un collègue travailler sans casque dans une zone où circulent des engins. Que fais-tu ?",
+      choix: ["Je ne dis rien, ce n'est pas mon affaire", "Je lui dis de mettre son casque", "Je préviens le CSE"],
+      bonne: 2,
+      explications: ["❌ Le silence laisse le danger s'installer.", "✅ Bien. Un rappel entre collègues peut suffire.", "✅ Excellent. Le CSE peut faire un rappel collectif."] },
+    { question: "Une palette déborde sur l'allée de circulation des engins. Personne ne l'a enlevée. Que fais-tu ?",
+      choix: ["Je passe à côté, ça va", "Je signale l'encombrement à mon chef", "Je dégage l'allée moi-même"],
+      bonne: 1,
+      explications: ["❌ Une palette qui déborde peut accrocher un engin ou tomber.", "✅ Bien. Signaler, c'est déjà protéger.", "⚠️ Attention, ne te mets pas en danger. Signale plutôt."] }
+  ],
+  ambiance: [
+    { question: "Un nouveau collègue est arrivé il y a 3 semaines. Personne ne lui parle vraiment. Il mange seul. Que fais-tu ?",
+      choix: ["Ce n'est pas mon problème", "Je vais lui parler à la pause", "J'en parle au CSE pour proposer un accueil des nouveaux"],
+      bonne: 2,
+      explications: ["❌ L'isolement est un vrai risque (mal-être, démission).", "✅ Bien. Un geste simple peut tout changer.", "✅ Excellent. Un accueil structuré évite les isolements."] },
+    { question: "Deux collègues ne se parlent plus depuis une semaine. L'ambiance est tendue. Que fais-tu ?",
+      choix: ["Je reste à l'écart", "J'essaie de comprendre ce qui se passe", "Je préviens le CSE que l'ambiance se dégrade"],
+      bonne: 2,
+      explications: ["❌ Les tensions non dites explosent un jour.", "✅ Bien. Comprendre, c'est déjà apaiser.", "✅ Excellent. Le CSE peut proposer une médiation."] },
+    { question: "Ton chef te parle mal devant les collègues. Ça fait plusieurs fois. Que fais-tu ?",
+      choix: ["Je ne dis rien, je ne veux pas d'histoires", "Je lui dis calmement que ça ne me convient pas", "Je préviens le CSE et je garde une trace écrite"],
+      bonne: 2,
+      explications: ["❌ Le manque de respect répété est du harcèlement.", "✅ Bien. Dire les choses, c'est un premier pas.", "✅ Excellent. Garde une trace (dates, mots), c'est important."] }
+  ],
+  salaire: [
+    { question: "Tu devais toucher une prime ce mois-ci. Elle n'est pas sur ta fiche de paie. Que fais-tu ?",
+      choix: ["J'attends le mois prochain", "Je demande des explications à mon chef", "Je contacte le CSE pour vérifier mes droits"],
+      bonne: 2,
+      explications: ["❌ Sans réclamation, la prime peut être oubliée définitivement.", "✅ Bien. Demande une explication écrite.", "✅ Excellent. Le CSE peut faire le lien avec la direction."] },
+    { question: "Tu as fait 10 heures supplémentaires ce mois-ci. Elles n'apparaissent pas sur ta fiche de paie. Que fais-tu ?",
+      choix: ["Je ne dis rien, ça va passer", "Je note les heures et je demande une régularisation", "Je préviens le CSE que les heures ne sont pas payées"],
+      bonne: 2,
+      explications: ["❌ Les heures non payées sont un manque à gagner réel.", "✅ Bien. Note tout par écrit.", "✅ Excellent. Le CSE peut vérifier les pointages."] },
+    { question: "Tu apprends qu'un collègue qui fait le même travail que toi est payé 100 € de plus. Que fais-tu ?",
+      choix: ["Je ne dis rien, je ne veux pas créer de problèmes", "Je demande un entretien avec mon chef", "Je contacte le CSE pour vérifier l'égalité de traitement"],
+      bonne: 2,
+      explications: ["❌ L'inégalité non dite reste une injustice.", "✅ Bien. Demande une explication écrite.", "✅ Excellent. L'égalité de salaire est un droit."] }
+  ]
+};
+
+const JD_CONSEILS_INTERLOCUTEUR = {
+  personne:  "👉 Tu as répondu « Personne ». C'est souvent le cas. Mais un problème dit à un élu peut être réglé. N'hésite pas à en parler.",
+  collegue:  "👉 Tu en parles à un collègue, c'est bien. Un élu peut t'aider à porter le problème plus loin.",
+  elu:       "👉 Tu en parles à un élu, c'est le bon réflexe. Le CSE est là pour ça.",
+  syndicat:  "👉 Tu en parles au syndicat, c'est parfait. Sud Industrie ELE est là pour t'aider.",
+  hierarchie:"👉 Tu en parles à la hiérarchie, c'est bien. Mais garde une trace écrite, et n'hésite pas à en parler à un élu si ça ne bouge pas."
+};
+
+let jdState = { etape: 0, reponses: {}, profil: null, scenarioIdx: 0, scenarioReponses: [] };
+
+// --- Accueil ---
+function jdCommencer(){
+  jdState = { etape: 0, reponses: {}, profil: null, scenarioIdx: 0, scenarioReponses: [] };
+  $("jd-accueil").hidden = true;
+  $("jd-questions").hidden = false;
+  $("jd-scenario").hidden = true;
+  $("jd-bilan").hidden = true;
+  jdAfficherQuestion(1);
+}
+
+function jdAfficherQuestion(n){
+  jdState.etape = n;
+  document.querySelectorAll(".jd-question").forEach(q => q.hidden = true);
+  const q = document.querySelector('.jd-question[data-q="' + n + '"]');
+  if(q) q.hidden = false;
+  $("jd-question-num").textContent = "Question " + n + " / 4";
+  $("jd-progress").style.width = (n / 4 * 100) + "%";
+  $("jd-err").hidden = true;
+  $("jd-btn-suivant").textContent = n === 4 ? "Voir mon profil ➡️" : "Suivant ➡️";
+}
+
+function jdSuivant(){
+  const n = jdState.etape;
+  const err = $("jd-err");
+  err.hidden = true;
+
+  if(n === 1){
+    const v = document.querySelector('input[name="jd-q1"]:checked');
+    if(!v){ err.textContent = "Choisis une réponse avant de continuer."; err.hidden = false; return; }
+    jdState.reponses.q1 = v.value;
+    jdState.profil = v.value;
+    jdAfficherQuestion(2);
+  } else if(n === 2){
+    const v = document.querySelector('input[name="jd-q2"]:checked');
+    if(!v){ err.textContent = "Choisis une réponse avant de continuer."; err.hidden = false; return; }
+    jdState.reponses.q2 = v.value;
+    jdAfficherQuestion(3);
+  } else if(n === 3){
+    const coches = [...document.querySelectorAll('input[name="jd-q3"]:checked')].map(x => x.value);
+    const autre = $("jd-q3-autre").value.trim();
+    if(autre) coches.push("autre: " + autre);
+    jdState.reponses.q3 = coches;
+    jdAfficherQuestion(4);
+  } else if(n === 4){
+    jdState.reponses.q4 = $("jd-q4").value.trim();
+    jdLancerScenarios();
+  }
+}
+
+function jdAnnuler(){
+  if(!confirm("Annuler le jeu ? Tes réponses ne seront pas enregistrées.")) return;
+  $("jd-questions").hidden = true;
+  $("jd-accueil").hidden = false;
+  jdAfficherDernierBilanSiExiste();
+}
+
+// --- Scénarios ---
+function jdLancerScenarios(){
+  jdState.scenarioIdx = 0;
+  jdState.scenarioReponses = [];
+  $("jd-questions").hidden = true;
+  $("jd-scenario").hidden = false;
+  jdAfficherScenario();
+}
+
+function jdAfficherScenario(){
+  const profil = jdState.profil;
+  const scenarios = JD_SCENARIOS[profil];
+  const sc = scenarios[jdState.scenarioIdx];
+  $("jd-scenario-num").textContent = "Scénario " + (jdState.scenarioIdx + 1) + " / 3";
+  const box = $("jd-scenario-contenu");
+  box.innerHTML = '<p style="font-size:1.05rem; margin:0 0 12px 0;">' + sc.question + '</p>' +
+    '<div class="jd-scenario-choix">' +
+    sc.choix.map((c, i) => '<button onclick="jdChoisirScenario(' + i + ', this)">' + c + '</button>').join("") +
+    '</div>';
+  $("jd-btn-scenario-suivant").hidden = true;
+}
+
+function jdChoisirScenario(i, btn){
+  const profil = jdState.profil;
+  const sc = JD_SCENARIOS[profil][jdState.scenarioIdx];
+  document.querySelectorAll("#jd-scenario-contenu .jd-scenario-choix button").forEach((b, k) => {
+    b.disabled = true;
+    if(k === sc.bonne) b.classList.add("ok");
+  });
+  if(i !== sc.bonne) btn.classList.add("ko");
+  const fb = document.createElement("div");
+  fb.className = "jd-scenario-feedback";
+  fb.innerHTML = "<strong>💡 " + sc.explications[i] + "</strong>";
+  $("jd-scenario-contenu").appendChild(fb);
+  jdState.scenarioReponses.push(i);
+  $("jd-btn-scenario-suivant").hidden = false;
+}
+
+function jdScenarioSuivant(){
+  jdState.scenarioIdx++;
+  if(jdState.scenarioIdx < 3){
+    jdAfficherScenario();
+  } else {
+    jdAfficherBilan();
+  }
+}
+
+// --- Bilan ---
+function jdAfficherBilan(){
+  const p = JD_PROFILS[jdState.profil];
+  $("jd-scenario").hidden = true;
+  $("jd-bilan").hidden = false;
+  $("jd-bilan-emoji").textContent = p.emoji;
+  $("jd-bilan-titre").textContent = p.titre;
+  $("jd-bilan-profil").textContent = "Profil : " + p.nom;
+
+  const priorites = jdState.reponses.q3 || [];
+  const conseilInterlocuteur = JD_CONSEILS_INTERLOCUTEUR[jdState.reponses.q2] || "";
+
+  let html = "<strong>📋 Tes priorités :</strong><br>";
+  html += priorites.length ? priorites.map(x => "• " + x).join("<br>") : "• (aucune)";
+  html += "<br><br><strong>💬 Ce que le syndicat peut faire :</strong><br>";
+  html += jdBilanSpecifique(jdState.profil);
+  html += "<br><br>" + conseilInterlocuteur;
+  if(jdState.reponses.q4){
+    html += "<br><br><strong>✍️ Ta préoccupation :</strong><br>« " + jdState.reponses.q4 + " »";
+  }
+  $("jd-bilan-details").innerHTML = html;
+
+  // Sauvegarde locale
+  const bilan = {
+    date: new Date().toISOString(),
+    profil: jdState.profil,
+    profilNom: p.nom,
+    reponses: jdState.reponses,
+    scenarios: jdState.scenarioReponses
+  };
+  try{ localStorage.setItem(JD_KEY, JSON.stringify(bilan)); }catch(e){}
+
+  // Envoi Formspree (anonyme)
+  fetch(JD_FORMSPREE, {
+    method: "POST",
+    headers: { "Accept": "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "jeu-quotidien",
+      profil: p.nom,
+      q1_probleme: jdState.reponses.q1,
+      q2_interlocuteur: jdState.reponses.q2,
+      q3_priorites: (jdState.reponses.q3 || []).join(", "),
+      q4_preoccupation: jdState.reponses.q4 || "",
+      scenarios: jdState.scenarioReponses.join(","),
+      date: new Date().toLocaleString("fr-FR")
+    })
+  }).catch(() => {}); // silencieux si ça échoue
+
+  if(window.goatcounter) goatcounter.count({ path: "jeu-quotidien-fini", event: true });
+}
+
+function jdBilanSpecifique(profil){
+  const bilans = {
+    cadence: "Le CSE peut demander un audit des cadences. Sud Industrie ELE a déjà obtenu des pauses supplémentaires dans d'autres entrepôts.",
+    horaires: "La convention collective prévoit un délai de prévenance pour les plannings. Le CSE peut négocier des horaires plus stables.",
+    securite: "Un engin défectueux se signale et se met hors service. Tu as un droit de retrait si le danger est grave et imminent.",
+    ambiance: "Le CSE peut proposer un accueil structuré des nouveaux et une médiation en cas de tension. Le manque de respect répété est du harcèlement.",
+    salaire: "Le CSE peut vérifier les pointages et l'égalité de traitement. Les heures supplémentaires sont majorées de 25% pour les 8 premières heures."
+  };
+  return bilans[profil] || "";
+}
+
+// --- Dernier bilan ---
+function jdAfficherDernierBilanSiExiste(){
+  try{
+    const raw = localStorage.getItem(JD_KEY);
+    if(!raw){ $("jd-dernier-bilan-box").style.display = "none"; return; }
+    const b = JSON.parse(raw);
+    $("jd-dernier-profil").textContent = b.profilNom + " (" + new Date(b.date).toLocaleDateString("fr-FR") + ")";
+    $("jd-dernier-bilan-box").style.display = "block";
+  }catch(e){ $("jd-dernier-bilan-box").style.display = "none"; }
+}
+
+function jdVoirDernierBilan(){
+  try{
+    const b = JSON.parse(localStorage.getItem(JD_KEY));
+    if(!b) return;
+    jdState = { reponses: b.reponses, profil: b.profil, scenarioReponses: b.scenarios || [] };
+    $("jd-accueil").hidden = true;
+    jdAfficherBilan();
+  }catch(e){}
+}
+
+// --- Partage ---
+function jdPartager(canal){
+  const p = JD_PROFILS[jdState.profil];
+  const txt = `J'ai fait le jeu "Ton quotidien" de Sud Industrie ELE. Mon profil : ${p.nom}. Et toi ? ${location.href}`;
+  if(canal === "wa") window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank");
+  else window.open("sms:?&body=" + encodeURIComponent(txt), "_blank");
+  if(window.goatcounter) goatcounter.count({ path: "jeu-quotidien-partage-" + canal, event: true });
+}
+
+function jdRejouer(){
+  $("jd-bilan").hidden = true;
+  $("jd-accueil").hidden = false;
+  jdState = { etape: 0, reponses: {}, profil: null, scenarioIdx: 0, scenarioReponses: [] };
+  jdAfficherDernierBilanSiExiste();
+}
+
+// Au chargement : afficher le dernier bilan s'il existe
+document.addEventListener("DOMContentLoaded", () => {
+  jdAfficherDernierBilanSiExiste();
+});
+    <div class="card" style="padding:16px;">
     <h2 style="border:none; margin:0 0 10px 0; padding:0;">🧭 Quelle est ma situation ?</h2>
     <div id="sit-etape1">
       <button class="opt" onclick="sitCategorie('securite')">🦺 Sécurité</button>
