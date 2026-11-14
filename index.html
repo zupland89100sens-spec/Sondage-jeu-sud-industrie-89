@@ -1205,6 +1205,29 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
 
 // ==== QUIZ, SONDAGE, ETC. ====
 // (Le code du quiz, du sondage et des photos reste exactement le même que dans ton fichier actuel, je ne l'ai pas répété pour te faire un message plus court, mais il est intégré au fichier complet).
+
+  // ==== SAUVEGARDE HORS-LIGNE DE SECOURS (Pour iPhone) ====
+document.addEventListener("DOMContentLoaded", () => {
+  // On vérifie si on est en ligne
+  if (navigator.onLine) {
+    // On sauvegarde le code source complet de la page
+    try {
+      const pageHTML = document.documentElement.outerHTML;
+      localStorage.setItem('sud_page_hors_ligne', pageHTML);
+      console.log("Page sauvegardée pour le mode hors-ligne.");
+    } catch (e) {
+      console.log("Impossible de sauvegarder la page.");
+    }
+  } else {
+    // Si on est hors-ligne et que la page est vide ou ne charge pas bien
+    const pageSauvee = localStorage.getItem('sud_page_hors_ligne');
+    if (pageSauvee && document.body.innerHTML.trim() === "") {
+      document.open();
+      document.write(pageSauvee);
+      document.close();
+    }
+  }
+});
 </script>
 </body>
 </html>
