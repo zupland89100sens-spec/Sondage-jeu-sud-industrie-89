@@ -7,14 +7,12 @@
 <title>Sud Industrie ELE – Espace Salarié</title>
 <meta name="theme-color" content="#004aad">
 <meta name="description" content="Tes droits, nos victoires, un sondage anonyme et un quiz.">
-<!-- Balises de partage (WhatsApp, SMS, réseaux) -->
 <meta property="og:title" content="Sud Industrie ELE – Espace Salarié">
 <meta property="og:description" content="Tes droits, nos victoires, un sondage anonyme et un quiz.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="">
 <meta property="og:image" content="logo.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<!-- Favicon généré en data-URI (pas de fichier séparé) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23004aad'/%3E%3Ctext x='50%25' y='54%25' font-family='Arial,sans-serif' font-size='30' font-weight='bold' fill='%23ffcc00' text-anchor='middle' dominant-baseline='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%23004aad'/%3E%3Ctext x='50%25' y='54%25' font-family='Arial,sans-serif' font-size='90' font-weight='bold' fill='%23ffcc00' text-anchor='middle' dominant-baseline='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
@@ -127,6 +125,16 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 .badge.obtenu{opacity:1;background:var(--yellow);border-color:#b8860b;color:#000;transform:scale(1.05)}
 .btn-partage{display:flex;gap:8px;margin-top:10px}
 .btn-partage button{flex:1;margin-top:0}
+/* Jeu quotidien */
+.jd-check-group label{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--bg);margin-bottom:6px;border-radius:8px;cursor:pointer;font-weight:400;font-size:.95rem;line-height:1.3;transition:transform .2s,background .2s}
+.jd-check-group label:hover{background:#e6efff;transform:translateX(4px)}
+.jd-check-group input[type="checkbox"]{width:18px;height:18px;margin-top:2px;accent-color:var(--acc);flex-shrink:0}
+.jd-scenario-choix{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.jd-scenario-choix button{background:var(--bg);color:var(--ink);border:2px solid var(--line);text-align:left;font-weight:600;transition:all .2s}
+.jd-scenario-choix button:hover:not(:disabled){border-color:var(--blue);transform:translateX(4px)}
+.jd-scenario-choix button.ok{background:var(--success);color:#fff;border-color:var(--success)}
+.jd-scenario-choix button.ko{background:var(--acc);color:#fff;border-color:var(--acc)}
+.jd-scenario-feedback{margin-top:12px;padding:12px;background:var(--bg);border-left:4px solid var(--blue);border-radius:6px;text-align:left;font-size:.95rem}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -152,60 +160,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <button id="vo-long" onclick="voixOff(true)" style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue); margin-top:6px;">📜 Version longue</button>
   <p id="vo-etat" class="note"></p>
 </div>
-<script>
-const VOIX_COURT = "Bonjour. Bienvenue sur l'espace salarié de Sud Industrie E.L.E. Tu y trouveras tes droits, un sondage anonyme et un quiz. Pour ta situation personnelle, contacte-nous en cliquant sur les liens pour nous envoyer un mail ou nous appeler.";
-const VOIX_LONG = "Bonjour chère collègue. Nous développons en ce moment une application pour améliorer la communication entre vous et le syndicat Sud Industrie E.L.E. Vous y trouverez vos droits, un parcours pour trouver votre situation, des photos et des vidéos pour vous guidez et vous orientez aux mieux, et une boîte pour poser vos questions. Nous sommes ouverts à toutes vos suggestions. Ce site est là pour vous aider, mais il ne remplace ni les échanges avec les élus, ni le syndicat, ni le Code du travail. Pour votre situation personnelle, contactez-nous directement. Merci pour votre confiance.";
-const VOIX_TEXTE = VOIX_COURT;
-
-if("speechSynthesis" in window) speechSynthesis.getVoices();
-
-function voixMaj(etat, actif){
-  document.getElementById("vo-etat").textContent = etat;
-  document.getElementById("vo-mute").style.display = actif ? "block" : "none";
-  document.getElementById("vo-play").style.display = actif ? "none" : "block";
-  document.getElementById("vo-long").style.display = actif ? "none" : "block";
-}
-
-function voixChoisir(){
-  const voix = speechSynthesis.getVoices();
-  return voix.find(v => v.lang.startsWith("fr") && /female|femme|woman|amélie|audrey|marie|julie|sophie|virginie|anne|aurélie|léa|lea/i.test(v.name))
-    || voix.find(v => v.lang.startsWith("fr"));
-}
-
-function voixStop(){
-  if("speechSynthesis" in window) speechSynthesis.cancel();
-  voixMaj("", false);
-}
-
-function voixOff(long){
-  if(!("speechSynthesis" in window)){
-    document.getElementById("vo-etat").textContent = "Ton téléphone ne permet pas la lecture vocale.";
-    return;
-  }
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(long ? VOIX_LONG : VOIX_COURT);
-  u.lang = "fr-FR";
-  u.rate = 0.9;
-  u.pitch = 1.15;
-  const v = voixChoisir();
-  if(v) u.voice = v;
-  voixMaj("Lecture en cours…", true);
-  u.onend = () => voixMaj("", false);
-  u.onerror = () => voixMaj("La lecture n'a pas pu démarrer.", false);
-  speechSynthesis.speak(u);
-}
-
-document.addEventListener("play", (e) => {
-  if(e.target.tagName === "VIDEO") voixStop();
-}, true);
-
-if(!localStorage.getItem("sudVoixVue")){
-  document.addEventListener("click", function premierClic(){
-    localStorage.setItem("sudVoixVue", "1");
-    voixOff(false);
-  }, { once: true });
-}
-</script>
 
 <p style="text-align:center; font-weight:700; margin:0 0 14px 0;">🗳️ Élections professionnelles : <span id="compteur-accueil"></span></p>
 <div class="card" style="border-left:6px solid var(--acc); margin-bottom:16px;">
@@ -334,7 +288,116 @@ body.grand{font-size:19px}
   <div class="card" style="padding:14px;">
     <input type="text" id="recherche-droits" placeholder="🔎 Rechercher dans mes droits (ex : congés, arrêt maladie)" style="width:100%; padding:14px; border-radius:8px; border:2px solid var(--blue); font:inherit; background:var(--surface); color:var(--ink);">
   </div>
-    
+
+ <div class="card" style="padding:16px;">
+    <h2 style="border:none; margin:0 0 10px 0; padding:0;">🧭 Quelle est ma situation ?</h2>
+    <div id="sit-etape1">
+      <button class="opt" onclick="sitCategorie('securite')">🦺 Sécurité</button>
+      <button class="opt" onclick="sitCategorie('conges')">✈️ Congés et temps de travail</button>
+      <button class="opt" onclick="sitCategorie('droits')">⚖️ Droits et sanctions</button>
+    </div>
+    <div id="sit-etape2" hidden></div>
+    <div id="sit-reponse" class="expl" hidden></div>
+    <button id="sit-retour" onclick="sitRetour()" hidden style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue);">⬅️ Retour aux catégories</button>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- JEU — TON QUOTIDIEN (remplace les 6 SVG)                     -->
+  <!-- ============================================================ -->
+  <div class="card" style="padding:16px;">
+    <h2 style="border:none; margin:0 0 10px 0; padding:0;">🎯 Ton quotidien</h2>
+    <p style="font-size:.9rem; color:var(--mute); margin:0 0 12px 0;">Réponds à 4 questions, découvre ton profil, et vois ce que le syndicat peut faire pour toi. Anonyme.</p>
+
+    <div id="jd-accueil">
+      <div id="jd-dernier-bilan-box" style="display:none; background:var(--bg); border-left:4px solid var(--success); padding:12px; border-radius:8px; margin-bottom:12px;">
+        <p style="margin:0 0 8px 0; font-weight:700;">📋 Tu as déjà joué</p>
+        <p style="margin:0 0 8px 0; font-size:.9rem;">Profil : <strong id="jd-dernier-profil"></strong></p>
+        <button onclick="jdVoirDernierBilan()" style="background:var(--success); margin-top:0;">👁️ Voir mon dernier bilan</button>
+      </div>
+      <button onclick="jdCommencer()">🚀 Commencer le jeu</button>
+      <p class="note" style="margin-top:12px;">⏱️ 2 minutes · 🔒 Anonyme · 📱 Sans inscription</p>
+    </div>
+
+    <div id="jd-questions" hidden>
+      <div class="bar"><i id="jd-progress"></i></div>
+      <p class="note" id="jd-question-num"></p>
+
+      <div class="jd-question" data-q="1">
+        <p class="q-title">1. Quel est ton plus gros problème au travail ?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="jd-q1" value="cadence" required> La cadence</label>
+          <label><input type="radio" name="jd-q1" value="horaires"> Les horaires</label>
+          <label><input type="radio" name="jd-q1" value="securite"> La sécurité</label>
+          <label><input type="radio" name="jd-q1" value="ambiance"> L'ambiance</label>
+          <label><input type="radio" name="jd-q1" value="salaire"> Le salaire</label>
+        </div>
+      </div>
+
+      <div class="jd-question" data-q="2" hidden>
+        <p class="q-title">2. Quand tu as un problème, tu en parles à qui ?</p>
+        <div class="radio-group">
+          <label><input type="radio" name="jd-q2" value="personne" required> Personne</label>
+          <label><input type="radio" name="jd-q2" value="collegue"> Un collègue</label>
+          <label><input type="radio" name="jd-q2" value="elu"> Un élu</label>
+          <label><input type="radio" name="jd-q2" value="syndicat"> Le syndicat</label>
+          <label><input type="radio" name="jd-q2" value="hierarchie"> La hiérarchie</label>
+        </div>
+      </div>
+
+      <div class="jd-question" data-q="3" hidden>
+        <p class="q-title">3. Qu'est-ce que tu aimerais améliorer en priorité ? <span style="font-weight:400; color:var(--mute);">(plusieurs choix possibles)</span></p>
+        <div class="jd-check-group">
+          <label><input type="checkbox" name="jd-q3" value="salaire"> Le salaire</label>
+          <label><input type="checkbox" name="jd-q3" value="horaires"> Les horaires</label>
+          <label><input type="checkbox" name="jd-q3" value="securite"> La sécurité</label>
+          <label><input type="checkbox" name="jd-q3" value="sante"> La santé (fatigue, stress, pénibilité)</label>
+          <label><input type="checkbox" name="jd-q3" value="evolution"> L'évolution de carrière (formation, promotion)</label>
+          <label><input type="checkbox" name="jd-q3" value="ambiance"> L'ambiance / le respect</label>
+          <label><input type="checkbox" name="jd-q3" value="pauses"> Les pauses</label>
+          <label><input type="checkbox" name="jd-q3" value="conditions"> Les conditions matérielles (locaux, outils, température)</label>
+        </div>
+        <input type="text" id="jd-q3-autre" name="jd-q3-autre" maxlength="80" placeholder="Autre (précise) : ..." style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit; margin-top:6px;">
+      </div>
+
+      <div class="jd-question" data-q="4" hidden>
+        <p class="q-title">4. En un mot ou une phrase, qu'est-ce qui te préoccupe le plus en ce moment ? <span style="font-weight:400; color:var(--mute);">(facultatif)</span></p>
+        <textarea id="jd-q4" name="jd-q4" rows="3" maxlength="200" placeholder="Ex : La cadence, on n'en peut plus. On est 3 au lieu de 5." style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;"></textarea>
+        <p class="note" style="text-align:left;">⚠️ Ne cite pas de noms de collègues ou de chefs.</p>
+      </div>
+
+      <p id="jd-err" class="msg-err" hidden></p>
+      <button id="jd-btn-suivant" onclick="jdSuivant()">Suivant ➡️</button>
+      <button onclick="jdAnnuler()" style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue);">⬅️ Annuler</button>
+    </div>
+
+    <div id="jd-scenario" hidden>
+      <p class="note" id="jd-scenario-num"></p>
+      <div id="jd-scenario-contenu"></div>
+      <button id="jd-btn-scenario-suivant" onclick="jdScenarioSuivant()">Suivant ➡️</button>
+    </div>
+
+    <div id="jd-bilan" hidden>
+      <div style="text-align:center; margin-bottom:12px;">
+        <div class="final-emoji" id="jd-bilan-emoji"></div>
+        <p style="font-size:1.2rem; font-weight:700; margin:6px 0;" id="jd-bilan-titre"></p>
+        <p class="note" id="jd-bilan-profil"></p>
+      </div>
+      <div id="jd-bilan-details" class="expl"></div>
+      <div style="background:var(--bg); padding:12px; border-radius:8px; margin-top:12px;">
+        <p style="margin:0 0 6px 0; font-weight:700;">📞 Envie d'en parler ?</p>
+        <a href="mailto:sud.industrie.ele89@gmail.com?subject=Bilan%20jeu%20quotidien" class="btn" style="background:var(--blue); margin-top:6px;">✉️ Écrire au syndicat</a>
+        <a href="tel:0626711687" class="btn contact-btn" style="margin-top:6px;">📞 Appeler le 06 26 71 16 87</a>
+      </div>
+      <div class="btn-partage" style="margin-top:12px;">
+        <button onclick="jdPartager('wa')" style="background:#25D366;">💬 WhatsApp</button>
+        <button onclick="jdPartager('sms')" style="background:var(--blue);">✉️ SMS</button>
+      </div>
+      <button onclick="jdRejouer()">🔄 Rejouer</button>
+      <button onclick="document.querySelector('.tab[data-t=droits]').click()" style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue);">📚 Revoir mes droits</button>
+    </div>
+  </div>
+  <!-- FIN JEU QUOTIDIEN -->
+
   <div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
     <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
     <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
@@ -430,753 +493,6 @@ body.grand{font-size:19px}
   </div>
 </section>
 
-<div class="card">
-<div class="card" style="text-align:center; padding:14px;">
-<style>
-@keyframes eCam{0%{transform:translateX(160px)}9%,90%{transform:translateX(0)}100%{transform:translateX(160px)}}
-@keyframes eFk{0%,9%{transform:translateX(-110px)}10%,11%{transform:translateX(40px)}13.5%,15%{transform:translateX(-110px)}17.5%,19%{transform:translateX(40px)}21.5%,23%{transform:translateX(-110px)}25.5%,27%{transform:translateX(40px)}29.5%,31%{transform:translateX(-110px)}33.5%,35%{transform:translateX(40px)}37.5%,39%{transform:translateX(-110px)}41.5%,43%{transform:translateX(40px)}45.5%,47%{transform:translateX(-110px)}49.5%,51%{transform:translateX(40px)}53.5%,55%{transform:translateX(-110px)}57.5%,59%{transform:translateX(40px)}61.5%,63%{transform:translateX(-110px)}65.5%,67%{transform:translateX(40px)}69.5%,71%{transform:translateX(-110px)}73.5%,75%{transform:translateX(40px)}77.5%,79%{transform:translateX(-110px)}81.5%,83%{transform:translateX(40px)}85.5%,100%{transform:translateX(-110px)}}
-@keyframes eCar{0%,11%{opacity:0}11.1%,15%{opacity:1}15.1%,19%{opacity:0}19.1%,23%{opacity:1}23.1%,27%{opacity:0}27.1%,31%{opacity:1}31.1%,35%{opacity:0}35.1%,39%{opacity:1}39.1%,43%{opacity:0}43.1%,47%{opacity:1}47.1%,51%{opacity:0}51.1%,55%{opacity:1}55.1%,59%{opacity:0}59.1%,63%{opacity:1}63.1%,67%{opacity:0}67.1%,71%{opacity:1}71.1%,75%{opacity:0}75.1%,79%{opacity:1}79.1%,83%{opacity:0}83.1%,87%{opacity:1}87.1%,100%{opacity:0}}
-@keyframes eT1{0%,10.9%{opacity:1}11%,100%{opacity:0}}
-@keyframes eT2{0%,18.9%{opacity:1}19%,100%{opacity:0}}
-@keyframes eT3{0%,26.9%{opacity:1}27%,100%{opacity:0}}
-@keyframes eT4{0%,34.9%{opacity:1}35%,100%{opacity:0}}
-@keyframes eT5{0%,42.9%{opacity:1}43%,100%{opacity:0}}
-@keyframes eT6{0%,50.9%{opacity:1}51%,100%{opacity:0}}
-@keyframes eT7{0%,58.9%{opacity:1}59%,100%{opacity:0}}
-@keyframes eT8{0%,66.9%{opacity:1}67%,100%{opacity:0}}
-@keyframes eT9{0%,74.9%{opacity:1}75%,100%{opacity:0}}
-@keyframes eT10{0%,82.9%{opacity:1}83%,100%{opacity:0}}
-@keyframes eC1{0%,15%{opacity:0}15.1%,100%{opacity:1}}
-@keyframes eC2{0%,23%{opacity:0}23.1%,100%{opacity:1}}
-@keyframes eC3{0%,31%{opacity:0}31.1%,100%{opacity:1}}
-@keyframes eC4{0%,39%{opacity:0}39.1%,100%{opacity:1}}
-@keyframes eC5{0%,47%{opacity:0}47.1%,100%{opacity:1}}
-@keyframes eC6{0%,55%{opacity:0}55.1%,100%{opacity:1}}
-@keyframes eC7{0%,63%{opacity:0}63.1%,100%{opacity:1}}
-@keyframes eC8{0%,71%{opacity:0}71.1%,100%{opacity:1}}
-@keyframes eC9{0%,79%{opacity:0}79.1%,100%{opacity:1}}
-@keyframes eC10{0%,87%{opacity:0}87.1%,100%{opacity:1}}
-@keyframes eBelt{0%,60%{transform:translateX(0)}70%,100%{transform:translateX(-20px)}}
-@keyframes eWh{to{transform:rotate(360deg)}}
-.e-cam{animation:eCam 40s linear infinite}
-.e-fk{animation:eFk 40s linear infinite}
-.e-car{animation:eCar 40s linear infinite}
-.e-belt{animation:eBelt 40s linear infinite}
-.e-t1{animation:eT1 40s linear infinite}
-.e-t2{animation:eT2 40s linear infinite}
-.e-t3{animation:eT3 40s linear infinite}
-.e-t4{animation:eT4 40s linear infinite}
-.e-t5{animation:eT5 40s linear infinite}
-.e-t6{animation:eT6 40s linear infinite}
-.e-t7{animation:eT7 40s linear infinite}
-.e-t8{animation:eT8 40s linear infinite}
-.e-t9{animation:eT9 40s linear infinite}
-.e-t10{animation:eT10 40s linear infinite}
-.e-c1{animation:eC1 40s linear infinite}
-.e-c2{animation:eC2 40s linear infinite}
-.e-c3{animation:eC3 40s linear infinite}
-.e-c4{animation:eC4 40s linear infinite}
-.e-c5{animation:eC5 40s linear infinite}
-.e-c6{animation:eC6 40s linear infinite}
-.e-c7{animation:eC7 40s linear infinite}
-.e-c8{animation:eC8 40s linear infinite}
-.e-c9{animation:eC9 40s linear infinite}
-.e-c10{animation:eC10 40s linear infinite}
-.e-wh{transform-box:fill-box;transform-origin:center;animation:eWh .8s linear infinite}
-</style>
-<h2 style="border:none; margin:0 0 6px 0; padding:0;">🚚 Zone réception</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le camion recule au quai, le réceptionnaire décharge les 10 palettes une à une et les pose sur le convoyeur, qui avance vers le stock.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Camion qui recule au quai, chariot qui décharge 10 palettes sur le convoyeur, qui avance vers le stock">
-<rect width="320" height="200" fill="#d5d9de"/>
-<rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="0" y="30" width="150" height="142" fill="#b8bec6"/>
-<rect x="0" y="30" width="150" height="10" fill="#9aa1ab"/>
-<text x="75" y="24" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">ENTREPÔT</text>
-<rect x="8" y="58" width="22" height="44" fill="#9aa1ab"/>
-<rect x="8" y="106" width="22" height="44" fill="#8a94a0"/>
-<rect x="150" y="110" width="8" height="62" fill="#7b8794"/>
-<rect x="158" y="142" width="38" height="8" fill="#55606c"/>
-<text x="177" y="136" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">NIVELEUR</text>
-<g class="e-cam">
-  <rect x="200" y="62" width="112" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
-  <rect x="222" y="72" width="70" height="80" fill="#3a4550" opacity=".3"/>
-  <text x="256" y="56" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION</text>
-  <circle cx="222" cy="170" r="7" fill="#111"/><circle cx="246" cy="170" r="7" fill="#111"/><circle cx="296" cy="170" r="7" fill="#111"/>
-  <rect class="e-t1" x="218" y="136" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t2" x="248" y="136" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t3" x="218" y="122" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t4" x="248" y="122" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t5" x="218" y="108" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t6" x="248" y="108" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t7" x="218" y="94" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t8" x="248" y="94" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t9" x="218" y="80" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-t10" x="248" y="80" width="24" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-</g>
-<g class="e-fk">
-  <rect x="172" y="126" width="22" height="3" fill="#333"/>
-  <rect x="190" y="112" width="4" height="34" fill="#555"/>
-  <rect x="194" y="118" width="22" height="22" rx="3" fill="#ffcc00"/>
-  <rect x="196" y="108" width="16" height="10" fill="#333"/>
-  <circle cx="204" cy="112" r="4" fill="#f0c08a"/>
-  <g class="e-car">
-    <rect x="172" y="124" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  </g>
-  <circle class="e-wh" cx="199" cy="144" r="4" fill="#111"/>
-  <circle class="e-wh" cx="212" cy="144" r="4" fill="#111"/>
-</g>
-<rect x="30" y="140" width="110" height="6" fill="#55606c"/>
-<rect x="32" y="146" width="4" height="14" fill="#55606c"/>
-<rect x="134" y="146" width="4" height="14" fill="#55606c"/>
-<text x="85" y="122" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">CONVOYEUR → STOCK</text>
-<g class="e-belt">
-  <rect class="e-c1" x="34" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c2" x="43" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c3" x="52" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c4" x="61" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c5" x="70" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c6" x="79" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c7" x="88" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c8" x="97" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c9" x="106" y="130" width="14" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="e-c10" x="115" y="130" width="14" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-</g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Réception : 10 palettes déchargées, puis envoyées au stock</text>
-</svg>
-</div>
-
-<div class="card" style="text-align:center; padding:14px;">
-<style>
-@keyframes stTour{0%{transform:translate(0px,0px)}3.5%{transform:translate(0px,0px)}5%{transform:translate(49px,-4px)}6.5%{transform:translate(0px,0px)}8%{transform:translate(75px,-4px)}9.5%{transform:translate(0px,0px)}11%{transform:translate(101px,-4px)}12.5%{transform:translate(0px,0px)}14%{transform:translate(127px,-4px)}15.5%{transform:translate(0px,0px)}17%{transform:translate(153px,-4px)}18.5%{transform:translate(0px,0px)}20%{transform:translate(179px,-4px)}21.5%{transform:translate(0px,0px)}23%{transform:translate(49px,-28px)}24.5%{transform:translate(0px,0px)}26%{transform:translate(75px,-28px)}27.5%{transform:translate(0px,0px)}29%{transform:translate(101px,-28px)}30.5%{transform:translate(0px,0px)}32%{transform:translate(127px,-28px)}33.5%{transform:translate(0px,0px)}35%{transform:translate(153px,-28px)}36.5%{transform:translate(0px,0px)}38%{transform:translate(179px,-28px)}39.5%{transform:translate(0px,0px)}41%{transform:translate(49px,-52px)}42.5%{transform:translate(0px,0px)}44%{transform:translate(75px,-52px)}45.5%{transform:translate(0px,0px)}47%{transform:translate(101px,-52px)}48.5%{transform:translate(0px,0px)}50%{transform:translate(127px,-52px)}51.5%{transform:translate(0px,0px)}53%{transform:translate(153px,-52px)}54.5%{transform:translate(0px,0px)}56%{transform:translate(179px,-52px)}57.5%{transform:translate(0px,0px)}59%{transform:translate(49px,-76px)}60.5%{transform:translate(0px,0px)}62%{transform:translate(75px,-76px)}63.5%{transform:translate(0px,0px)}65%{transform:translate(101px,-76px)}66.5%{transform:translate(0px,0px)}68%{transform:translate(127px,-76px)}69.5%{transform:translate(0px,0px)}71%{transform:translate(153px,-76px)}72.5%{transform:translate(0px,0px)}74%{transform:translate(179px,-76px)}75.5%{transform:translate(0px,0px)}77%{transform:translate(49px,-100px)}78.5%{transform:translate(0px,0px)}80%{transform:translate(75px,-100px)}81.5%{transform:translate(0px,0px)}83%{transform:translate(101px,-100px)}84.5%{transform:translate(0px,0px)}86%{transform:translate(127px,-100px)}87.5%{transform:translate(0px,0px)}89%{transform:translate(153px,-100px)}90.5%{transform:translate(0px,0px)}92%{transform:translate(179px,-100px)}95.5%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
-@keyframes stCv{0%{transform:translateX(0px);opacity:1}15%{transform:translateX(100px);opacity:1}15.1%,100%{transform:translateX(100px);opacity:0}}
-@keyframes st0{0%,4.8%{opacity:0}5%,100%{opacity:1}}
-@keyframes st1{0%,7.8%{opacity:0}8%,100%{opacity:1}}
-@keyframes st2{0%,10.8%{opacity:0}11%,100%{opacity:1}}
-@keyframes st3{0%,13.8%{opacity:0}14%,100%{opacity:1}}
-@keyframes st4{0%,16.8%{opacity:0}17%,100%{opacity:1}}
-@keyframes st5{0%,19.8%{opacity:0}20%,100%{opacity:1}}
-@keyframes st6{0%,22.8%{opacity:0}23%,100%{opacity:1}}
-@keyframes st7{0%,25.8%{opacity:0}26%,100%{opacity:1}}
-@keyframes st8{0%,28.8%{opacity:0}29%,100%{opacity:1}}
-@keyframes st9{0%,31.8%{opacity:0}32%,100%{opacity:1}}
-@keyframes st10{0%,34.8%{opacity:0}35%,100%{opacity:1}}
-@keyframes st11{0%,37.8%{opacity:0}38%,100%{opacity:1}}
-@keyframes st12{0%,40.8%{opacity:0}41%,100%{opacity:1}}
-@keyframes st13{0%,43.8%{opacity:0}44%,100%{opacity:1}}
-@keyframes st14{0%,46.8%{opacity:0}47%,100%{opacity:1}}
-@keyframes st15{0%,49.8%{opacity:0}50%,100%{opacity:1}}
-@keyframes st16{0%,52.8%{opacity:0}53%,100%{opacity:1}}
-@keyframes st17{0%,55.8%{opacity:0}56%,100%{opacity:1}}
-@keyframes st18{0%,58.8%{opacity:0}59%,100%{opacity:1}}
-@keyframes st19{0%,61.8%{opacity:0}62%,100%{opacity:1}}
-@keyframes st20{0%,64.8%{opacity:0}65%,100%{opacity:1}}
-@keyframes st21{0%,67.8%{opacity:0}68%,100%{opacity:1}}
-@keyframes st22{0%,70.8%{opacity:0}71%,100%{opacity:1}}
-@keyframes st23{0%,73.8%{opacity:0}74%,100%{opacity:1}}
-@keyframes st24{0%,76.8%{opacity:0}77%,100%{opacity:1}}
-@keyframes st25{0%,79.8%{opacity:0}80%,100%{opacity:1}}
-@keyframes st26{0%,82.8%{opacity:0}83%,100%{opacity:1}}
-@keyframes st27{0%,85.8%{opacity:0}86%,100%{opacity:1}}
-@keyframes st28{0%,88.8%{opacity:0}89%,100%{opacity:1}}
-@keyframes st29{0%,91.8%{opacity:0}92%,100%{opacity:1}}
-</style>
-<h2 style="border:none; margin:0 0 6px 0; padding:0;">🏗️ Zone stock</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Les 30 palettes arrivent une à une au bout du convoyeur. Le transstockeur les prend et les range dans les 30 alvéoles, sur 5 niveaux.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Le transstockeur prend les 30 palettes du convoyeur et les range dans les 5 niveaux de l'allée">
-<rect width="320" height="200" fill="#d5d9de"/>
-<rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="4" y="146" width="120" height="5" fill="#55606c"/>
-<rect x="10" y="151" width="4" height="14" fill="#55606c"/>
-<rect x="116" y="151" width="4" height="14" fill="#55606c"/>
-<text x="64" y="142" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">CONVOYEUR D'ENTRÉE</text>
-<rect x="156" y="26" width="160" height="128" fill="none" stroke="#9aa1ab"/>
-<text x="236" y="20" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">STOCK · ALLÉE 1 · 5 NIVEAUX</text>
-<rect x="160" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="160" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="160" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="160" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="160" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect style="animation:st0 40s linear infinite" x="163" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st1 40s linear infinite" x="189" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st2 40s linear infinite" x="215" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st3 40s linear infinite" x="241" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st4 40s linear infinite" x="267" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st5 40s linear infinite" x="293" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st6 40s linear infinite" x="163" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st7 40s linear infinite" x="189" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st8 40s linear infinite" x="215" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st9 40s linear infinite" x="241" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st10 40s linear infinite" x="267" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st11 40s linear infinite" x="293" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st12 40s linear infinite" x="163" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st13 40s linear infinite" x="189" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st14 40s linear infinite" x="215" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st15 40s linear infinite" x="241" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st16 40s linear infinite" x="267" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st17 40s linear infinite" x="293" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st18 40s linear infinite" x="163" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st19 40s linear infinite" x="189" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st20 40s linear infinite" x="215" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st21 40s linear infinite" x="241" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st22 40s linear infinite" x="267" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st23 40s linear infinite" x="293" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st24 40s linear infinite" x="163" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st25 40s linear infinite" x="189" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st26 40s linear infinite" x="215" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st27 40s linear infinite" x="241" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st28 40s linear infinite" x="267" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:st29 40s linear infinite" x="293" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-4s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-2.8s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-1.6s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-0.4s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-39.2s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-38s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-36.8s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-35.6s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-34.4s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-33.2s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-32s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-30.8s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-29.6s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-28.4s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-27.2s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-26s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-24.8s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-23.6s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-22.4s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-21.2s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-20s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-18.8s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-17.6s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-16.4s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-15.2s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-14s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-12.8s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-11.6s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-10.4s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:stCv 40s linear infinite;animation-delay:-9.2s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<g style="animation:stTour 40s linear infinite">
-  <rect x="114" y="118" width="8" height="30" fill="#004aad"/>
-  <rect x="108" y="128" width="18" height="14" fill="#004aad"/>
-  <rect x="126" y="138" width="20" height="3" fill="#333"/>
-</g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Stock : 30 palettes rangées sur 5 niveaux</text>
-</svg>
-</div>
-
-<div class="card" style="text-align:center; padding:14px;">
-<style>
-@keyframes stTour{0%{transform:translate(0px,0px)}3.5%{transform:translate(0px,0px)}5%{transform:translate(49px,-4px)}6.5%{transform:translate(0px,0px)}8%{transform:translate(75px,-4px)}9.5%{transform:translate(0px,0px)}11%{transform:translate(101px,-4px)}12.5%{transform:translate(0px,0px)}14%{transform:translate(127px,-4px)}15.5%{transform:translate(0px,0px)}17%{transform:translate(153px,-4px)}18.5%{transform:translate(0px,0px)}20%{transform:translate(179px,-4px)}21.5%{transform:translate(0px,0px)}23%{transform:translate(49px,-28px)}24.5%{transform:translate(0px,0px)}26%{transform:translate(75px,-28px)}27.5%{transform:translate(0px,0px)}29%{transform:translate(101px,-28px)}30.5%{transform:translate(0px,0px)}32%{transform:translate(127px,-28px)}33.5%{transform:translate(0px,0px)}35%{transform:translate(153px,-28px)}36.5%{transform:translate(0px,0px)}38%{transform:translate(179px,-28px)}39.5%{transform:translate(0px,0px)}41%{transform:translate(49px,-52px)}42.5%{transform:translate(0px,0px)}44%{transform:translate(75px,-52px)}45.5%{transform:translate(0px,0px)}47%{transform:translate(101px,-52px)}48.5%{transform:translate(0px,0px)}50%{transform:translate(127px,-52px)}51.5%{transform:translate(0px,0px)}53%{transform:translate(153px,-52px)}54.5%{transform:translate(0px,0px)}56%{transform:translate(179px,-52px)}57.5%{transform:translate(0px,0px)}59%{transform:translate(49px,-76px)}60.5%{transform:translate(0px,0px)}62%{transform:translate(75px,-76px)}63.5%{transform:translate(0px,0px)}65%{transform:translate(101px,-76px)}66.5%{transform:translate(0px,0px)}68%{transform:translate(127px,-76px)}69.5%{transform:translate(0px,0px)}71%{transform:translate(153px,-76px)}72.5%{transform:translate(0px,0px)}74%{transform:translate(179px,-76px)}75.5%{transform:translate(0px,0px)}77%{transform:translate(49px,-100px)}78.5%{transform:translate(0px,0px)}80%{transform:translate(75px,-100px)}81.5%{transform:translate(0px,0px)}83%{transform:translate(101px,-100px)}84.5%{transform:translate(0px,0px)}86%{transform:translate(127px,-100px)}87.5%{transform:translate(0px,0px)}89%{transform:translate(153px,-100px)}90.5%{transform:translate(0px,0px)}92%{transform:translate(179px,-100px)}95.5%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
-@keyframes dsEx{0%{transform:translateX(0px);opacity:1}15%{transform:translateX(-100px);opacity:1}15.1%,100%{transform:translateX(-100px);opacity:0}}
-@keyframes dr0{0%,5%{opacity:1}5.2%,100%{opacity:0}}
-@keyframes dr1{0%,8%{opacity:1}8.2%,100%{opacity:0}}
-@keyframes dr2{0%,11%{opacity:1}11.2%,100%{opacity:0}}
-@keyframes dr3{0%,14%{opacity:1}14.2%,100%{opacity:0}}
-@keyframes dr4{0%,17%{opacity:1}17.2%,100%{opacity:0}}
-@keyframes dr5{0%,20%{opacity:1}20.2%,100%{opacity:0}}
-@keyframes dr6{0%,23%{opacity:1}23.2%,100%{opacity:0}}
-@keyframes dr7{0%,26%{opacity:1}26.2%,100%{opacity:0}}
-@keyframes dr8{0%,29%{opacity:1}29.2%,100%{opacity:0}}
-@keyframes dr9{0%,32%{opacity:1}32.2%,100%{opacity:0}}
-@keyframes dr10{0%,35%{opacity:1}35.2%,100%{opacity:0}}
-@keyframes dr11{0%,38%{opacity:1}38.2%,100%{opacity:0}}
-@keyframes dr12{0%,41%{opacity:1}41.2%,100%{opacity:0}}
-@keyframes dr13{0%,44%{opacity:1}44.2%,100%{opacity:0}}
-@keyframes dr14{0%,47%{opacity:1}47.2%,100%{opacity:0}}
-@keyframes dr15{0%,50%{opacity:1}50.2%,100%{opacity:0}}
-@keyframes dr16{0%,53%{opacity:1}53.2%,100%{opacity:0}}
-@keyframes dr17{0%,56%{opacity:1}56.2%,100%{opacity:0}}
-@keyframes dr18{0%,59%{opacity:1}59.2%,100%{opacity:0}}
-@keyframes dr19{0%,62%{opacity:1}62.2%,100%{opacity:0}}
-@keyframes dr20{0%,65%{opacity:1}65.2%,100%{opacity:0}}
-@keyframes dr21{0%,68%{opacity:1}68.2%,100%{opacity:0}}
-@keyframes dr22{0%,71%{opacity:1}71.2%,100%{opacity:0}}
-@keyframes dr23{0%,74%{opacity:1}74.2%,100%{opacity:0}}
-@keyframes dr24{0%,77%{opacity:1}77.2%,100%{opacity:0}}
-@keyframes dr25{0%,80%{opacity:1}80.2%,100%{opacity:0}}
-@keyframes dr26{0%,83%{opacity:1}83.2%,100%{opacity:0}}
-@keyframes dr27{0%,86%{opacity:1}86.2%,100%{opacity:0}}
-@keyframes dr28{0%,89%{opacity:1}89.2%,100%{opacity:0}}
-@keyframes dr29{0%,92%{opacity:1}92.2%,100%{opacity:0}}
-</style>
-<h2 style="border:none; margin:0 0 6px 0; padding:0;">📤 Destockage</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le transstockeur sort les 30 palettes des alvéoles et les dépose sur le convoyeur de sortie, qui les amène au cariste.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Le transstockeur sort les 30 palettes des alvéoles et les dépose sur le convoyeur de sortie">
-<rect width="320" height="200" fill="#d5d9de"/>
-<rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="4" y="146" width="120" height="5" fill="#55606c"/>
-<rect x="10" y="151" width="4" height="14" fill="#55606c"/>
-<rect x="116" y="151" width="4" height="14" fill="#55606c"/>
-<text x="64" y="142" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">CONVOYEUR DE SORTIE</text>
-<rect x="156" y="26" width="160" height="128" fill="none" stroke="#9aa1ab"/>
-<text x="236" y="20" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">STOCK · ALLÉE 1 · 5 NIVEAUX</text>
-<rect x="160" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="160" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="160" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="160" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="160" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="186" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="212" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="238" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="264" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect x="290" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
-<rect style="animation:dr0 40s linear infinite" x="163" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr1 40s linear infinite" x="189" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr2 40s linear infinite" x="215" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr3 40s linear infinite" x="241" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr4 40s linear infinite" x="267" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr5 40s linear infinite" x="293" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr6 40s linear infinite" x="163" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr7 40s linear infinite" x="189" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr8 40s linear infinite" x="215" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr9 40s linear infinite" x="241" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr10 40s linear infinite" x="267" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr11 40s linear infinite" x="293" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr12 40s linear infinite" x="163" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr13 40s linear infinite" x="189" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr14 40s linear infinite" x="215" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr15 40s linear infinite" x="241" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr16 40s linear infinite" x="267" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr17 40s linear infinite" x="293" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr18 40s linear infinite" x="163" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr19 40s linear infinite" x="189" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr20 40s linear infinite" x="215" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr21 40s linear infinite" x="241" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr22 40s linear infinite" x="267" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr23 40s linear infinite" x="293" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr24 40s linear infinite" x="163" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr25 40s linear infinite" x="189" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr26 40s linear infinite" x="215" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr27 40s linear infinite" x="241" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr28 40s linear infinite" x="267" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dr29 40s linear infinite" x="293" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-37.4s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-36.2s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-35s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-33.8s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-32.6s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-31.4s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-30.2s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-29s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-27.8s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-26.6s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-25.4s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-24.2s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-23s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-21.8s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-20.6s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-19.4s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-18.2s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-17s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-15.8s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-14.6s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-13.4s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-12.2s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-11s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-9.8s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-8.6s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-7.4s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-6.2s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-5s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-3.8s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:dsEx 40s linear infinite;animation-delay:-2.6s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<g style="animation:stTour 40s linear infinite">
-  <rect x="114" y="118" width="8" height="30" fill="#004aad"/>
-  <rect x="108" y="128" width="18" height="14" fill="#004aad"/>
-  <rect x="126" y="138" width="20" height="3" fill="#333"/>
-</g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Destockage : 30 palettes vers le convoyeur de sortie</text>
-</svg>
-</div>
-
-<!-- ============================================================ -->
-<!-- SCÈNE 4 — APPROVISIONNEMENT DU PICKING (refaite)             -->
-<!-- ============================================================ -->
-<div class="card" style="text-align:center; padding:14px;">
-<style>
-@keyframes apRouleau{to{transform:rotate(360deg)}}
-@keyframes apPal1{0%,4%{transform:translateX(0px);opacity:1}28%,32%{transform:translateX(140px);opacity:1}34%,100%{transform:translateX(140px);opacity:0}}
-@keyframes apPal2{0%,28%{transform:translateX(0px);opacity:1}52%,56%{transform:translateX(140px);opacity:1}58%,100%{transform:translateX(140px);opacity:0}}
-@keyframes apPal3{0%,52%{transform:translateX(0px);opacity:1}76%,80%{transform:translateX(140px);opacity:1}82%,100%{transform:translateX(140px);opacity:0}}
-@keyframes apCariste{
-  0%{transform:translate(0px,0px)}
-  8%{transform:translate(0px,0px)}
-  18%{transform:translate(150px,0px)}
-  22%{transform:translate(150px,0px)}
-  30%{transform:translate(100px,-20px)}
-  36%{transform:translate(100px,-20px)}
-  44%{transform:translate(100px,0px)}
-  50%{transform:translate(100px,0px)}
-  58%{transform:translate(150px,0px)}
-  62%{transform:translate(150px,0px)}
-  70%{transform:translate(100px,-40px)}
-  76%{transform:translate(100px,-40px)}
-  84%{transform:translate(100px,0px)}
-  92%{transform:translate(0px,0px)}
-  100%{transform:translate(0px,0px)}
-}
-@keyframes apPalPortee{
-  0%,20%{opacity:0}
-  22%,28%{opacity:1;transform:translate(0,0)}
-  36%,44%{opacity:0;transform:translate(0,0)}
-  50%,56%{opacity:0}
-  58%,62%{opacity:1}
-  70%,76%{opacity:1;transform:translate(0,0)}
-  84%,100%{opacity:0}
-}
-@keyframes apStockN1{0%,35%{opacity:0}36%,100%{opacity:1}}
-@keyframes apStockN2{0%,75%{opacity:0}76%,100%{opacity:1}}
-.ap-rouleau{transform-box:fill-box;transform-origin:center;animation:apRouleau .8s linear infinite}
-.ap-pal1{animation:apPal1 24s linear infinite}
-.ap-pal2{animation:apPal2 24s linear infinite}
-.ap-pal3{animation:apPal3 24s linear infinite}
-.ap-cariste{animation:apCariste 24s linear infinite}
-.ap-pal-portee{animation:apPalPortee 24s linear infinite}
-.ap-stock-n1{animation:apStockN1 24s linear infinite}
-.ap-stock-n2{animation:apStockN2 24s linear infinite}
-</style>
-<h2 style="border:none; margin:0 0 6px 0; padding:0;">🚜 Approvisionnement du picking</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Les palettes arrivent sur le convoyeur qui tourne. Le cariste les récupère une par une en bout de convoyeur, puis les range sur les niveaux du picking.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Convoyeur animé qui amène les palettes, cariste qui les récupère et les range sur les deux niveaux du picking">
-<rect width="320" height="200" fill="#d5d9de"/>
-<rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="4" y="140" width="150" height="8" fill="#3a4550" rx="2"/>
-<rect x="4" y="148" width="150" height="4" fill="#55606c"/>
-<rect x="8" y="152" width="4" height="14" fill="#55606c"/>
-<rect x="146" y="152" width="4" height="14" fill="#55606c"/>
-<text x="79" y="134" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">CONVOYEUR D'ALIMENTATION</text>
-<g fill="#8a94a0">
-  <circle class="ap-rouleau" cx="16" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="28" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="40" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="52" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="64" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="76" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="88" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="100" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="112" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="124" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="136" cy="144" r="2.5"/>
-  <circle class="ap-rouleau" cx="148" cy="144" r="2.5"/>
-</g>
-<g class="ap-pal1"><rect x="10" y="132" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/></g>
-<g class="ap-pal2"><rect x="10" y="132" width="20" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/></g>
-<g class="ap-pal3"><rect x="10" y="132" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/></g>
-<rect x="196" y="60" width="4" height="100" fill="#55606c"/>
-<rect x="290" y="60" width="4" height="100" fill="#55606c"/>
-<rect x="196" y="60" width="98" height="4" fill="#55606c"/>
-<rect x="196" y="100" width="98" height="4" fill="#55606c"/>
-<rect x="196" y="140" width="98" height="4" fill="#55606c"/>
-<text x="245" y="52" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">PICKING · 2 NIVEAUX</text>
-<text x="245" y="96" text-anchor="middle" font-size="7" font-weight="700" fill="#004aad">NIVEAU 2</text>
-<text x="245" y="136" text-anchor="middle" font-size="7" font-weight="700" fill="#004aad">NIVEAU 1</text>
-<rect class="ap-stock-n1" x="210" y="122" width="20" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="ap-stock-n2" x="240" y="82" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<g class="ap-cariste">
-  <circle cx="30" cy="162" r="4" fill="#111"/>
-  <circle cx="50" cy="162" r="4" fill="#111"/>
-  <rect x="24" y="138" width="30" height="14" fill="#004aad" rx="2"/>
-  <circle cx="34" cy="130" r="5" fill="#f0c08a"/>
-  <rect x="30" y="135" width="8" height="5" fill="#ffcc00"/>
-  <rect x="56" y="108" width="4" height="44" fill="#555"/>
-  <rect x="58" y="150" width="20" height="3" fill="#333"/>
-  <rect class="ap-pal-portee" x="58" y="138" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-</g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Approvisionnement : le cariste récupère et range les palettes</text>
-</svg>
-</div>
-
-<!-- ============================================================ -->
-<!-- SCÈNE 5 — PICKING MULTI-ALLÉES (refaite)                     -->
-<!-- ============================================================ -->
-<div class="card" style="text-align:center; padding:14px;">
-<style>
-@keyframes pkTrajet{
-  0%{transform:translate(0px,0px)}
-  8%{transform:translate(0px,0px)}
-  18%{transform:translate(70px,0px)}
-  26%{transform:translate(70px,0px)}
-  36%{transform:translate(140px,0px)}
-  44%{transform:translate(140px,0px)}
-  54%{transform:translate(210px,0px)}
-  62%{transform:translate(210px,0px)}
-  72%{transform:translate(280px,0px)}
-  80%{transform:translate(280px,0px)}
-  88%{transform:translate(280px,0px)}
-  92%{transform:translate(280px,0px)}
-  100%{transform:translate(280px,0px)}
-}
-@keyframes pkProdA{0%,20%{opacity:1}22%,100%{opacity:0}}
-@keyframes pkProdB{0%,40%{opacity:1}42%,100%{opacity:0}}
-@keyframes pkProdC{0%,58%{opacity:1}60%,100%{opacity:0}}
-@keyframes pkProdD{0%,76%{opacity:1}78%,100%{opacity:0}}
-@keyframes pkPalA{0%,22%{opacity:0}23%,100%{opacity:1}}
-@keyframes pkPalB{0%,42%{opacity:0}43%,100%{opacity:1}}
-@keyframes pkPalC{0%,60%{opacity:0}61%,100%{opacity:1}}
-@keyframes pkPalD{0%,78%{opacity:0}79%,100%{opacity:1}}
-.pk-chariot{animation:pkTrajet 24s linear infinite}
-.pk-prod-a{animation:pkProdA 24s linear infinite}
-.pk-prod-b{animation:pkProdB 24s linear infinite}
-.pk-prod-c{animation:pkProdC 24s linear infinite}
-.pk-prod-d{animation:pkProdD 24s linear infinite}
-.pk-pal-a{animation:pkPalA 24s linear infinite}
-.pk-pal-b{animation:pkPalB 24s linear infinite}
-.pk-pal-c{animation:pkPalC 24s linear infinite}
-.pk-pal-d{animation:pkPalD 24s linear infinite}
-</style>
-<h2 style="border:none; margin:0 0 6px 0; padding:0;">🛒 Picking multi-allées</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le préparateur enchaîne les allées A, B, C et D, prélève des produits sur chaque étagère, les monte sur sa palette, puis sort à droite pour livrer sa commande à l'expédition.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Préparateur qui passe dans quatre allées de picking, prélève des produits et sort à droite avec sa palette complète">
-<rect width="320" height="200" fill="#d5d9de"/>
-<rect y="146" width="320" height="26" fill="#c5cad1"/>
-<rect x="20" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
-<rect x="20" y="60" width="60" height="3" fill="#55606c"/>
-<rect x="20" y="100" width="60" height="3" fill="#55606c"/>
-<text x="50" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE A</text>
-<rect class="pk-prod-a" x="26" y="48" width="9" height="12" fill="#ffcc00"/>
-<rect x="38" y="48" width="9" height="12" fill="#2a78d6"/>
-<rect class="pk-prod-a" x="50" y="88" width="9" height="12" fill="#eb6834"/>
-<rect x="62" y="88" width="9" height="12" fill="#7b1fa2"/>
-<rect x="90" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
-<rect x="90" y="60" width="60" height="3" fill="#55606c"/>
-<rect x="90" y="100" width="60" height="3" fill="#55606c"/>
-<text x="120" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE B</text>
-<rect class="pk-prod-b" x="96" y="48" width="9" height="12" fill="#2e7d32"/>
-<rect x="108" y="48" width="9" height="12" fill="#eb6834"/>
-<rect class="pk-prod-b" x="120" y="88" width="9" height="12" fill="#ffcc00"/>
-<rect x="132" y="88" width="9" height="12" fill="#2a78d6"/>
-<rect x="160" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
-<rect x="160" y="60" width="60" height="3" fill="#55606c"/>
-<rect x="160" y="100" width="60" height="3" fill="#55606c"/>
-<text x="190" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE C</text>
-<rect class="pk-prod-c" x="166" y="48" width="9" height="12" fill="#7b1fa2"/>
-<rect x="178" y="48" width="9" height="12" fill="#2a78d6"/>
-<rect class="pk-prod-c" x="190" y="88" width="9" height="12" fill="#2e7d32"/>
-<rect x="202" y="88" width="9" height="12" fill="#eb6834"/>
-<rect x="230" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
-<rect x="230" y="60" width="60" height="3" fill="#55606c"/>
-<rect x="230" y="100" width="60" height="3" fill="#55606c"/>
-<text x="260" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE D</text>
-<rect class="pk-prod-d" x="236" y="48" width="9" height="12" fill="#ffcc00"/>
-<rect x="248" y="48" width="9" height="12" fill="#2e7d32"/>
-<rect class="pk-prod-d" x="260" y="88" width="9" height="12" fill="#2a78d6"/>
-<rect x="272" y="88" width="9" height="12" fill="#eb6834"/>
-<g class="pk-chariot">
-  <circle cx="12" cy="158" r="4" fill="#111"/>
-  <circle cx="32" cy="158" r="4" fill="#111"/>
-  <rect x="6" y="134" width="30" height="14" fill="#004aad" rx="2"/>
-  <circle cx="16" cy="126" r="5" fill="#f0c08a"/>
-  <rect x="12" y="131" width="8" height="5" fill="#ffcc00"/>
-  <rect x="38" y="104" width="4" height="44" fill="#555"/>
-  <rect x="40" y="146" width="20" height="3" fill="#333"/>
-  <rect x="40" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="pk-pal-a" x="42" y="124" width="7" height="10" fill="#ffcc00"/>
-  <rect class="pk-pal-b" x="50" y="124" width="7" height="10" fill="#2e7d32"/>
-  <rect class="pk-pal-c" x="46" y="114" width="7" height="10" fill="#7b1fa2"/>
-  <rect class="pk-pal-d" x="54" y="114" width="7" height="10" fill="#eb6834"/>
-</g>
-<polygon points="296,140 306,146 296,152" fill="#2e7d32"/>
-<text x="290" y="170" text-anchor="middle" font-size="7" font-weight="700" fill="#2e7d32">SORTIE →</text>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Picking : le préparateur prélève dans 4 allées puis sort à droite</text>
-</svg>
-</div>
-
-<!-- ============================================================ -->
-<!-- SCÈNE 6 — EXPÉDITION (refaite)                               -->
-<!-- ============================================================ -->
-<div class="card" style="text-align:center; padding:14px;">
-<style>
-@keyframes exCamion{
-  0%{transform:translateX(120px)}
-  8%{transform:translateX(0px)}
-  100%{transform:translateX(0px)}
-}
-@keyframes exNiveleur{
-  0%,10%{transform:scaleX(0)}
-  14%,100%{transform:scaleX(1)}
-}
-.ex-niveleur{transform-box:fill-box;transform-origin:left center;animation:exNiveleur 40s linear infinite}
-.ex-camion{animation:exCamion 40s linear infinite}
-@keyframes exFilm{to{transform:rotate(360deg)}}
-.ex-film{transform-box:fill-box;transform-origin:center;animation:exFilm 1.2s linear infinite}
-@keyframes exPalTourne{to{transform:rotate(360deg)}}
-.ex-pal-tourne{transform-box:fill-box;transform-origin:center;animation:exPalTourne 2.4s linear infinite}
-@keyframes exChargeur{
-  0%{transform:translate(0px,0px)}
-  2%{transform:translate(0px,0px)}
-  4%{transform:translate(60px,0px)}
-  6%{transform:translate(60px,0px)}
-  8%{transform:translate(140px,0px)}
-  10%{transform:translate(140px,0px)}
-  12%{transform:translate(0px,0px)}
-  14%{transform:translate(60px,0px)}
-  16%{transform:translate(60px,0px)}
-  18%{transform:translate(140px,0px)}
-  20%{transform:translate(140px,0px)}
-  22%{transform:translate(0px,0px)}
-  24%{transform:translate(60px,0px)}
-  26%{transform:translate(60px,0px)}
-  28%{transform:translate(140px,0px)}
-  30%{transform:translate(140px,0px)}
-  32%{transform:translate(0px,0px)}
-  34%{transform:translate(60px,0px)}
-  36%{transform:translate(60px,0px)}
-  38%{transform:translate(140px,0px)}
-  40%{transform:translate(140px,0px)}
-  42%{transform:translate(0px,0px)}
-  44%{transform:translate(60px,0px)}
-  46%{transform:translate(60px,0px)}
-  48%{transform:translate(140px,0px)}
-  50%{transform:translate(140px,0px)}
-  52%{transform:translate(0px,0px)}
-  54%{transform:translate(60px,0px)}
-  56%{transform:translate(60px,0px)}
-  58%{transform:translate(140px,0px)}
-  60%{transform:translate(140px,0px)}
-  62%{transform:translate(0px,0px)}
-  64%{transform:translate(60px,0px)}
-  66%{transform:translate(60px,0px)}
-  68%{transform:translate(140px,0px)}
-  70%{transform:translate(140px,0px)}
-  72%{transform:translate(0px,0px)}
-  74%{transform:translate(60px,0px)}
-  76%{transform:translate(60px,0px)}
-  78%{transform:translate(140px,0px)}
-  80%{transform:translate(140px,0px)}
-  82%{transform:translate(0px,0px)}
-  84%{transform:translate(60px,0px)}
-  86%{transform:translate(60px,0px)}
-  88%{transform:translate(140px,0px)}
-  90%{transform:translate(140px,0px)}
-  92%{transform:translate(0px,0px)}
-  94%{transform:translate(60px,0px)}
-  96%{transform:translate(60px,0px)}
-  98%{transform:translate(140px,0px)}
-  100%{transform:translate(140px,0px)}
-}
-.ex-chargeur{animation:exChargeur 40s linear infinite}
-@keyframes exPalPortee{0%,2%{opacity:0}3%,10%{opacity:1}11%,100%{opacity:0}}
-.ex-pal-portee{animation:exPalPortee 4s linear infinite}
-@keyframes exT1{0%,10%{opacity:0}11%,100%{opacity:1}}
-@keyframes exT2{0%,20%{opacity:0}21%,100%{opacity:1}}
-@keyframes exT3{0%,30%{opacity:0}31%,100%{opacity:1}}
-@keyframes exT4{0%,40%{opacity:0}41%,100%{opacity:1}}
-@keyframes exT5{0%,50%{opacity:0}51%,100%{opacity:1}}
-@keyframes exT6{0%,60%{opacity:0}61%,100%{opacity:1}}
-@keyframes exT7{0%,70%{opacity:0}71%,100%{opacity:1}}
-@keyframes exT8{0%,80%{opacity:0}81%,100%{opacity:1}}
-@keyframes exT9{0%,90%{opacity:0}91%,100%{opacity:1}}
-@keyframes exT10{0%,99%{opacity:0}100%{opacity:1}}
-.ex-t1{animation:exT1 40s linear infinite}
-.ex-t2{animation:exT2 40s linear infinite}
-.ex-t3{animation:exT3 40s linear infinite}
-.ex-t4{animation:exT4 40s linear infinite}
-.ex-t5{animation:exT5 40s linear infinite}
-.ex-t6{animation:exT6 40s linear infinite}
-.ex-t7{animation:exT7 40s linear infinite}
-.ex-t8{animation:exT8 40s linear infinite}
-.ex-t9{animation:exT9 40s linear infinite}
-.ex-t10{animation:exT10 40s linear infinite}
-</style>
-<h2 style="border:none; margin:0 0 6px 0; padding:0;">🚛 Expédition</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le camion recule au quai, le niveleur se déploie. Le chargeur amène chaque palette à la filmeuse, la filme, puis la charge dans le camion. Les 10 palettes finissent côte à côte.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Camion qui recule au quai, niveleur qui se déploie, chargeur qui filme 10 palettes et les charge dans le camion">
-<rect width="320" height="200" fill="#d5d9de"/>
-<rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="0" y="60" width="50" height="112" fill="#b8bec6"/>
-<rect x="0" y="56" width="50" height="4" fill="#9aa1ab"/>
-<text x="25" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">QUAI</text>
-<g class="ex-niveleur">
-  <rect x="50" y="148" width="30" height="6" fill="#7b8794"/>
-  <rect x="50" y="144" width="30" height="4" fill="#55606c"/>
-</g>
-<rect x="96" y="150" width="34" height="10" fill="#55606c"/>
-<rect x="110" y="108" width="4" height="44" fill="#3a4550"/>
-<g class="ex-film">
-  <ellipse cx="130" cy="136" rx="22" ry="6" fill="none" stroke="#e8ecf0" stroke-width="3"/>
-  <ellipse cx="130" cy="136" rx="22" ry="6" fill="none" stroke="#c0c8d0" stroke-width="1" stroke-dasharray="3 3"/>
-</g>
-<text x="113" y="104" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">FILMEUSE</text>
-<g class="ex-pal-tourne">
-  <rect x="118" y="130" width="18" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-</g>
-<g class="ex-camion">
-  <rect x="208" y="62" width="104" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
-  <text x="260" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION DE DÉPART</text>
-  <circle cx="226" cy="166" r="6" fill="#111"/>
-  <circle cx="250" cy="166" r="6" fill="#111"/>
-  <circle cx="290" cy="166" r="6" fill="#111"/>
-  <rect class="ex-t1" x="216" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t2" x="234" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t3" x="252" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t4" x="270" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t5" x="288" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t6" x="216" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t7" x="234" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t8" x="252" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t9" x="270" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect class="ex-t10" x="288" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-</g>
-<g class="ex-chargeur">
-  <circle cx="16" cy="158" r="4" fill="#111"/>
-  <circle cx="36" cy="158" r="4" fill="#111"/>
-  <rect x="10" y="134" width="30" height="14" fill="#004aad" rx="2"/>
-  <circle cx="20" cy="126" r="5" fill="#f0c08a"/>
-  <rect x="16" y="131" width="8" height="5" fill="#ffcc00"/>
-  <rect x="42" y="104" width="4" height="44" fill="#555"/>
-  <rect x="44" y="146" width="20" height="3" fill="#333"/>
-  <rect class="ex-pal-portee" x="44" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-</g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Expédition : 10 palettes filmées puis chargées côte à côte</text>
-</svg>
-</div>  
-  
 <!-- ONGLET 2 : NOS VICTOIRES -->
 <section id="victoires" hidden>
   <div class="card">
@@ -1542,6 +858,354 @@ const QUESTIONS_URL = "https://formspree.io/f/xyewzday";
 const IA_URL = "https://assistant-sud.kg4fnd86k2-c01.workers.dev/";
 const LEGI = "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/";
 const $ = id => document.getElementById(id);
+
+// ==== JEU QUOTIDIEN ====
+const JD_FORMSPREE = "https://formspree.io/f/xwlovwav"; // <-- CORRIGÉ ICI
+const JD_KEY = "sudJeuQuotidien";
+
+const JD_PROFILS = {
+  cadence:  { nom: "Le pressé",  emoji: "🔴", titre: "Tu es Le pressé",  couleur: "#c8102e" },
+  horaires: { nom: "L'épuisé",   emoji: "🟠", titre: "Tu es L'épuisé",   couleur: "#eb6834" },
+  securite: { nom: "L'inquiet",  emoji: "🟡", titre: "Tu es L'inquiet",  couleur: "#b8860b" },
+  ambiance: { nom: "Le seul",    emoji: "🟢", titre: "Tu es Le seul",    couleur: "#2e7d32" },
+  salaire:  { nom: "Le révolté", emoji: "🔵", titre: "Tu es Le révolté", couleur: "#004aad" }
+};
+
+const JD_SCENARIOS = {
+  cadence: [
+    { question: "Ce matin, ton chef te dit : « On a 20 palettes de plus, pas de pause aujourd'hui. » Que fais-tu ?",
+      choix: ["Je saute ma pause, je ne veux pas d'histoires", "Je prends ma pause quand même, c'est mon droit", "Je préviens le CSE que la pause n'est pas respectée"],
+      bonne: 1,
+      explications: ["❌ Tu accumules de la fatigue, et personne ne sait que tu as un problème.", "✅ Bravo. La pause de 20 minutes est obligatoire au-delà de 6h de travail.", "✅ Excellent. Le CSE peut intervenir pour faire respecter le droit."] },
+    { question: "Ton chef te demande de rester 30 minutes après l'heure pour finir la commande. « On te rattrapera. » Que fais-tu ?",
+      choix: ["Je reste, ça arrange tout le monde", "Je reste, mais je note mes heures", "Je refuse, je finis à l'heure prévue"],
+      bonne: 1,
+      explications: ["❌ Le temps de travail effectif doit être payé. Sans trace, tu ne pourras pas réclamer.", "✅ Bien. Note les dates et heures, et demande une régularisation écrite.", "✅ Bien. Ton contrat prévoit des horaires, tu peux refuser les heures supplémentaires non prévues."] },
+    { question: "La cadence augmente chaque semaine. Tu tiens, mais tu sens que ça ne va pas durer. Que fais-tu ?",
+      choix: ["Je tiens, je ne dis rien", "Je dis à mon chef que c'est trop", "Je demande un rendez-vous avec le CSE"],
+      bonne: 2,
+      explications: ["❌ Le silence laisse la cadence augmenter. Les accidents arrivent quand on est épuisé.", "✅ Bien. Dire les choses, c'est la première étape.", "✅ Excellent. Le CSE peut demander un audit des cadences."] }
+  ],
+  horaires: [
+    { question: "Ton planning de la semaine prochaine arrive le dimanche soir. Tu avais prévu quelque chose. Que fais-tu ?",
+      choix: ["Je m'adapte, ce n'est pas grave", "Je demande un délai de prévenance plus long", "Je préviens le CSE que les plannings arrivent trop tard"],
+      bonne: 2,
+      explications: ["❌ Tu ne pourras jamais organiser ta vie personnelle.", "✅ Bien. La convention collective prévoit souvent un délai de prévenance.", "✅ Excellent. Le CSE peut négocier un délai minimum."] },
+    { question: "Tu es du matin cette semaine, de l'après-midi la semaine prochaine, de nuit la suivante. Tu ne sais jamais à quelle heure tu finis. Que fais-tu ?",
+      choix: ["Je m'adapte, c'est le métier", "Je demande un planning fixe", "Je demande au CSE de négocier des horaires plus stables"],
+      bonne: 2,
+      explications: ["❌ L'alternance permanente fatigue et désorganise la vie.", "✅ Bien. Un planning fixe est possible dans beaucoup d'entrepôts.", "✅ Excellent. Le CSE peut porter cette demande collectivement."] },
+    { question: "Ton chef t'annonce que tu feras 2 heures supplémentaires tous les soirs cette semaine. « C'est obligatoire. » Que fais-tu ?",
+      choix: ["J'accepte, je n'ai pas le choix", "Je demande si c'est prévu par mon contrat", "Je préviens le CSE que les heures supplémentaires sont imposées sans préavis"],
+      bonne: 2,
+      explications: ["❌ Les heures supplémentaires ont des limites (contingent annuel).", "✅ Bien. Vérifie ton contrat et le contingent annuel.", "✅ Excellent. Le CSE peut vérifier si les règles sont respectées."] }
+  ],
+  securite: [
+    { question: "Ton chariot a un frein qui tire d'un côté. Tu dois commencer ta tournée. Que fais-tu ?",
+      choix: ["Je l'utilise prudemment", "Je signale le défaut et je ne l'utilise pas", "Je le répare moi-même vite fait"],
+      bonne: 1,
+      explications: ["❌ Un engin défectueux peut causer un accident grave.", "✅ Bravo. Un engin défectueux se signale et se met hors service.", "❌ Tu n'es pas mécanicien, et l'engin doit être consigné."] },
+    { question: "Tu vois un collègue travailler sans casque dans une zone où circulent des engins. Que fais-tu ?",
+      choix: ["Je ne dis rien, ce n'est pas mon affaire", "Je lui dis de mettre son casque", "Je préviens le CSE"],
+      bonne: 2,
+      explications: ["❌ Le silence laisse le danger s'installer.", "✅ Bien. Un rappel entre collègues peut suffire.", "✅ Excellent. Le CSE peut faire un rappel collectif."] },
+    { question: "Une palette déborde sur l'allée de circulation des engins. Personne ne l'a enlevée. Que fais-tu ?",
+      choix: ["Je passe à côté, ça va", "Je signale l'encombrement à mon chef", "Je dégage l'allée moi-même"],
+      bonne: 1,
+      explications: ["❌ Une palette qui déborde peut accrocher un engin ou tomber.", "✅ Bien. Signaler, c'est déjà protéger.", "⚠️ Attention, ne te mets pas en danger. Signale plutôt."] }
+  ],
+  ambiance: [
+    { question: "Un nouveau collègue est arrivé il y a 3 semaines. Personne ne lui parle vraiment. Il mange seul. Que fais-tu ?",
+      choix: ["Ce n'est pas mon problème", "Je vais lui parler à la pause", "J'en parle au CSE pour proposer un accueil des nouveaux"],
+      bonne: 2,
+      explications: ["❌ L'isolement est un vrai risque (mal-être, démission).", "✅ Bien. Un geste simple peut tout changer.", "✅ Excellent. Un accueil structuré évite les isolements."] },
+    { question: "Deux collègues ne se parlent plus depuis une semaine. L'ambiance est tendue. Que fais-tu ?",
+      choix: ["Je reste à l'écart", "J'essaie de comprendre ce qui se passe", "Je préviens le CSE que l'ambiance se dégrade"],
+      bonne: 2,
+      explications: ["❌ Les tensions non dites explosent un jour.", "✅ Bien. Comprendre, c'est déjà apaiser.", "✅ Excellent. Le CSE peut proposer une médiation."] },
+    { question: "Ton chef te parle mal devant les collègues. Ça fait plusieurs fois. Que fais-tu ?",
+      choix: ["Je ne dis rien, je ne veux pas d'histoires", "Je lui dis calmement que ça ne me convient pas", "Je préviens le CSE et je garde une trace écrite"],
+      bonne: 2,
+      explications: ["❌ Le manque de respect répété est du harcèlement.", "✅ Bien. Dire les choses, c'est un premier pas.", "✅ Excellent. Garde une trace (dates, mots), c'est important."] }
+  ],
+  salaire: [
+    { question: "Tu devais toucher une prime ce mois-ci. Elle n'est pas sur ta fiche de paie. Que fais-tu ?",
+      choix: ["J'attends le mois prochain", "Je demande des explications à mon chef", "Je contacte le CSE pour vérifier mes droits"],
+      bonne: 2,
+      explications: ["❌ Sans réclamation, la prime peut être oubliée définitivement.", "✅ Bien. Demande une explication écrite.", "✅ Excellent. Le CSE peut faire le lien avec la direction."] },
+    { question: "Tu as fait 10 heures supplémentaires ce mois-ci. Elles n'apparaissent pas sur ta fiche de paie. Que fais-tu ?",
+      choix: ["Je ne dis rien, ça va passer", "Je note les heures et je demande une régularisation", "Je préviens le CSE que les heures ne sont pas payées"],
+      bonne: 2,
+      explications: ["❌ Les heures non payées sont un manque à gagner réel.", "✅ Bien. Note tout par écrit.", "✅ Excellent. Le CSE peut vérifier les pointages."] },
+    { question: "Tu apprends qu'un collègue qui fait le même travail que toi est payé 100 € de plus. Que fais-tu ?",
+      choix: ["Je ne dis rien, je ne veux pas créer de problèmes", "Je demande un entretien avec mon chef", "Je contacte le CSE pour vérifier l'égalité de traitement"],
+      bonne: 2,
+      explications: ["❌ L'inégalité non dite reste une injustice.", "✅ Bien. Demande une explication écrite.", "✅ Excellent. L'égalité de salaire est un droit."] }
+  ]
+};
+
+const JD_CONSEILS_INTERLOCUTEUR = {
+  personne:  "👉 Tu as répondu « Personne ». C'est souvent le cas. Mais un problème dit à un élu peut être réglé. N'hésite pas à en parler.",
+  collegue:  "👉 Tu en parles à un collègue, c'est bien. Un élu peut t'aider à porter le problème plus loin.",
+  elu:       "👉 Tu en parles à un élu, c'est le bon réflexe. Le CSE est là pour ça.",
+  syndicat:  "👉 Tu en parles au syndicat, c'est parfait. Sud Industrie ELE est là pour t'aider.",
+  hierarchie:"👉 Tu en parles à la hiérarchie, c'est bien. Mais garde une trace écrite, et n'hésite pas à en parler à un élu si ça ne bouge pas."
+};
+
+let jdState = { etape: 0, reponses: {}, profil: null, scenarioIdx: 0, scenarioReponses: [] };
+
+function jdCommencer(){
+  jdState = { etape: 0, reponses: {}, profil: null, scenarioIdx: 0, scenarioReponses: [] };
+  $("jd-accueil").hidden = true;
+  $("jd-questions").hidden = false;
+  $("jd-scenario").hidden = true;
+  $("jd-bilan").hidden = true;
+  jdAfficherQuestion(1);
+}
+
+function jdAfficherQuestion(n){
+  jdState.etape = n;
+  document.querySelectorAll(".jd-question").forEach(q => q.hidden = true);
+  const q = document.querySelector('.jd-question[data-q="' + n + '"]');
+  if(q) q.hidden = false;
+  $("jd-question-num").textContent = "Question " + n + " / 4";
+  $("jd-progress").style.width = (n / 4 * 100) + "%";
+  $("jd-err").hidden = true;
+  $("jd-btn-suivant").textContent = n === 4 ? "Voir mon profil ➡️" : "Suivant ➡️";
+}
+
+function jdSuivant(){
+  const n = jdState.etape;
+  const err = $("jd-err");
+  err.hidden = true;
+
+  if(n === 1){
+    const v = document.querySelector('input[name="jd-q1"]:checked');
+    if(!v){ err.textContent = "Choisis une réponse avant de continuer."; err.hidden = false; return; }
+    jdState.reponses.q1 = v.value;
+    jdState.profil = v.value;
+    jdAfficherQuestion(2);
+  } else if(n === 2){
+    const v = document.querySelector('input[name="jd-q2"]:checked');
+    if(!v){ err.textContent = "Choisis une réponse avant de continuer."; err.hidden = false; return; }
+    jdState.reponses.q2 = v.value;
+    jdAfficherQuestion(3);
+  } else if(n === 3){
+    const coches = [...document.querySelectorAll('input[name="jd-q3"]:checked')].map(x => x.value);
+    const autre = $("jd-q3-autre").value.trim();
+    if(autre) coches.push("autre: " + autre);
+    jdState.reponses.q3 = coches;
+    jdAfficherQuestion(4);
+  } else if(n === 4){
+    jdState.reponses.q4 = $("jd-q4").value.trim();
+    jdLancerScenarios();
+  }
+}
+
+function jdAnnuler(){
+  if(!confirm("Annuler le jeu ? Tes réponses ne seront pas enregistrées.")) return;
+  $("jd-questions").hidden = true;
+  $("jd-accueil").hidden = false;
+  jdAfficherDernierBilanSiExiste();
+}
+
+function jdLancerScenarios(){
+  jdState.scenarioIdx = 0;
+  jdState.scenarioReponses = [];
+  $("jd-questions").hidden = true;
+  $("jd-scenario").hidden = false;
+  jdAfficherScenario();
+}
+
+function jdAfficherScenario(){
+  const profil = jdState.profil;
+  const scenarios = JD_SCENARIOS[profil];
+  const sc = scenarios[jdState.scenarioIdx];
+  $("jd-scenario-num").textContent = "Scénario " + (jdState.scenarioIdx + 1) + " / 3";
+  const box = $("jd-scenario-contenu");
+  box.innerHTML = '<p style="font-size:1.05rem; margin:0 0 12px 0;">' + sc.question + '</p>' +
+    '<div class="jd-scenario-choix">' +
+    sc.choix.map((c, i) => '<button onclick="jdChoisirScenario(' + i + ', this)">' + c + '</button>').join("") +
+    '</div>';
+  $("jd-btn-scenario-suivant").hidden = true;
+}
+
+function jdChoisirScenario(i, btn){
+  const profil = jdState.profil;
+  const sc = JD_SCENARIOS[profil][jdState.scenarioIdx];
+  document.querySelectorAll("#jd-scenario-contenu .jd-scenario-choix button").forEach((b, k) => {
+    b.disabled = true;
+    if(k === sc.bonne) b.classList.add("ok");
+  });
+  if(i !== sc.bonne) btn.classList.add("ko");
+  const fb = document.createElement("div");
+  fb.className = "jd-scenario-feedback";
+  fb.innerHTML = "<strong>💡 " + sc.explications[i] + "</strong>";
+  $("jd-scenario-contenu").appendChild(fb);
+  jdState.scenarioReponses.push(i);
+  $("jd-btn-scenario-suivant").hidden = false;
+}
+
+function jdScenarioSuivant(){
+  jdState.scenarioIdx++;
+  if(jdState.scenarioIdx < 3){
+    jdAfficherScenario();
+  } else {
+    jdAfficherBilan();
+  }
+}
+
+function jdAfficherBilan(){
+  const p = JD_PROFILS[jdState.profil];
+  $("jd-scenario").hidden = true;
+  $("jd-bilan").hidden = false;
+  $("jd-bilan-emoji").textContent = p.emoji;
+  $("jd-bilan-titre").textContent = p.titre;
+  $("jd-bilan-profil").textContent = "Profil : " + p.nom;
+
+  const priorites = jdState.reponses.q3 || [];
+  const conseilInterlocuteur = JD_CONSEILS_INTERLOCUTEUR[jdState.reponses.q2] || "";
+
+  let html = "<strong>📋 Tes priorités :</strong><br>";
+  html += priorites.length ? priorites.map(x => "• " + x).join("<br>") : "• (aucune)";
+  html += "<br><br><strong>💬 Ce que le syndicat peut faire :</strong><br>";
+  html += jdBilanSpecifique(jdState.profil);
+  html += "<br><br>" + conseilInterlocuteur;
+  if(jdState.reponses.q4){
+    html += "<br><br><strong>✍️ Ta préoccupation :</strong><br>« " + jdState.reponses.q4 + " »";
+  }
+  $("jd-bilan-details").innerHTML = html;
+
+  const bilan = {
+    date: new Date().toISOString(),
+    profil: jdState.profil,
+    profilNom: p.nom,
+    reponses: jdState.reponses,
+    scenarios: jdState.scenarioReponses
+  };
+  try{ localStorage.setItem(JD_KEY, JSON.stringify(bilan)); }catch(e){}
+
+  fetch(JD_FORMSPREE, {
+    method: "POST",
+    headers: { "Accept": "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "jeu-quotidien",
+      profil: p.nom,
+      q1_probleme: jdState.reponses.q1,
+      q2_interlocuteur: jdState.reponses.q2,
+      q3_priorites: (jdState.reponses.q3 || []).join(", "),
+      q4_preoccupation: jdState.reponses.q4 || "",
+      scenarios: jdState.scenarioReponses.join(","),
+      date: new Date().toLocaleString("fr-FR")
+    })
+  }).catch(() => {});
+
+  if(window.goatcounter) goatcounter.count({ path: "jeu-quotidien-fini", event: true });
+}
+
+function jdBilanSpecifique(profil){
+  const bilans = {
+    cadence: "Le CSE peut demander un audit des cadences. Sud Industrie ELE a déjà obtenu des pauses supplémentaires dans d'autres entrepôts.",
+    horaires: "La convention collective prévoit un délai de prévenance pour les plannings. Le CSE peut négocier des horaires plus stables.",
+    securite: "Un engin défectueux se signale et se met hors service. Tu as un droit de retrait si le danger est grave et imminent.",
+    ambiance: "Le CSE peut proposer un accueil structuré des nouveaux et une médiation en cas de tension. Le manque de respect répété est du harcèlement.",
+    salaire: "Le CSE peut vérifier les pointages et l'égalité de traitement. Les heures supplémentaires sont majorées de 25% pour les 8 premières heures."
+  };
+  return bilans[profil] || "";
+}
+
+function jdAfficherDernierBilanSiExiste(){
+  try{
+    const raw = localStorage.getItem(JD_KEY);
+    if(!raw){ $("jd-dernier-bilan-box").style.display = "none"; return; }
+    const b = JSON.parse(raw);
+    $("jd-dernier-profil").textContent = b.profilNom + " (" + new Date(b.date).toLocaleDateString("fr-FR") + ")";
+    $("jd-dernier-bilan-box").style.display = "block";
+  }catch(e){ $("jd-dernier-bilan-box").style.display = "none"; }
+}
+
+function jdVoirDernierBilan(){
+  try{
+    const b = JSON.parse(localStorage.getItem(JD_KEY));
+    if(!b) return;
+    jdState = { reponses: b.reponses, profil: b.profil, scenarioReponses: b.scenarios || [] };
+    $("jd-accueil").hidden = true;
+    jdAfficherBilan();
+  }catch(e){}
+}
+
+function jdPartager(canal){
+  const p = JD_PROFILS[jdState.profil];
+  const txt = `J'ai fait le jeu "Ton quotidien" de Sud Industrie ELE. Mon profil : ${p.nom}. Et toi ? ${location.href}`;
+  if(canal === "wa") window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank");
+  else window.open("sms:?&body=" + encodeURIComponent(txt), "_blank");
+  if(window.goatcounter) goatcounter.count({ path: "jeu-quotidien-partage-" + canal, event: true });
+}
+
+function jdRejouer(){
+  $("jd-bilan").hidden = true;
+  $("jd-accueil").hidden = false;
+  jdState = { etape: 0, reponses: {}, profil: null, scenarioIdx: 0, scenarioReponses: [] };
+  jdAfficherDernierBilanSiExiste();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  jdAfficherDernierBilanSiExiste();
+});
+
+
+// ==== VOIX OFF ====
+const VOIX_COURT = "Bonjour. Bienvenue sur l'espace salarié de Sud Industrie E.L.E. Tu y trouveras tes droits, un sondage anonyme et un quiz. Pour ta situation personnelle, contacte-nous en cliquant sur les liens pour nous envoyer un mail ou nous appeler.";
+const VOIX_LONG = "Bonjour chère collègue. Nous développons en ce moment une application pour améliorer la communication entre vous et le syndicat Sud Industrie E.L.E. Vous y trouverez vos droits, un parcours pour trouver votre situation, des photos et des vidéos pour vous guidez et vous orientez aux mieux, et une boîte pour poser vos questions. Nous sommes ouverts à toutes vos suggestions. Ce site est là pour vous aider, mais il ne remplace ni les échanges avec les élus, ni le syndicat, ni le Code du travail. Pour votre situation personnelle, contactez-nous directement. Merci pour votre confiance.";
+
+if("speechSynthesis" in window) speechSynthesis.getVoices();
+
+function voixMaj(etat, actif){
+  document.getElementById("vo-etat").textContent = etat;
+  document.getElementById("vo-mute").style.display = actif ? "block" : "none";
+  document.getElementById("vo-play").style.display = actif ? "none" : "block";
+  document.getElementById("vo-long").style.display = actif ? "none" : "block";
+}
+
+function voixChoisir(){
+  const voix = speechSynthesis.getVoices();
+  return voix.find(v => v.lang.startsWith("fr") && /female|femme|woman|amélie|audrey|marie|julie|sophie|virginie|anne|aurélie|léa|lea/i.test(v.name))
+    || voix.find(v => v.lang.startsWith("fr"));
+}
+
+function voixStop(){
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  voixMaj("", false);
+}
+
+function voixOff(long){
+  if(!("speechSynthesis" in window)){
+    document.getElementById("vo-etat").textContent = "Ton téléphone ne permet pas la lecture vocale.";
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(long ? VOIX_LONG : VOIX_COURT);
+  u.lang = "fr-FR";
+  u.rate = 0.9;
+  u.pitch = 1.15;
+  const v = voixChoisir();
+  if(v) u.voice = v;
+  voixMaj("Lecture en cours…", true);
+  u.onend = () => voixMaj("", false);
+  u.onerror = () => voixMaj("La lecture n'a pas pu démarrer.", false);
+  speechSynthesis.speak(u);
+}
+
+document.addEventListener("play", (e) => {
+  if(e.target.tagName === "VIDEO") voixStop();
+}, true);
+
+if(!localStorage.getItem("sudVoixVue")){
+  document.addEventListener("click", function premierClic(){
+    localStorage.setItem("sudVoixVue", "1");
+    voixOff(false);
+  }, { once: true });
+}
 
 // ==== COMPTEURS ====
 function majCompteurs(){
