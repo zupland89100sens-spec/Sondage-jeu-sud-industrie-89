@@ -1353,7 +1353,7 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   if(b.dataset.t === "quiz") showStart();
   if(b.dataset.t === "photos") chargerGalerie();
   if(b.dataset.t === "videos") chargerVideos();
-  if(b.dataset.t === "jeu") jeuLancer();
+  if(b.dataset.t === "jeu") jeuPresenter();
   if(window.goatcounter) goatcounter.count({ path: "onglet-" + b.dataset.t, title: "Onglet " + b.dataset.t, event: true });
 });
 
@@ -2323,6 +2323,47 @@ function sitRetour(){
   $("sit-reponse").hidden = true;
   $("sit-retour").hidden = true;
 }
+// ===== ÉCRAN D'ACCUEIL DU JEU =====
+function jeuPresenter(){
+  jeuArreterChrono();
+  ["jeu-regle","jeu-decision","jeu-suite","jeu-bilan","jeu-fin"].forEach(id => $(id).hidden = true);
+  if($("jeu-options")) $("jeu-options").hidden = true;
+  if($("jeu-statut")) $("jeu-statut").textContent = "";
+  const best = localStorage.getItem("sudMissionBest") || 0;
+  $("jeu-zone").innerHTML =
+    '<div style="text-align:center;padding:10px 0">' +
+      '<div style="font-size:4rem;animation:bob 1.6s ease-in-out infinite">🧑‍🏭</div>' +
+      '<div style="display:inline-block;background:var(--bg);border:2px solid var(--blue);border-radius:12px;padding:10px 14px;margin:8px 0;font-weight:600">' +
+        'Salut ! Je suis ton collègue préparateur. Aide-moi à repérer les dangers de ma journée. Tu es prêt ?' +
+      '</div>' +
+      '<p class="note">🏅 Ton meilleur score : <strong>' + best + '</strong></p>' +
+      '<button onclick="jeuDemarrerDepuisAccueil()" style="background:var(--yellow);color:#000;font-size:1.1rem">🚀 C\'est parti !</button>' +
+    '</div>';
+}
+function jeuDemarrerDepuisAccueil(){
+  if($("jeu-options")) $("jeu-options").hidden = false;
+  jeuLancer();
+}
+
+// ===== PARTAGE DU SCORE DE LA MISSION =====
+function jeuAjouterPartage(){
+  if($("jeu-partage")) return;
+  const d = document.createElement("div");
+  d.id = "jeu-partage";
+  d.className = "btn-partage";
+  d.style.marginTop = "10px";
+  d.innerHTML =
+    '<button onclick="jeuPartager(\'wa\')" style="background:#25D366;margin-top:0">💬 WhatsApp</button>' +
+    '<button onclick="jeuPartager(\'sms\')" style="background:var(--blue);margin-top:0">✉️ SMS</button>';
+  $("jeu-fin").appendChild(d);
+}
+function jeuPartager(canal){
+  const resultat = $("jeu-resultat").textContent.split("Récapitulatif")[0].trim();
+  const txt = "Mission sécurité de Sud Industrie ELE : " + resultat + " · " + $("jeu-titre").textContent + ". Et toi ? " + location.href;
+  window.open(canal === "wa" ? "https://wa.me/?text=" + encodeURIComponent(txt) : "sms:?&body=" + encodeURIComponent(txt), "_blank");
+  if(window.goatcounter) goatcounter.count({ path: "partage-jeu-" + canal, event: true });
+}
+jeuAjouterPartage();
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(24px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
