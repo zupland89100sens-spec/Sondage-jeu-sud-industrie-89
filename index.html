@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <script data-goatcounter="https://sudindustrieele.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
- <head>
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sud Industrie ELE – Espace Salarié</title>
@@ -106,8 +106,8 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 <body>
 <main>
 <header>
- <img class="logo-anime" src="logo.jpg" alt="Logo Sud Industrie ELE" style="display:block; width:100%; height:auto; margin:0 auto 10px auto;">
- <h1>SUD <span>INDUSTRIE</span> ELE</h1>
+  <img class="logo-anime" src="logo.jpg" alt="Logo Sud Industrie ELE" style="display:block; width:100%; height:auto; margin:0 auto 10px auto;">
+  <h1>SUD <span>INDUSTRIE</span> ELE</h1>
   <p class="sub"><span class="bob">✊</span> Votre Espace Salarié <span class="bob">🗳️</span></p>
 </header>
 <p style="margin:12px 0 0 0; color:#fff; font-size:.95rem;">Tes droits en quelques clics, sans rien à installer. Le sondage est anonyme.</p>
@@ -121,7 +121,11 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <h2 style="border:none; margin:0 0 8px 0; padding:0;">📢 Actualités</h2>
   <p style="margin:0 0 6px 0;"><strong>📅 Prochaine réunion CSE : lundi 16 novembre 2026 à 14h00.</strong></p>
   <p style="margin:0; font-size:.9rem; color:var(--mute);">Venez poser vos questions, et signalez-nous les problèmes sur le terrain.</p>
-< style="margin:0 0 6px 0;">🏆 <strong>Ce que le syndicat a obtenu :</strong> onglet Victoires.</p>
+</div>
+<div class="card" style="margin-bottom:16px;">
+  <h2 style="border:none; margin:0 0 8px 0; padding:0;">🧭 Par où commencer ?</h2>
+  <p style="margin:0 0 6px 0;">🚨 <strong>Convocation, sanction, arrêt maladie, danger au travail :</strong> onglet Mes Droits, puis « Quelle est ma situation ? » en haut de la page.</p>
+  <p style="margin:0 0 6px 0;">🏆 <strong>Ce que le syndicat a obtenu :</strong> onglet Victoires.</p>
   <p style="margin:0 0 6px 0;">📊 <strong>Tu veux faire entendre ta voix :</strong> onglet Sondage, il est anonyme.</p>
   <p style="margin:0;">🎮 <strong>Tu veux tester tes connaissances :</strong> onglet Quiz.</p>
 </div>
@@ -154,68 +158,214 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 </div>
 <button onclick="if(navigator.share){navigator.share({title:'Sud Industrie ELE',text:'Espace salarié : droits, victoires, sondage et quiz',url:location.href})}else{navigator.clipboard.writeText(location.href).then(()=>alert('Lien copié !'))}">📤 Partager l'espace</button>
 
- <!-- ONGLET 1 : MES DROITS -->
+<!-- ONGLET 1 : MES DROITS -->
 <section id="droits">
   <div class="card">
     <h2>Connaître ses droits</h2>
     <input type="search" id="recherche-droits" placeholder="🔍 Rechercher : arrêt maladie, chariot, congés…" style="width:100%; padding:12px; border:2px solid var(--line); border-radius:8px; font:inherit; margin-bottom:16px; background:var(--surface); color:var(--ink);">
-   <div class="card" style="border-left:6px solid var(--blue); margin-bottom:16px;">
-  <h2 style="border:none; margin:0 0 8px 0; padding:0;">🧭 Quelle est ma situation ?</h2>
-  <p style="margin:0 0 10px 0; font-weight:700; color:var(--acc);">👇 Clique sur ta situation pour avoir la réponse</p>
- <div style="background:var(--bg); border-left:4px solid var(--acc); padding:10px 12px; border-radius:8px; margin-bottom:12px; font-size:.9rem;">
-    <strong>ℹ️ Information à titre indicatif.</strong> Ces réponses sont générales et peuvent ne pas correspondre à ta situation. Le mieux est de consulter un élu du personnel ou le syndicat avant d'agir.
-  </div>
 
-  <div id="sit-etape1">
-    <p style="font-weight:700; margin:0 0 8px 0;">Choisis une catégorie :</p>
-    <button class="opt" style="background:var(--blue); color:#fff; border:0; box-shadow:0 3px 0 rgba(0,0,0,.25);" onclick="sitCategorie('securite')">🦺 Sécurité</button>
-    <button class="opt" style="background:var(--blue); color:#fff; border:0; box-shadow:0 3px 0 rgba(0,0,0,.25);" onclick="sitCategorie('conges')">✈️ Congés et temps de travail</button>
-    <button class="opt" style="background:var(--blue); color:#fff; border:0; box-shadow:0 3px 0 rgba(0,0,0,.25);" onclick="sitCategorie('droits')">⚖️ Droits et sanctions</button>
-  </div>
+    <div class="card" style="border-left:6px solid var(--blue); margin-bottom:16px;">
+      <h2 style="border:none; margin:0 0 8px 0; padding:0;">🧭 Quelle est ma situation ?</h2>
+      <p style="margin:0 0 10px 0; font-weight:700; color:var(--acc);">👇 Clique sur ta situation pour avoir la réponse</p>
+      <div style="background:var(--bg); border-left:4px solid var(--acc); padding:10px 12px; border-radius:8px; margin-bottom:12px; font-size:.9rem;">
+        <strong>ℹ️ Information à titre indicatif.</strong> Ces réponses sont générales et peuvent ne pas correspondre à ta situation. Le mieux est de consulter un élu du personnel ou le syndicat avant d'agir.
+      </div>
 
-  <div id="sit-etape2" hidden></div>
-  <div id="sit-reponse" class="expl" hidden></div>
-  <button id="sit-retour" hidden onclick="sitRetour()">⬅️ Autre situation</button>
-</div>
- <div class="card" style="text-align:center; padding:14px;">
+      <div id="sit-etape1">
+        <p style="font-weight:700; margin:0 0 8px 0;">Choisis une catégorie :</p>
+        <button class="opt" style="background:var(--blue); color:#fff; border:0; box-shadow:0 3px 0 rgba(0,0,0,.25);" onclick="sitCategorie('securite')">🦺 Sécurité</button>
+        <button class="opt" style="background:var(--blue); color:#fff; border:0; box-shadow:0 3px 0 rgba(0,0,0,.25);" onclick="sitCategorie('conges')">✈️ Congés et temps de travail</button>
+        <button class="opt" style="background:var(--blue); color:#fff; border:0; box-shadow:0 3px 0 rgba(0,0,0,.25);" onclick="sitCategorie('droits')">⚖️ Droits et sanctions</button>
+      </div>
+
+      <div id="sit-etape2" hidden></div>
+      <div id="sit-reponse" class="expl" hidden></div>
+      <button id="sit-retour" hidden onclick="sitRetour()">⬅️ Autre situation</button>
+    </div>
+
+    <div class="card" style="text-align:center; padding:14px;">
 <style>
-.wh{position:relative; height:170px; margin:10px 0 4px 0; overflow:hidden}
-.wh-rail{position:absolute; left:2%; right:2%; top:88px; height:6px; background:#8a94a0; border-radius:3px}
-.wh-st{position:absolute; top:58px; transform:translateX(-50%); font-size:1.5rem; line-height:1}
-.wh-mv{position:absolute; top:56px; transform:translateX(-50%); font-size:1.6rem; line-height:1}
-.wh-lab{position:absolute; top:112px; transform:translateX(-50%); width:70px; font-size:.65rem; line-height:1.2; color:var(--mute); text-align:center}
-.wh-cari{left:4%; animation:wh-cari 12s ease-in-out infinite}
-.wh-p1{left:4%; opacity:1; animation:wh-p1 12s linear infinite}
-.wh-p2{left:56%; opacity:0; animation:wh-p2 12s linear infinite; animation-delay:6s}
-.wh-bob{animation:wh-bob 1.6s ease-in-out infinite}
-@keyframes wh-cari{0%{left:4%}20%{left:28%}40%{left:30%}55%{left:30%}75%{left:4%}100%{left:4%}}
-@keyframes wh-p1{0%{left:4%;opacity:1}20%{left:28%;opacity:1}40%{left:30%;opacity:1}52%{left:56%;opacity:1}58%{left:56%;opacity:0}100%{left:56%;opacity:0}}
-@keyframes wh-p2{0%{left:56%;opacity:0}6%{left:56%;opacity:1}30%{left:76%;opacity:1}55%{left:76%;opacity:1}75%{left:92%;opacity:1}85%{left:92%;opacity:0}100%{left:92%;opacity:0}}
-@keyframes wh-bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
+@keyframes ldA{0%,24.9%{opacity:1}25%,100%{opacity:0}}
+@keyframes ldB{0%,24.9%{opacity:0}25%,49.9%{opacity:1}50%,100%{opacity:0}}
+@keyframes ldC{0%,49.9%{opacity:0}50%,74.9%{opacity:1}75%,100%{opacity:0}}
+@keyframes ldD{0%,74.9%{opacity:0}75%,99.9%{opacity:1}100%{opacity:0}}
+@keyframes ldFkA{0%{transform:translateX(230px)}9%{transform:translateX(22px)}21%{transform:translateX(150px)}25%,100%{transform:translateX(230px)}}
+@keyframes ldPtA{0%,8.9%{opacity:1}9%,100%{opacity:0}}
+@keyframes ldPkA{0%,9.4%{opacity:0}9.5%,22.8%{opacity:1}22.9%,100%{opacity:0}}
+@keyframes ldPcA{0%,22.9%{opacity:0}23%,100%{opacity:1}}
+@keyframes ldPbB{0%,25%{transform:translateX(0px);opacity:1}33%{transform:translateX(54px);opacity:1}34%,100%{transform:translateX(54px);opacity:0}}
+@keyframes ldTcB{0%,34%{transform:translate(0px,0px)}36%,40%{transform:translate(0px,-34px)}42%,46%{transform:translate(56px,-34px)}49%,100%{transform:translate(0px,0px)}}
+@keyframes ldTkB{0%,33.9%{opacity:0}34%,42.4%{opacity:1}42.5%,100%{opacity:0}}
+@keyframes ldRsB{0%,42.4%{opacity:0}42.5%,100%{opacity:1}}
+@keyframes ldRsC{0%,53.5%{opacity:1}53.6%,100%{opacity:0}}
+@keyframes ldTcC{0%,50%{transform:translate(0px,0px)}51.5%{transform:translate(56px,0px)}53%,55%{transform:translate(56px,-34px)}56%{transform:translate(56px,0px)}57%,100%{transform:translate(0px,0px)}}
+@keyframes ldTkC{0%,53.5%{opacity:0}53.6%,57.9%{opacity:1}58%,100%{opacity:0}}
+@keyframes ldCeC{0%,57.9%{opacity:0}58%,61.9%{opacity:1}62%,100%{opacity:0}}
+@keyframes ldF2C{0%,49.9%{transform:translateX(300px)}50%,58.9%{transform:translateX(300px)}61%,62%{transform:translateX(204px)}70%,71%{transform:translateX(60px)}74%,100%{transform:translateX(300px)}}
+@keyframes ldCkC{0%,62%{opacity:0}62.1%,70.9%{opacity:1}71%,100%{opacity:0}}
+@keyframes ldCpC{0%,70.9%{opacity:0}71%,100%{opacity:1}}
+@keyframes ldCsD{0%,87.9%{opacity:1}88%,100%{opacity:0}}
+@keyframes ldBx1{0%,75.9%{opacity:0}76%,100%{opacity:1}}
+@keyframes ldBx2{0%,78.9%{opacity:0}79%,100%{opacity:1}}
+@keyframes ldBx3{0%,81.9%{opacity:0}82%,100%{opacity:1}}
+@keyframes ldBx4{0%,84.9%{opacity:0}85%,100%{opacity:1}}
+@keyframes ldF3D{0%,74.9%{transform:translateX(300px)}75%,85.9%{transform:translateX(300px)}87%,88.9%{transform:translateX(60px)}92%,94%{transform:translateX(200px)}96%,100%{transform:translateX(300px)}}
+@keyframes ldCkD{0%,88%{opacity:0}88.1%,94.9%{opacity:1}95%,100%{opacity:0}}
+@keyframes ldT2D{0%,83.9%{transform:translateX(90px)}88%,95.9%{transform:translateX(0px)}97%,100%{transform:translateX(90px)}}
+@keyframes ldBob{0%,100%{transform:translateY(0px)}50%{transform:translateY(-2px)}}
+.ld-scA{animation:ldA 16s linear infinite}
+.ld-scB{animation:ldB 16s linear infinite}
+.ld-scC{animation:ldC 16s linear infinite}
+.ld-scD{animation:ldD 16s linear infinite}
+.ld-fkA{animation:ldFkA 16s linear infinite}
+.ld-ptA{animation:ldPtA 16s linear infinite}
+.ld-pkA{animation:ldPkA 16s linear infinite}
+.ld-pcA{animation:ldPcA 16s linear infinite}
+.ld-pbB{animation:ldPbB 16s linear infinite}
+.ld-tcB{animation:ldTcB 16s linear infinite}
+.ld-tkB{animation:ldTkB 16s linear infinite}
+.ld-rsB{animation:ldRsB 16s linear infinite}
+.ld-rsC{animation:ldRsC 16s linear infinite}
+.ld-tcC{animation:ldTcC 16s linear infinite}
+.ld-tkC{animation:ldTkC 16s linear infinite}
+.ld-ceC{animation:ldCeC 16s linear infinite}
+.ld-f2C{animation:ldF2C 16s linear infinite}
+.ld-ckC{animation:ldCkC 16s linear infinite}
+.ld-cpC{animation:ldCpC 16s linear infinite}
+.ld-csD{animation:ldCsD 16s linear infinite}
+.ld-bx1{animation:ldBx1 16s linear infinite}
+.ld-bx2{animation:ldBx2 16s linear infinite}
+.ld-bx3{animation:ldBx3 16s linear infinite}
+.ld-bx4{animation:ldBx4 16s linear infinite}
+.ld-f3D{animation:ldF3D 16s linear infinite}
+.ld-ckD{animation:ldCkD 16s linear infinite}
+.ld-t2D{animation:ldT2D 16s linear infinite}
+.ld-pr{animation:ldBob 1.2s ease-in-out infinite}
 </style>
-<h2 style="border:none; margin:0 0 6px 0; padding:0;">🏭 Une palette, de l'arrivée au départ</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le camion arrive, la palette est rangée en stock, puis préparée et rechargée.</p>
-<div class="wh">
-  <div class="wh-rail"></div>
-  <span class="wh-st" style="left:4%">🚚</span>
-  <span class="wh-st" style="left:56%">🏗️</span>
-  <span class="wh-st wh-bob" style="left:76%">🧑‍🏭</span>
-  <span class="wh-st" style="left:92%">🚛</span>
-  <span class="wh-mv wh-cari">🚜</span>
-  <span class="wh-mv wh-p1">📦</span>
-  <span class="wh-mv wh-p2">📦</span>
-  <span class="wh-lab" style="left:4%">Camion arrivée</span>
-  <span class="wh-lab" style="left:30%">Convoyeurs</span>
-  <span class="wh-lab" style="left:56%">Stock (transstockeurs)</span>
-  <span class="wh-lab" style="left:76%">Picking (préparateur)</span>
-  <span class="wh-lab" style="left:92%">Camion départ</span>
-</div>
-<p style="font-size:.8rem; color:var(--mute); margin:4px 0 0 0;">🚜 cariste · 🏗️ transstockeur · 🧑‍🏭 préparateur · 📦 palette</p>
-</div>
-<div class="card" style="background:var(--bg); margin-bottom:16px; text-align:907749  <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
-    <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
-    <button onclick="document.querySelector('.tab[data-t=quiz]').click()">🎮 Le quiz</button>
-    <button onclick="document.querySelector('.tab[data-t=sondage]').click()">📊 Le sondage</button>
+<h2 style="border:none; margin:0 0 6px 0; padding:0;">🏭 La journée d'une palette</h2>
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Du camion d'arrivée au camion de départ. Schéma animé, en boucle.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Une palette va du camion au stock, puis au picking, puis repart en camion">
+<rect x="0" y="146" width="320" height="54" fill="#c5cad1"/>
+
+<g class="ld-scA">
+  <rect x="4" y="92" width="60" height="54" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
+  <text x="34" y="104" font-size="9" font-weight="700" fill="#004aad" text-anchor="middle">CAMION</text>
+  <rect class="ld-ptA" x="20" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <circle cx="18" cy="152" r="6" fill="#111"/><circle cx="50" cy="152" r="6" fill="#111"/>
+  <rect x="140" y="146" width="92" height="6" fill="#55606c"/>
+  <rect x="144" y="152" width="4" height="14" fill="#55606c"/><rect x="224" y="152" width="4" height="14" fill="#55606c"/>
+  <text x="186" y="122" font-size="9" font-weight="700" fill="#55606c" text-anchor="middle">CONVOYEUR</text>
+  <rect class="ld-pcA" x="150" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <g class="ld-fkA">
+    <rect x="0" y="146" width="26" height="3" fill="#333"/>
+    <rect x="28" y="112" width="4" height="38" fill="#555"/>
+    <rect x="32" y="120" width="34" height="28" rx="3" fill="#ffcc00"/>
+    <rect x="38" y="106" width="22" height="16" fill="#333"/>
+    <circle cx="49" cy="112" r="4" fill="#f0c08a"/>
+    <circle cx="40" cy="152" r="5" fill="#111"/><circle cx="62" cy="152" r="5" fill="#111"/>
+    <rect class="ld-pkA" x="0" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  </g>
+  <text x="160" y="194" font-size="10" font-weight="700" fill="#333" text-anchor="middle">1 · Arrivée : le cariste dépose sur le convoyeur</text>
+</g>
+
+<g class="ld-scB">
+  <rect x="140" y="146" width="92" height="6" fill="#55606c"/>
+  <rect x="144" y="152" width="4" height="14" fill="#55606c"/><rect x="224" y="152" width="4" height="14" fill="#55606c"/>
+  <text x="186" y="122" font-size="9" font-weight="700" fill="#55606c" text-anchor="middle">CONVOYEUR</text>
+  <rect class="ld-pbB" x="150" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <rect x="236" y="40" width="6" height="110" fill="#333"/>
+  <rect x="226" y="150" width="26" height="4" fill="#333"/>
+  <rect x="250" y="86" width="66" height="64" fill="none" stroke="#9aa1ab" stroke-width="2"/>
+  <line x1="250" y1="120" x2="316" y2="120" stroke="#9aa1ab" stroke-width="2"/>
+  <line x1="290" y1="86" x2="290" y2="150" stroke="#9aa1ab" stroke-width="2"/>
+  <text x="283" y="80" font-size="9" font-weight="700" fill="#55606c" text-anchor="middle">STOCK</text>
+  <rect x="260" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <rect class="ld-rsB" x="260" y="94" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <g class="ld-tcB">
+    <rect x="230" y="112" width="6" height="34" fill="#ffcc00"/>
+    <rect x="204" y="146" width="26" height="3" fill="#333"/>
+    <rect class="ld-tkB" x="204" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  </g>
+  <text x="160" y="194" font-size="10" font-weight="700" fill="#333" text-anchor="middle">2 · Stock : le transstockeur range la palette</text>
+</g>
+
+<g class="ld-scC">
+  <rect x="140" y="146" width="92" height="6" fill="#55606c"/>
+  <rect x="144" y="152" width="4" height="14" fill="#55606c"/><rect x="224" y="152" width="4" height="14" fill="#55606c"/>
+  <text x="186" y="122" font-size="9" font-weight="700" fill="#55606c" text-anchor="middle">CONVOYEUR</text>
+  <rect class="ld-ceC" x="204" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <rect x="236" y="40" width="6" height="110" fill="#333"/>
+  <rect x="226" y="150" width="26" height="4" fill="#333"/>
+  <rect x="250" y="86" width="66" height="64" fill="none" stroke="#9aa1ab" stroke-width="2"/>
+  <line x1="250" y1="120" x2="316" y2="120" stroke="#9aa1ab" stroke-width="2"/>
+  <line x1="290" y1="86" x2="290" y2="150" stroke="#9aa1ab" stroke-width="2"/>
+  <text x="283" y="80" font-size="9" font-weight="700" fill="#55606c" text-anchor="middle">STOCK</text>
+  <rect x="260" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <rect class="ld-rsC" x="260" y="94" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <g class="ld-tcC">
+    <rect x="230" y="112" width="6" height="34" fill="#ffcc00"/>
+    <rect x="204" y="146" width="26" height="3" fill="#333"/>
+    <rect class="ld-tkC" x="204" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  </g>
+  <rect class="ld-cpC" x="60" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  <text x="73" y="122" font-size="9" font-weight="700" fill="#55606c" text-anchor="middle">PICKING</text>
+  <g class="ld-f2C">
+    <rect x="0" y="146" width="26" height="3" fill="#333"/>
+    <rect x="28" y="112" width="4" height="38" fill="#555"/>
+    <rect x="32" y="120" width="34" height="28" rx="3" fill="#ffcc00"/>
+    <rect x="38" y="106" width="22" height="16" fill="#333"/>
+    <circle cx="49" cy="112" r="4" fill="#f0c08a"/>
+    <circle cx="40" cy="152" r="5" fill="#111"/><circle cx="62" cy="152" r="5" fill="#111"/>
+    <rect class="ld-ckC" x="0" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+  </g>
+  <text x="160" y="194" font-size="10" font-weight="700" fill="#333" text-anchor="middle">3 · Sortie : la palette part vers le picking</text>
+</g>
+
+<g class="ld-scD">
+  <g class="ld-csD">
+    <rect x="60" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+    <rect class="ld-bx1" x="64" y="118" width="8" height="10" fill="#c9a46a" stroke="#8a6a3f" stroke-width=".5"/>
+    <rect class="ld-bx2" x="74" y="118" width="8" height="10" fill="#c9a46a" stroke="#8a6a3f" stroke-width=".5"/>
+    <rect class="ld-bx3" x="64" y="108" width="8" height="10" fill="#c9a46a" stroke="#8a6a3f" stroke-width=".5"/>
+    <rect class="ld-bx4" x="74" y="108" width="8" height="10" fill="#c9a46a" stroke="#8a6a3f" stroke-width=".5"/>
+  </g>
+  <g class="ld-pr">
+    <circle cx="106" cy="116" r="6" fill="#f0c08a"/>
+    <rect x="100" y="122" width="12" height="22" rx="2" fill="#ffcc00"/>
+    <rect x="101" y="144" width="4" height="4" fill="#333"/><rect x="107" y="144" width="4" height="4" fill="#333"/>
+  </g>
+  <g class="ld-t2D">
+    <rect x="236" y="92" width="74" height="54" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
+    <rect x="236" y="110" width="5" height="36" fill="#222"/>
+    <text x="273" y="104" font-size="9" font-weight="700" fill="#004aad" text-anchor="middle">DÉPART</text>
+    <circle cx="250" cy="152" r="6" fill="#111"/><circle cx="296" cy="152" r="6" fill="#111"/>
+  </g>
+  <g class="ld-f3D">
+    <rect x="0" y="146" width="26" height="3" fill="#333"/>
+    <rect x="28" y="112" width="4" height="38" fill="#555"/>
+    <rect x="32" y="120" width="34" height="28" rx="3" fill="#ffcc00"/>
+    <rect x="38" y="106" width="22" height="16" fill="#333"/>
+    <circle cx="49" cy="112" r="4" fill="#f0c08a"/>
+    <circle cx="40" cy="152" r="5" fill="#111"/><circle cx="62" cy="152" r="5" fill="#111"/>
+    <g class="ld-ckD">
+      <rect x="0" y="128" width="26" height="18" fill="#d9b87c" stroke="#8a6a3f"/>
+      <rect x="4" y="118" width="8" height="10" fill="#c9a46a" stroke="#8a6a3f" stroke-width=".5"/>
+      <rect x="14" y="118" width="8" height="10" fill="#c9a46a" stroke="#8a6a3f" stroke-width=".5"/>
+      <rect x="4" y="108" width="8" height="10" fill="#c9a46a" stroke="#8a6a3f" stroke-width=".5"/>
+      <rect x="14" y="108" width="8" height="10" fill="#c9a46a" stroke="#8a6a3f" stroke-width=".5"/>
+    </g>
+  </g>
+  <text x="160" y="194" font-size="10" font-weight="700" fill="#333" text-anchor="middle">4 · Le préparateur charge la palette dans le camion</text>
+</g>
+</svg>
+<p style="font-size:.8rem; color:var(--mute); margin:6px 0 0 0;">🚜 cariste · 🏗️ transstockeur · 🧑‍🏭 préparateur · 📦 palette</p>
+    </div>
+
+    <div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
+      <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
+      <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
+      <button onclick="document.querySelector('.tab[data-t=quiz]').click()">🎮 Le quiz</button>
+      <button onclick="document.querySelector('.tab[data-t=sondage]').click()">📊 Le sondage</button>
     </div>
 
     <div class="droit-item">
@@ -303,7 +453,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 
     <a href="tel:0626711687" class="btn contact-btn">📞 M'appeler directement (06 26 71 16 87)</a>
     <a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:10px;">✉️ Écrire au syndicat</a>
- </div>
+  </div>
 </section>
 
 <!-- ONGLET 2 : NOS VICTOIRES -->
@@ -311,7 +461,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <div class="card">
     <h2>Nos Bilan et Victoires</h2>
     <p style="font-size:.9rem; color:var(--mute); margin-bottom:20px;">Ce sont des actions concrètes obtenues grâce à votre mobilisation.</p>
-
     <div class="victoire-item">
       <div class="icon">❄️</div>
       <div><p>Prime Froid</p><span>Revalorisation et attribution de la prime.</span></div>
@@ -347,15 +496,15 @@ section:not([hidden]){animation:fadeUp .5s ease both}
     <p style="font-weight:600; text-align:center;">En votant pour Sud Industrie, vous choisissez une équipe présente sur le terrain, qui connaît vos réalités et qui se bat pour vos conditions de travail.</p>
     <a href="tel:0626711687" class="btn contact-btn" style="margin-top:20px;">📞 Rejoindre le syndicat / M'appeler</a>
     <a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:10px;">✉️ Écrire au syndicat</a>
- <div style="margin-top:20px; padding:16px; background:var(--bg); border-radius:12px;">
-  <h3 style="margin:0 0 10px 0; color:#004aad;">📞 Nos contacts</h3>
-  <p style="margin:6px 0;"><strong>Tony</strong> : élu titulaire</p>
-  <p style="margin:6px 0;"><strong>Ilda</strong> : élue titulaire</p>
-  <p style="margin:6px 0;"><strong>Mélanie</strong> : élue suppléante</p>
-  <p style="margin:6px 0;"><strong>Christopher</strong> : élu suppléant</p>
-  <p style="margin:6px 0;"><strong>Aziz</strong> : délégué syndical</p>
-</div>
- </div>
+    <div style="margin-top:20px; padding:16px; background:var(--bg); border-radius:12px;">
+      <h3 style="margin:0 0 10px 0; color:#004aad;">📞 Nos contacts</h3>
+      <p style="margin:6px 0;"><strong>Tony</strong> : élu titulaire</p>
+      <p style="margin:6px 0;"><strong>Ilda</strong> : élue titulaire</p>
+      <p style="margin:6px 0;"><strong>Mélanie</strong> : élue suppléante</p>
+      <p style="margin:6px 0;"><strong>Christopher</strong> : élu suppléant</p>
+      <p style="margin:6px 0;"><strong>Aziz</strong> : délégué syndical</p>
+    </div>
+  </div>
 </section>
 
 <!-- ONGLET 4 : SONDAGE -->
@@ -363,9 +512,11 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <div class="card">
     <h2>Sondage Sécurité et Conditions de travail</h2>
     <p style="font-size:.9rem; color:var(--mute); margin-bottom:15px;">Ce sondage est anonyme. Tes réponses seront analysées et transmises à la direction pour exiger des changements. Un seul vote par téléphone.</p>
-  <div style="background:#fff3cd; border:2px solid #ffcc00; border-radius:12px; padding:14px; margin-bottom:16px; text-align:center;">
-</div>
-<div id="resultats" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-bottom:16px;"></div>
+    <div style="background:#fff3cd; border:2px solid #ffcc00; border-radius:12px; padding:14px; margin-bottom:16px; text-align:center;">
+      <p style="margin:0 0 6px 0; font-size:1.2rem; font-weight:700; color:#000;">⚠️ Résultats provisoires</p>
+      <p style="margin:0; font-size:1rem; font-weight:600; color:#000;">Ces chiffres sont mis à jour à chaque palier de 20 réponses.</p>
+    </div>
+    <div id="resultats" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; margin-bottom:16px;"></div>
 
     <form id="form-sondage">
       <div class="question">
@@ -377,7 +528,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q1_Securite_Poste" value="Dangereux"> Dangereux</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">2. As-tu vécu un accident ou un presque-accident ces derniers mois ?</span>
         <div class="radio-group">
@@ -385,7 +535,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q2_Accident" value="Non"> Non</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">3. Les équipements de protection (EPI) sont-ils suffisants et en bon état ?</span>
         <div class="radio-group">
@@ -394,7 +543,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q3_EPI" value="Il faut toujours réclamer"> Il faut toujours réclamer</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">4. As-tu reçu une formation sécurité adaptée à ton poste ?</span>
         <div class="radio-group">
@@ -403,7 +551,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q4_Formation_Securite" value="Non"> Non</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">5. La cadence de travail met-elle en danger ta sécurité ou ta santé ?</span>
         <div class="radio-group">
@@ -412,7 +559,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q5_Cadence" value="Souvent"> Souvent</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">6. Ressens-tu une pression de la hiérarchie pour aller plus vite ou produire davantage ?</span>
         <div class="radio-group">
@@ -421,7 +567,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q6_Pression" value="Tous les jours"> Tous les jours</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">7. Comment qualifies-tu l'ambiance de travail entre collègues ?</span>
         <div class="radio-group">
@@ -431,7 +576,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q7_Ambiance" value="Très dégradée"> Très dégradée</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">8. As-tu peur de représailles si tu signales un problème ?</span>
         <div class="radio-group">
@@ -440,7 +584,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q8_Peur_Represailles" value="Non"> Non</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">9. Te sens-tu respecté par ton encadrement ?</span>
         <div class="radio-group">
@@ -449,7 +592,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q9_Respect" value="Non"> Non</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">10. Ta charge de travail est-elle tenable sur une journée ?</span>
         <div class="radio-group">
@@ -458,7 +600,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q10_Charge" value="Non, je suis épuisé"> Non, je suis épuisé</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">11. Ton planning est-il communiqué suffisamment à l'avance ?</span>
         <div class="radio-group">
@@ -467,7 +608,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q11_Planning" value="Non, souvent au dernier moment"> Non, souvent au dernier moment</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">12. Les conditions matérielles (locaux, température, bruit, outils) sont-elles correctes ?</span>
         <div class="radio-group">
@@ -476,7 +616,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q12_Conditions_Materielles" value="Non"> Non</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">13. Ressens-tu du stress ou de la fatigue liés à ton travail ?</span>
         <div class="radio-group">
@@ -485,7 +624,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q13_Stress" value="Souvent"> Souvent</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">14. Quand tu signales un problème, est-il réellement traité ?</span>
         <div class="radio-group">
@@ -494,7 +632,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q14_Traitement_Problemes" value="Non"> Non</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">16. La validation de dépose à quai est-elle efficace avec scanette et QR code ?</span>
         <div class="radio-group">
@@ -504,7 +641,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q16_Validation_Quai" value="Inefficace"> Inefficace</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">17. La signalétique est-elle cohérente avec le chemin de préparation ?</span>
         <div class="radio-group">
@@ -513,7 +649,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q17_Signaletique_Preparation" value="Non, incohérente"> Non, incohérente</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">18. Ton positionnement en fin de commande est-il facile lors de ton prélèvement d'étiquette ?</span>
         <div class="radio-group">
@@ -522,7 +657,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q18_Positionnement_Fin_Commande" value="Souvent difficile"> Souvent difficile</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">19. La signalétique est-elle visible lorsque tu es dans une allée ?</span>
         <div class="radio-group">
@@ -531,7 +665,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q19_Signaletique_Allee" value="Non, pas visible"> Non, pas visible</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">20. Le stationnement de ton chariot en salle de charge est-il dangereux ?</span>
         <div class="radio-group">
@@ -540,7 +673,6 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q20_Stationnement_Chariot" value="Souvent dangereux"> Souvent dangereux</label>
         </div>
       </div>
-
       <div class="question">
         <span class="q-title">21. Rencontres-tu des anomalies sur les chariots de manière récurrente ?</span>
         <div class="radio-group">
@@ -549,19 +681,16 @@ section:not([hidden]){animation:fadeUp .5s ease both}
           <label><input type="radio" name="Q21_Anomalies_Chariots" value="Souvent"> Souvent</label>
         </div>
       </div>
-
       <div class="question">
         <label class="q-title" for="message-libre">22. Un exemple concret ou une remarque à partager ? (optionnel)</label>
         <textarea id="message-libre" name="Q22_Remarque_Libre" rows="4" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : une situation qui t'a inquiété..."></textarea>
       </div>
-
       <button type="submit" id="btn-submit" style="margin-top:20px; background:var(--success);">Envoyer mes réponses anonymement</button>
     </form>
 
     <div id="res-sondage" style="display:none; background:var(--success); color:#fff; padding:20px; border-radius:8px; text-align:center; font-weight:bold; margin-top:15px;">
       ✅ Merci ! Tes réponses ont bien été envoyées de manière anonyme.<br>
-<span style="display:block; font-weight:400; font-size:.95rem; margin-top:8px;">Prochain rendez-vous : les élections professionnelles en octobre 2027. D'ici là, tu peux nous appeler ou partager l'espace avec tes collègues.</span>
-
+      <span style="display:block; font-weight:400; font-size:.95rem; margin-top:8px;">Prochain rendez-vous : les élections professionnelles en octobre 2027. D'ici là, tu peux nous appeler ou partager l'espace avec tes collègues.</span>
     </div>
   </div>
 </section>
@@ -590,7 +719,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
       <p class="note" id="fbest"></p>
       <button id="quiz-again">🔄 Rejouer</button>
       <button onclick="document.querySelector('.tab[data-t=droits]').click()">📚 Revoir mes droits</button>
- </div>
+    </div>
   </div>
 </section>
 
@@ -599,9 +728,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <div class="card">
     <h2>📷 Photos du terrain</h2>
     <p style="font-size:.9rem; color:var(--mute); margin-bottom:10px;">Signalétique, zones de circulation, anomalies… Clique sur une photo pour l'agrandir.</p>
-    <div id="galerie" class="galerie">
-      <!-- Le script va injecter les photos ici -->
-    </div>
+    <div id="galerie" class="galerie"></div>
   </div>
 </section>
 
@@ -615,6 +742,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
     </div>
   </div>
 </section>
+
 <!-- ONGLET QUESTIONS -->
 <section id="questions" hidden>
   <div class="card">
@@ -627,18 +755,18 @@ section:not([hidden]){animation:fadeUp .5s ease both}
       ✅ Merci ! Ta question a bien été envoyée.
     </div>
   </div>
-<div class="card" style="margin-top:16px;">
-  <h2>🤖 Assistant informatif</h2>
-  <div style="background:var(--bg); border-left:4px solid var(--acc); padding:12px; border-radius:8px; margin-bottom:12px;">
-    <p style="margin:0 0 6px 0; font-weight:700;">ℹ️ Information à titre indicatif uniquement</p>
-    <p style="margin:0 0 6px 0; font-size:.9rem;">Cet assistant donne des informations générales. Ses réponses peuvent être incomplètes ou inexactes, et ne remplacent ni un conseil juridique ni l'avis du syndicat.</p>
-    <p style="margin:0; font-size:.9rem;"><strong>Pour votre situation personnelle, rapprochez-vous de Sud Industrie ELE</strong> : bouton « Écrire au syndicat » ou appel au 06 26 71 16 87.</p>
+  <div class="card" style="margin-top:16px;">
+    <h2>🤖 Assistant informatif</h2>
+    <div style="background:var(--bg); border-left:4px solid var(--acc); padding:12px; border-radius:8px; margin-bottom:12px;">
+      <p style="margin:0 0 6px 0; font-weight:700;">ℹ️ Information à titre indicatif uniquement</p>
+      <p style="margin:0 0 6px 0; font-size:.9rem;">Cet assistant donne des informations générales. Ses réponses peuvent être incomplètes ou inexactes, et ne remplacent ni un conseil juridique ni l'avis du syndicat.</p>
+      <p style="margin:0; font-size:.9rem;"><strong>Pour votre situation personnelle, rapprochez-vous de Sud Industrie ELE</strong> : bouton « Écrire au syndicat » ou appel au 06 26 71 16 87.</p>
+    </div>
+    <textarea id="ia-question" rows="3" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : combien de jours de congés payés par mois ?"></textarea>
+    <button id="ia-btn">Poser ma question</button>
+    <div id="ia-reponse" class="expl" hidden></div>
+    <p class="note">Pour une situation personnelle, utilise le bouton « Écrire au syndicat » ou appelle le 06 26 71 16 87.</p>
   </div>
-  <textarea id="ia-question" rows="3" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : combien de jours de congés payés par mois ?"></textarea>
-  <button id="ia-btn">Poser ma question</button>
-  <div id="ia-reponse" class="expl" hidden></div>
-  <p class="note">Pour une situation personnelle, utilise le bouton « Écrire au syndicat » ou appelle le 06 26 71 16 87.</p>
-</div>
 </section>
 
 <!-- ONGLET JEU -->
@@ -669,8 +797,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   </div>
 </section>
 
-
- <!-- ONGLET QR CODE -->
+<!-- ONGLET QR CODE -->
 <section id="qrcode" hidden>
   <div class="card" style="text-align:center;">
     <h2>Partager l'Espace Salarié</h2>
@@ -833,6 +960,64 @@ $("form-sondage").onsubmit = async function(e){
   }
 };
 
+// ===== RÉSULTATS DU SONDAGE (camemberts) =====
+// Pour mettre à jour : modifiez seulement les nombres ci-dessous.
+const RESULTATS = [
+  { titre: "Sécurité à ton poste", choix: { "Très bien": 2, "Correct": 4, "Insuffisant": 5, "Dangereux": 0 } },
+  { titre: "Accident ou presque-accident", choix: { "Oui": 4, "Non": 7 } },
+  { titre: "EPI suffisants et en bon état", choix: { "Oui": 8, "Il en manque ou usés": 2, "Il faut toujours réclamer": 1 } },
+  { titre: "Formation sécurité", choix: { "Oui": 5, "Partiellement": 4, "Non": 2 } },
+  { titre: "Conditions matérielles", choix: { "Oui": 4, "Partiellement": 6, "Non": 1 } },
+  { titre: "Cadence dangereuse", choix: { "Jamais": 3, "Parfois": 6, "Souvent": 2 } },
+  { titre: "Pression de la hiérarchie", choix: { "Jamais": 2, "Parfois": 9 } },
+  { titre: "Ambiance entre collègues", choix: { "Très bonne": 1, "Correcte": 7, "Tendue": 3 } },
+  { titre: "Crainte de représailles", choix: { "Oui": 4, "Parfois": 5, "Non": 2 } },
+  { titre: "Respect par l'encadrement", choix: { "Oui": 3, "Parfois": 4, "Non": 4 } },
+  { titre: "Charge de travail tenable", choix: { "Oui": 7, "Difficilement": 4 } },
+  { titre: "Planning communiqué à l'avance", choix: { "Oui": 10, "Parfois": 1 } },
+  { titre: "Stress ou fatigue", choix: { "Jamais": 1, "Parfois": 8, "Souvent": 2 } },
+  { titre: "Signalements traités", choix: { "Oui": 2, "Parfois": 3, "Non": 6 } },
+  { titre: "Validation de dépose à quai (9 réponses)", choix: { "Oui, efficace": 2, "Correcte": 4, "Peu fiable": 2, "Inefficace": 1 } },
+  { titre: "Signalétique et chemin de préparation (9 réponses)", choix: { "Oui": 2, "Partiellement": 4, "Non": 3 } },
+  { titre: "Positionnement en fin de commande (9 réponses)", choix: { "Oui": 2, "Parfois difficile": 6, "Souvent difficile": 1 } },
+  { titre: "Signalétique visible en allée (9 réponses)", choix: { "Oui": 1, "Partiellement": 5, "Non": 3 } },
+  { titre: "Stationnement des chariots (9 réponses)", choix: { "Non": 5, "Parfois dangereux": 2, "Souvent dangereux": 2 } },
+  { titre: "Anomalies récurrentes sur les chariots (9 réponses)", choix: { "Parfois": 7, "Non": 2 } }
+];
+
+function camembert(d){
+  const couleurs = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#7b1fa2"];
+  const total = Object.values(d.choix).reduce((a, b) => a + b, 0);
+  if(total === 0) return "";
+  let angle = -Math.PI / 2, parts = "", legende = "", i = 0;
+  for(const label of Object.keys(d.choix)){
+    const n = d.choix[label];
+    const c = couleurs[i % couleurs.length];
+    const pct = Math.round(n / total * 100);
+    if(n === total){
+      parts += '<circle cx="90" cy="90" r="80" fill="' + c + '"/>';
+    } else if(n > 0){
+      const a2 = angle + n / total * 2 * Math.PI;
+      const x1 = 90 + 80 * Math.cos(angle), y1 = 90 + 80 * Math.sin(angle);
+      const x2 = 90 + 80 * Math.cos(a2), y2 = 90 + 80 * Math.sin(a2);
+      const grand = (a2 - angle) > Math.PI ? 1 : 0;
+      parts += '<path d="M90,90 L' + x1 + ',' + y1 + ' A80,80 0 ' + grand + ' 1 ' + x2 + ',' + y2 + ' Z" fill="' + c + '" stroke="#fff" stroke-width="2"/>';
+      angle = a2;
+    }
+    legende += '<div style="display:flex; align-items:center; gap:8px; font-size:.9rem; margin:3px 0;"><span style="width:12px; height:12px; border-radius:2px; background:' + c + '; display:inline-block;"></span>' + label + " : " + n + " (" + pct + " %)</div>";
+    i++;
+  }
+  return '<div class="card" style="padding:14px; margin:0;">' +
+    '<p style="font-weight:700; margin:0 0 8px 0;">' + d.titre + '</p>' +
+    '<svg viewBox="0 0 180 180" width="160" height="160" style="display:block; margin:0 auto;">' + parts + '</svg>' +
+    legende +
+    '<p class="note">Sur ' + total + ' réponses</p></div>';
+}
+function afficherResultats(){
+  $("resultats").innerHTML = RESULTATS.map(camembert).join("");
+}
+afficherResultats();
+
 // ===== QR CODE =====
 function drawQR(){
   const el = $("qrb"); el.innerHTML = "";
@@ -861,12 +1046,10 @@ function chargerGalerie(){
   galerieChargee = true;
   const box = $("galerie");
   box.innerHTML = "";
-
   if(PHOTOS.length === 0){
     box.innerHTML = '<div class="vide">📷 Aucune photo pour le moment.</div>';
     return;
   }
-
   PHOTOS.forEach(nom => {
     const chemin = "photos/" + nom;
     const a = document.createElement("a");
@@ -878,10 +1061,7 @@ function chargerGalerie(){
     img.src = chemin;
     img.alt = "Photo terrain Sud Industrie";
     img.loading = "lazy";
-    img.onerror = () => { 
-      a.style.border = "2px solid red"; 
-      a.title = "Image introuvable : " + nom;
-    };
+    img.onerror = () => { a.style.border = "2px solid red"; a.title = "Image introuvable : " + nom; };
     a.appendChild(img);
     box.appendChild(a);
   });
@@ -902,6 +1082,7 @@ function ouvrirLightbox(src){
   lb.appendChild(btn);
   document.body.appendChild(lb);
 }
+
 // ===== VIDÉOS (liste écrite dans le code) =====
 const VIDEOS = [
   "video1.mp4",
@@ -955,6 +1136,7 @@ function ouvrirVideo(src){
   lb.appendChild(btn);
   document.body.appendChild(lb);
 }
+
 // ===== RECHERCHE DANS MES DROITS =====
 const rechercheDroits = $("recherche-droits");
 rechercheDroits.addEventListener("input", () => {
@@ -963,6 +1145,7 @@ rechercheDroits.addEventListener("input", () => {
     item.hidden = terme !== "" && !item.textContent.toLowerCase().includes(terme);
   });
 });
+
 // ===== MESSAGE DE BIENVENUE (une seule fois) =====
 if(!localStorage.getItem("sudBienvenue")){
   $("bienvenue").hidden = false;
@@ -971,11 +1154,13 @@ function fermerBienvenue(){
   localStorage.setItem("sudBienvenue", "1");
   $("bienvenue").hidden = true;
 }
+
 // ===== COMPTEUR SUR LA PAGE D'ACCUEIL =====
 setInterval(() => {
   const el = $("compteur-accueil");
   if(el) el.textContent = $("timer").textContent;
 }, 1000);
+
 // ===== QUESTIONS (formulaire Formspree séparé du sondage) =====
 const QUESTIONS_URL = "https://formspree.io/f/xyewzday";
 $("btn-question").onclick = async () => {
@@ -999,11 +1184,11 @@ $("btn-question").onclick = async () => {
     }
   }catch(err){
     alert("Oups, erreur de connexion. Réessaie.");
-      btn.disabled = false; btn.textContent = "Envoyer ma question";
+    btn.disabled = false; btn.textContent = "Envoyer ma question";
   }
 };
-   
-   // ===== MISSION SÉCURITÉ (jeu) =====
+
+// ===== MISSION SÉCURITÉ (jeu) =====
 const JEU_SCENES = [
   {
     titre: "1. Prise de poste",
@@ -1323,6 +1508,7 @@ $("ia-btn").onclick = async () => {
   }
   btn.disabled = false; btn.textContent = "Poser ma question";
 };
+
 // ===== PARCOURS « QUELLE EST MA SITUATION ? » =====
 const SITUATIONS = {
   securite: {
@@ -1389,7 +1575,7 @@ function sitReponse(i){
     '<br><a class="lf-link" href="#" onclick="sitVoirFiche(' + i + '); return false;">📖 Voir la fiche « ' + it.f + ' »</a>' +
     '<br><br><button onclick="sitCategorie(sitCat)" style="margin-top:6px; background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue);">⬅️ Autre question dans cette catégorie</button>' +
     '<br><br><a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:6px;">✉️ Écrire au syndicat</a>';
-    zone.hidden = false;
+  zone.hidden = false;
 }
 function sitRetour(){
   $("sit-etape1").hidden = false;
