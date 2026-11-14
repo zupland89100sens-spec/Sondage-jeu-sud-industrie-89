@@ -11,6 +11,22 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23004aad'/%3E%3Ctext x='50%25' y='54%25' font-family='Arial,sans-serif' font-size='30' font-weight='bold' fill='%23ffcc00' text-anchor='middle' dominant-baseline='middle'%3ES%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+.question{margin-bottom:20px;padding-bottom:15px;border-bottom:1px dashed var(--line)}
+.q-title{font-weight:600;margin-bottom:10px;display:block;color:var(--ink)}
+.radio-group label{display:flex;align-items:flex-start;padding:10px;background:var(--bg);margin-bottom:6px;border-radius:8px;cursor:pointer;font-weight:400;font-size:.95rem;line-height:1.3}
+.radio-group input[type="radio"]{width:18px;height:18px;margin-right:10px;margin-top:2px;accent-color:var(--acc);flex-shrink:0}
+.q-img{font-size:4.5rem;display:block;text-align:center;margin:10px 0}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--success));transition:width .4s}
+.galerie{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
+.galerie a{display:block;overflow:hidden;border-radius:8px;border:2px solid var(--line);background:var(--bg);aspect-ratio:1/1}
+.galerie img,.galerie video{width:100%;height:100%;object-fit:cover;display:block}
+.vide{grid-column:1/-1;text-align:center;padding:30px 15px;color:var(--mute)}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.lightbox img,.lightbox video{max-width:100%;max-height:100%;border-radius:8px}
+.lightbox .fermer{position:absolute;top:15px;right:20px;color:#fff;font-size:2rem;background:rgba(255,255,255,.15);width:44px;height:44px;border-radius:50%;border:0;margin:0;padding:0;min-height:0;box-shadow:none}
+.inf-det{margin:0 0 8px 0;background:var(--bg);border-radius:8px;padding:8px 12px}
+.inf-det summary{font-weight:700;cursor:pointer;color:var(--blue);padding:6px 0}
 <style>
 /* ==== VARIABLES & THEME SOMBRE ==== */
 :root{--bg:#eef0f2;--surface:#fff;--ink:#16181d;--mute:#5b616b;--line:#d3d7dc;--acc:#c8102e;--blue:#004aad;--yellow:#ffcc00;--success:#2e7d32;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
@@ -282,6 +298,7 @@ body.dark-mode .jd-check-group label:hover{background:#2a2d33}
       <button class="opt" onclick="sitCategorie('securite')">🦺 Sécurité</button>
       <button class="opt" onclick="sitCategorie('conges')">✈️ Congés et temps de travail</button>
       <button class="opt" onclick="sitCategorie('droits')">⚖️ Droits et sanctions</button>
+      <button class="opt" onclick="sitCategorie('sante')">🩺 Santé au travail</button>
     </div>
     <div id="sit-etape2" hidden></div>
     <div id="sit-reponse" class="expl" hidden></div>
@@ -1205,29 +1222,551 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
 
 // ==== QUIZ, SONDAGE, ETC. ====
 // (Le code du quiz, du sondage et des photos reste exactement le même que dans ton fichier actuel, je ne l'ai pas répété pour te faire un message plus court, mais il est intégré au fichier complet).
+// ===== RÉFÉRENCES MANQUANTES =====
+const rechercheDroits = $("recherche-droits");
+if (rechercheDroits) {
+  rechercheDroits.addEventListener("input", () => {
+    const terme = rechercheDroits.value.trim().toLowerCase();
+    document.querySelectorAll("#droits .droit-item").forEach(item => {
+      item.hidden = terme !== "" && !item.textContent.toLowerCase().includes(terme);
+    });
+  });
+}
 
-  // ==== SAUVEGARDE HORS-LIGNE DE SECOURS (Pour iPhone) ====
-document.addEventListener("DOMContentLoaded", () => {
-  // On vérifie si on est en ligne
-  if (navigator.onLine) {
-    // On sauvegarde le code source complet de la page
-    try {
-      const pageHTML = document.documentElement.outerHTML;
-      localStorage.setItem('sud_page_hors_ligne', pageHTML);
-      console.log("Page sauvegardée pour le mode hors-ligne.");
-    } catch (e) {
-      console.log("Impossible de sauvegarder la page.");
-    }
+// ===== BIENVENUE =====
+function fermerBienvenue(){ localStorage.setItem("sudBienvenue","1"); $("bienvenue").hidden = true; }
+if(!localStorage.getItem("sudBienvenue")) $("bienvenue").hidden = false;
+
+// ===== QR CODE =====
+function drawQR(){
+  const el = $("qrb"); el.innerHTML = "";
+  if(typeof QRCode === "undefined"){ el.textContent = "QR code indisponible."; return; }
+  new QRCode(el, {text: APP_URL || location.href, width:220, height:220, colorDark:"#000", colorLight:"#fff", correctLevel: QRCode.CorrectLevel.M});
+}
+
+// ===== QUIZ =====
+// Le tableau QUIZ est à recopier depuis la partie 5 de mes messages précédents (30 questions).
+let qDeck=[], qI=0, qScore=0;
+const BEST_KEY="sudQuizBest";
+const bestScore=()=>+(localStorage.getItem(BEST_KEY)||0);
+function showStart(){ $("quiz-start").hidden=false; $("quiz-play").hidden=true; $("quiz-end").hidden=true; $("best").textContent=bestScore(); }
+function startQuiz(){
+  qDeck=[...QUIZ].sort(()=>Math.random()-0.5).slice(0,10);
+  qI=0; qScore=0;
+  $("quiz-start").hidden=true; $("quiz-end").hidden=true; $("quiz-play").hidden=false;
+  showQuestion();
+}
+function showQuestion(){
+  const q=qDeck[qI];
+  $("qbar").style.width=(qI/qDeck.length*100)+"%";
+  $("qnum").textContent=`Question ${qI+1} / ${qDeck.length}`;
+  $("qimg").textContent=q.img;
+  $("qtext").textContent=q.q;
+  $("qexp").hidden=true; $("qnext").hidden=true;
+  const box=$("qopts"); box.innerHTML="";
+  q.a.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.textContent=t;
+    b.onclick=()=>pick(i,b);
+    box.appendChild(b);
+  });
+}
+function pick(i,btn){
+  const q=qDeck[qI];
+  document.querySelectorAll("#qopts button").forEach((b,k)=>{ b.disabled=true; if(k===q.c) b.classList.add("ok"); });
+  if(i===q.c){ qScore++; btn.classList.add("ok"); $("qimg").textContent="🎉"; }
+  else { btn.classList.add("ko"); $("qimg").textContent="😅"; }
+  const ref=q.art?`Article ${q.art} : `:"";
+  $("qexp").innerHTML=`<strong>💡 ${q.e}</strong><br><a class="lf-link" href="${LEGI}" target="_blank" rel="noopener">📖 ${ref}voir le Code du travail sur Légifrance</a>`;
+  $("qexp").hidden=false;
+  $("qnext").hidden=false;
+  $("qnext").textContent = qI===qDeck.length-1 ? "🏁 Voir mon score" : "Suivante ➡️";
+}
+function endQuiz(){
+  const prev=bestScore(), s=qScore;
+  if(s>prev) localStorage.setItem(BEST_KEY,s);
+  $("quiz-play").hidden=true; $("quiz-end").hidden=false;
+  $("fe").textContent = s>=9?"🏆":s>=6?"🌟":s>=3?"😊":"📚";
+  $("fscore").textContent=`Tu as ${s} / ${qDeck.length} bonnes réponses`;
+  $("fbest").textContent = s>prev ? "🎊 Nouveau meilleur score !" : `Meilleur score : ${Math.max(prev,s)}/10`;
+}
+function partagerScore(canal){
+  const txt=`J'ai fait le quiz de Sud Industrie ELE : ${qScore}/10 ! ${location.href}`;
+  window.open(canal==="wa" ? "https://wa.me/?text="+encodeURIComponent(txt) : "sms:?&body="+encodeURIComponent(txt), "_blank");
+}
+$("quiz-go").onclick=startQuiz;
+$("quiz-again").onclick=startQuiz;
+$("qnext").onclick=()=>{ qI++; if(qI<qDeck.length) showQuestion(); else endQuiz(); };
+
+// ===== SONDAGE =====
+$("form-sondage").onsubmit = async function(e){
+  e.preventDefault();
+  const btn=$("btn-submit"), err=$("err-sondage");
+  err.hidden=true;
+  if(localStorage.getItem("sudVote")){ err.textContent="Tu as déjà voté avec ce téléphone. Merci !"; err.hidden=false; return; }
+  const rep={};
+  new FormData(this).forEach((v,k)=>{ if(k!=="_gotcha") rep[k]=v; });
+  btn.disabled=true; btn.textContent="Envoi en cours...";
+  try{
+    const r=await fetch(FORMSPREE_URL,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(rep)});
+    if(!r.ok) throw new Error();
+    localStorage.setItem("sudVote","1");
+    this.style.display="none";
+    $("res-sondage").style.display="block";
+  }catch(x){
+    err.textContent="Erreur d'envoi. Réessaie."; err.hidden=false;
+    btn.disabled=false; btn.textContent="Envoyer mes réponses anonymement";
+  }
+};
+
+// ===== QUESTIONS =====
+$("btn-question").onclick = async () => {
+  const btn=$("btn-question"), err=$("err-question"), t=$("question-texte").value.trim();
+  err.hidden=true;
+  if(t.length<10){ err.textContent="Écris un peu plus ta question."; err.hidden=false; return; }
+  btn.disabled=true; btn.textContent="Envoi en cours...";
+  try{
+    const r=await fetch(QUESTIONS_URL,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify({question:t})});
+    if(!r.ok) throw new Error();
+    $("question-texte").value=""; btn.style.display="none"; $("res-question").style.display="block";
+  }catch(x){
+    err.textContent="Erreur d'envoi. Réessaie."; err.hidden=false;
+    btn.disabled=false; btn.textContent="Envoyer ma question";
+  }
+};
+
+// ===== ASSISTANT =====
+$("ia-btn").onclick = async () => {
+  const btn=$("ia-btn"), q=$("ia-question").value.trim(), zone=$("ia-reponse");
+  if(q.length<10){ alert("Écris une question un peu plus précise."); return; }
+  btn.disabled=true; btn.textContent="Réponse en cours...";
+  zone.hidden=false; zone.textContent="…";
+  try{
+    const r=await fetch(IA_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:q})});
+    const d=await r.json();
+    zone.textContent=d.reponse || "Désolé, réponse indisponible. Contacte le syndicat.";
+  }catch(x){
+    zone.textContent="Erreur de connexion. Réessaie plus tard ou contacte le syndicat.";
+  }
+  btn.disabled=false; btn.textContent="Poser ma question";
+};
+
+// ===== QUELLE EST MA SITUATION ? =====
+// Le tableau SITUATIONS est à recopier depuis la partie 5 (avec les ajouts de ma réponse précédente : avertissement et catégorie santé).
+let sitCat=null;
+function sitCategorie(cat){
+  sitCat=cat;
+  $("sit-etape2").innerHTML = '<p style="font-weight:700; margin:0 0 8px 0;">'+SITUATIONS[cat].titre+' : quelle est ta situation ?</p>' +
+    SITUATIONS[cat].items.map((it,i)=>'<button class="opt" onclick="sitReponse('+i+')">'+it.q+'</button>').join("");
+  $("sit-etape2").hidden=false;
+  $("sit-etape1").hidden=true;
+  $("sit-reponse").hidden=true;
+  $("sit-retour").hidden=false;
+}
+function sitReponse(i){
+  const it=SITUATIONS[sitCat].items[i];
+  const zone=$("sit-reponse");
+  zone.innerHTML = '<strong>💡 '+it.q+'</strong><br><br>'+it.r +
+    '<br><br><em>ℹ️ Information à titre indicatif. Pour ta situation, consulte un élu du personnel ou le syndicat.</em>' +
+    '<br><a class="lf-link" href="#" onclick="sitVoirFiche('+i+'); return false;">📖 Voir la fiche « '+it.f+' »</a>' +
+    '<br><br><button onclick="sitCategorie(sitCat)" style="margin-top:6px; background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue);">⬅️ Autre question dans cette catégorie</button>' +
+    '<br><a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:6px;">✉️ Écrire au syndicat</a>';
+  zone.hidden=false;
+}
+function sitVoirFiche(i){
+  const titre=SITUATIONS[sitCat].items[i].f;
+  if(rechercheDroits && rechercheDroits.value!==""){ rechercheDroits.value=""; rechercheDroits.dispatchEvent(new Event("input")); }
+  const cible=[...document.querySelectorAll("#droits .droit-item")].find(el=>{ const h3=el.querySelector("h3"); return h3 && h3.textContent.includes(titre); });
+  if(!cible) return;
+  cible.scrollIntoView({behavior:"smooth", block:"center"});
+  cible.style.outline="3px solid var(--acc)";
+  setTimeout(()=>{ cible.style.outline=""; }, 2500);
+}
+function sitRetour(){
+  $("sit-etape1").hidden=false; $("sit-etape2").hidden=true; $("sit-reponse").hidden=true; $("sit-retour").hidden=true;
+}
+
+// ===== PHOTOS ET VIDÉOS =====
+// Remplacez ces noms par les noms exacts de vos fichiers dans les dossiers photos/ et videos/
+const PHOTOS = ["photo1.jpg","Photo2.jpg","photo3.jpg","photo4.jpg","photo5.jpg","temp_image_02E74C43-B742-45E3-AB63-A073B888BD0F.webp","photo7.jpg","photo8.jpg","temp_image_867EFF3D-2EC8-4DEE-9249-7054622BEBFD.jpeg","photo10.jpg"];
+const VIDEOS = ["video1.mp4","video2.mp4","video3.mp4","video4.mov"];
+let galerieChargee=false, videosChargees=false;
+
+function ouvrirLightbox(src, estVideo){
+  const lb=document.createElement("div");
+  lb.className="lightbox";
+  lb.onclick=()=>lb.remove();
+  const el=document.createElement(estVideo ? "video" : "img");
+  el.src=src;
+  if(estVideo){ el.controls=true; el.autoplay=true; el.playsInline=true; el.onclick=e=>e.stopPropagation(); }
+  const btn=document.createElement("button");
+  btn.className="fermer"; btn.textContent="✕";
+  btn.onclick=e=>{ e.stopPropagation(); lb.remove(); };
+  lb.appendChild(el); lb.appendChild(btn);
+  document.body.appendChild(lb);
+}
+function chargerGalerie(){
+  if(galerieChargee) return;
+  galerieChargee=true;
+  const box=$("galerie"); box.innerHTML="";
+  PHOTOS.forEach(nom=>{
+    const chemin="photos/"+nom;
+    const a=document.createElement("a");
+    a.href=chemin;
+    a.onclick=e=>{ e.preventDefault(); ouvrirLightbox(chemin,false); };
+    const img=document.createElement("img");
+    img.src=chemin; img.alt="Photo terrain Sud Industrie"; img.loading="lazy";
+    img.onerror=()=>{ a.style.border="2px solid red"; a.title="Image introuvable : "+nom; };
+    a.appendChild(img); box.appendChild(a);
+  });
+}
+function chargerVideos(){
+  if(videosChargees) return;
+  videosChargees=true;
+  const box=$("galerie-videos"); box.innerHTML="";
+  VIDEOS.forEach(nom=>{
+    const chemin="videos/"+nom;
+    const a=document.createElement("a");
+    a.href=chemin;
+    a.onclick=e=>{ e.preventDefault(); ouvrirLightbox(chemin,true); };
+    const v=document.createElement("video");
+    v.src=chemin; v.muted=true; v.playsInline=true; v.preload="metadata";
+    v.onerror=()=>{ a.style.border="2px solid red"; a.title="Vidéo introuvable : "+nom; };
+    a.appendChild(v); box.appendChild(a);
+  });
+}
+
+// ===== JEU SÉCURITÉ =====
+// Le tableau JEU_SCENES est à recopier depuis la partie 5 (4 scènes). Dans la page, remplacez « Six scènes » par « Quatre scènes ».
+const JEU_BEST_KEY="sudMissionBest";
+let jeuIdx=0, jeuScore=0, jeuTrouves=[], jeuFini=false, jeuChoisi=false;
+function jeuLancer(){ jeuIdx=0; jeuScore=0; $("jeu-fin").hidden=true; jeuAfficher(); }
+function jeuAfficher(){
+  const sc=JEU_SCENES[jeuIdx];
+  jeuTrouves=[]; jeuFini=false; jeuChoisi=false;
+  $("jeu-scene").textContent=(jeuIdx+1)+" / "+JEU_SCENES.length;
+  $("jeu-score").textContent=jeuScore;
+  $("jeu-best").textContent=localStorage.getItem(JEU_BEST_KEY)||0;
+  $("jeu-zone").innerHTML='<p style="font-weight:700;margin:0 0 4px 0">'+sc.titre+'</p><p style="font-size:.9rem;color:var(--mute);margin:0 0 8px 0">'+sc.intro+'</p>'+sc.svg;
+  $("jeu-regle").hidden=true; $("jeu-decision").hidden=true; $("jeu-decision").innerHTML="";
+  $("jeu-suite").hidden=true; $("jeu-bilan").hidden=false; $("jeu-fin").hidden=true;
+}
+function jeuClic(e){
+  if(jeuFini) return;
+  const sc=JEU_SCENES[jeuIdx];
+  const hs=e.target.closest(".hs");
+  if(!hs) return;
+  const id=hs.dataset.id, d=sc.dangers[id];
+  if(!d || jeuTrouves.indexOf(id)!==-1) return;
+  jeuTrouves.push(id);
+  hs.classList.add("trouve");
+  jeuScore+=10; $("jeu-score").textContent=jeuScore;
+  $("jeu-regle").innerHTML="<strong>✅ "+d.nom+"</strong><br>"+d.regle+"<br><em>Risque évité : "+d.risque+"</em>";
+  $("jeu-regle").hidden=false;
+  if(jeuTrouves.length===Object.keys(sc.dangers).length) jeuBilan();
+}
+function jeuBilan(){
+  if(jeuFini) return;
+  jeuFini=true;
+  const sc=JEU_SCENES[jeuIdx];
+  const manques=Object.keys(sc.dangers).filter(id=>jeuTrouves.indexOf(id)===-1);
+  document.querySelectorAll("#jeu-zone .hs").forEach(el=>{ if(manques.indexOf(el.dataset.id)!==-1) el.classList.add("rate"); });
+  let html;
+  if(manques.length){
+    html="<strong>⚠️ Dangers que tu n'as pas repérés :</strong>";
+    manques.forEach(id=>{ const d=sc.dangers[id]; html+="<br><br><strong>"+d.nom+"</strong> : "+d.regle+"<br><em>Risque : "+d.risque+"</em>"; });
   } else {
-    // Si on est hors-ligne et que la page est vide ou ne charge pas bien
-    const pageSauvee = localStorage.getItem('sud_page_hors_ligne');
-    if (pageSauvee && document.body.innerHTML.trim() === "") {
-      document.open();
-      document.write(pageSauvee);
-      document.close();
+    html="<strong>🎉 Tu as repéré tous les dangers de cette scène !</strong>";
+  }
+  $("jeu-regle").innerHTML=html; $("jeu-regle").hidden=false;
+  const dec=sc.decision, box=$("jeu-decision");
+  box.innerHTML='<p style="font-weight:700;margin:0 0 8px 0">🤔 '+dec.q+'</p>';
+  dec.a.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.textContent=t;
+    b.onclick=()=>jeuChoisir(i,b);
+    box.appendChild(b);
+  });
+  box.hidden=false;
+  $("jeu-bilan").hidden=true;
+}
+function jeuChoisir(i,btn){
+  if(jeuChoisi) return;
+  jeuChoisi=true;
+  const dec=JEU_SCENES[jeuIdx].decision;
+  document.querySelectorAll("#jeu-decision button").forEach((b,k)=>{ b.disabled=true; if(k===dec.c) b.classList.add("ok"); });
+  if(i===dec.c){ jeuScore+=10; $("jeu-score").textContent=jeuScore; }
+  else btn.classList.add("ko");
+  const p=document.createElement("p");
+  p.style.margin="10px 0 0 0";
+  p.innerHTML="<strong>💡 "+(i===dec.c?"Bonne décision. ":"Pas tout à fait. ")+"</strong>"+dec.e;
+  $("jeu-decision").appendChild(p);
+  $("jeu-suite").textContent = jeuIdx===JEU_SCENES.length-1 ? "🏁 Voir mon résultat" : "Scène suivante ➡️";
+  $("jeu-suite").hidden=false;
+}
+function jeuFinir(){
+  const max=JEU_SCENES.reduce((s,sc)=>s+(Object.keys(sc.dangers).length+1)*10,0);
+  const pct=Math.round(jeuScore/max*100);
+  const prev=+(localStorage.getItem(JEU_BEST_KEY)||0);
+  if(jeuScore>prev) localStorage.setItem(JEU_BEST_KEY,jeuScore);
+  $("jeu-zone").innerHTML="";
+  ["jeu-regle","jeu-decision","jeu-suite","jeu-bilan"].forEach(id=>$(id).hidden=true);
+  $("jeu-badge").textContent = pct>=90?"🛡️":pct>=60?"🌟":"📚";
+  $("jeu-titre").textContent = pct>=90?"Gardien de la sécurité":pct>=60?"Vigilant, mais quelques angles morts":"À revoir : la sécurité commence par l'observation";
+  $("jeu-resultat").textContent="Score : "+jeuScore+" / "+max+" ("+pct+" %)"+(jeuScore>prev?" 🎊 Nouveau meilleur score !":"");
+  $("jeu-fin").hidden=false;
+}
+$("jeu-zone").addEventListener("click", jeuClic);
+$("jeu-bilan").onclick=jeuBilan;
+$("jeu-suite").onclick=()=>{ if(jeuIdx<JEU_SCENES.length-1){ jeuIdx++; jeuAfficher(); } else jeuFinir(); };
+// ===== RÉFÉRENCES MANQUANTES =====
+const QUIZ = [
+  {img:"📨",q:"Quel est le délai minimum entre la convocation écrite à un entretien préalable de licenciement et l'entretien ?",a:["2 jours","5 jours ouvrables","1 mois","15 jours"],c:1,e:"Le délai minimum est de 5 jours ouvrables. Tu peux te faire assister pendant l'entretien.",art:"L1232-2"},
+  {img:"✉️",q:"On te remet une lettre en main propre. Que dois-tu faire ?",a:["La signer sans la lire","Demander un exemplaire daté et signé, et garder une copie","La jeter","Répondre seulement à l'oral"],c:1,e:"Une copie datée et signée te protège en cas de litige."},
+  {img:"📮",q:"Comment un licenciement doit-il être notifié ?",a:["Par SMS","Par mail simple","Par lettre recommandée avec accusé de réception","Par téléphone"],c:2,e:"La lettre de licenciement est envoyée en recommandé avec accusé de réception.",art:"L1232-6"},
+  {img:"⚠️",q:"Tu constates un danger grave et imminent. Quel droit peux-tu utiliser ?",a:["Rester sans rien dire","Le droit de retrait","Démissionner sur-le-champ","Attendre le mois prochain"],c:1,e:"Tu peux quitter ton poste sans sanction, après avoir alerté l'employeur.",art:"L4131-1"},
+  {img:"🚧",q:"Pour exercer le droit de retrait, qui faut-il prévenir ?",a:["Personne","Ses collègues seulement","L'employeur ou son représentant, immédiatement","L'inspection du travail, dans un mois"],c:2,e:"L'employeur doit être informé immédiatement.",art:"L4131-1"},
+  {img:"🚫",q:"Un supérieur humilie régulièrement un salarié. Est-ce permis ?",a:["Oui, c'est son supérieur","Non, c'est du harcèlement moral interdit","Oui, si le salarié ne se plaint pas","Oui, pendant la période d'essai"],c:1,e:"Le harcèlement moral est interdit, quelle que soit la position hiérarchique.",art:"L1152-1"},
+  {img:"🤝",q:"Qui peut t'aider si tu es victime de harcèlement ?",a:["Le CSE, l'inspection du travail ou un élu","Personne","Seulement la police","Seulement ton employeur"],c:0,e:"Tu peux saisir le CSE et l'inspection du travail, et te faire accompagner par un élu.",art:"L1152-1"},
+  {img:"⏱️",q:"Quelle majoration s'applique en général aux 8 premières heures supplémentaires ?",a:["10 %","25 %","50 %","100 %"],c:1,e:"La majoration est de 25 % pour les 8 premières heures supplémentaires, puis de 50 %."},
+  {img:"✈️",q:"Combien de congés payés acquiert-on par mois travaillé ?",a:["1 jour","2,5 jours ouvrables","4 jours","5 jours"],c:1,e:"2,5 jours ouvrables par mois, soit 5 semaines par an.",art:"L3141-3"},
+  {img:"💶",q:"Le bulletin de paie est-il obligatoire ?",a:["Non, seulement sur demande","Oui, à chaque versement de salaire","Oui, une fois par an","Seulement en CDI"],c:1,e:"L'employeur doit remettre le bulletin de paie à chaque paiement du salaire.",art:"L3243-2"},
+  {img:"⏳",q:"Pour un ouvrier en CDI, quelle est en général la durée maximale de la période d'essai ?",a:["1 mois","2 mois","3 mois","6 mois"],c:1,e:"Elle est en général limitée à 2 mois pour un ouvrier, et doit figurer dans le contrat.",art:"L1221-19"},
+  {img:"🤒",q:"Dans quel délai dois-tu prévenir l'employeur d'un arrêt maladie ?",a:["24 heures","48 heures","1 semaine","Aucun délai"],c:1,e:"Il faut prévenir l'employeur dans les 48 heures."},
+  {img:"🦺",q:"Les EPI (gants, chaussures de sécurité…) sont-ils payés par le salarié ?",a:["Oui, toujours","Non, l'employeur les fournit gratuitement","Oui, à moitié prix","Seulement pour les cadres"],c:1,e:"L'employeur fournit les équipements de protection adaptés et gratuits."},
+  {img:"☕",q:"Au bout de combien de temps de travail a-t-on droit à une pause de 20 minutes ?",a:["4 heures","6 heures","8 heures","10 heures"],c:1,e:"Au-delà de 6 heures de travail par jour, une pause d'au moins 20 minutes est obligatoire.",art:"L3121-16"},
+  {img:"🕒",q:"Quelle est en principe la durée maximale de travail quotidien ?",a:["8 heures","10 heures","12 heures","14 heures"],c:1,e:"La durée quotidienne maximale est en principe de 10 heures.",art:"L3121-18"},
+  {img:"😴",q:"Quel est le repos quotidien minimum entre deux journées de travail ?",a:["8 heures","9 heures","11 heures","13 heures"],c:2,e:"Tu dois avoir 11 heures consécutives de repos.",art:"L3131-1"},
+  {img:"👥",q:"Peux-tu être accompagné lors d'un entretien préalable ?",a:["Non, jamais","Oui, par un salarié de l'entreprise ou un conseiller","Oui, seulement par un avocat","Oui, seulement par un membre de ta famille"],c:1,e:"Tu peux te faire assister par un salarié de l'entreprise ou un conseiller extérieur.",art:"L1232-4"},
+  {img:"🏛️",q:"Quelle instance représente le personnel dans les entreprises d'au moins 11 salariés ?",a:["La CAF","Le CSE","La CPAM","L'URSSAF"],c:1,e:"Le CSE (Comité social et économique) représente les salariés."},
+  {img:"📅",q:"Quel est le délai pour réclamer un salaire impayé ?",a:["1 an","3 ans","5 ans","10 ans"],c:1,e:"Les salaires impayés peuvent être réclamés pendant 3 ans.",art:"L3245-1"},
+  {img:"🤝",q:"Une rupture conventionnelle suppose-t-elle l'accord des deux parties ?",a:["Oui, de l'employeur et du salarié","Non, l'employeur seul décide","Oui, du salarié seul","Non, l'inspecteur décide"],c:0,e:"Elle repose sur un accord commun, formalisé dans une convention signée.",art:"L1237-11"},
+  {img:"↩️",q:"Quel est le délai de rétractation d'une rupture conventionnelle ?",a:["48 heures","7 jours","15 jours calendaires","1 mois"],c:2,e:"Tu peux revenir sur ta décision pendant 15 jours calendaires.",art:"L1237-13"},
+  {img:"⚖️",q:"Un employeur peut-il refuser d'embaucher quelqu'un à cause de son origine ?",a:["Oui, si le poste est dangereux","Oui, si le candidat est trop jeune","Non, c'est une discrimination interdite","Oui, si le patron le décide"],c:2,e:"Toute discrimination à l'embauche est interdite.",art:"L1132-1"},
+  {img:"👩‍🏭",q:"Quel principe s'applique au salaire entre femmes et hommes ?",a:["Salaire égal pour un travail de valeur égale","Salaire plus bas pour les femmes","Pas de règle","Seulement dans la fonction publique"],c:0,e:"L'égalité de rémunération entre femmes et hommes est obligatoire.",art:"L3221-2"},
+  {img:"📜",q:"Un employeur peut-il sanctionner un fait vieux de plus de 2 mois ?",a:["Oui, toujours","Non, les faits sont prescrits au-delà de 2 mois","Oui, s'il le décide","Oui, si le salarié ne dit rien"],c:1,e:"Le délai pour sanctionner est en principe de 2 mois à partir de la connaissance des faits.",art:"L1332-4"},
+  {img:"📝",q:"Un avertissement doit-il être notifié par écrit ?",a:["Non, à l'oral suffit","Oui, par écrit","Seulement pour un licenciement","Non, par SMS suffit"],c:1,e:"Toute sanction doit être notifiée par écrit au salarié.",art:"L1332-1"},
+  {img:"🕔",q:"Ton employeur te demande de rester après l'heure sans être payé. Est-ce normal ?",a:["Oui, c'est normal","Non, c'est du temps de travail à payer","Oui, si c'est exceptionnel","Oui, si tu es cadre"],c:1,e:"Le temps de travail effectif doit être rémunéré.",art:"L3121-1"},
+  {img:"🚑",q:"Une maladie peut-elle à elle seule justifier un licenciement ?",a:["Oui, toujours","Non, pas à elle seule","Oui, après 3 jours d'arrêt","Oui, si elle est répétée"],c:1,e:"La maladie ne justifie pas à elle seule un licenciement, sauf cas particuliers.",art:"L1132-1"},
+  {img:"📘",q:"Quel document officiel regroupe les règles applicables aux salariés ?",a:["Le Code du travail","Le Code de la route","Le Code civil","Le Code rural"],c:0,e:"Le Code du travail regroupe les règles applicables aux salariés.",art:""},
+  {img:"📄",q:"Un CDD peut-il être renouvelé sans limite ?",a:["Oui, sans limite","Non, il est encadré par la loi","Oui, sans écrit","Oui, seulement en CDI"],c:1,e:"La durée et le nombre de renouvellements d'un CDD sont encadrés par la loi.",art:"L1243-13"},
+  {img:"🛡️",q:"Qui peut te conseiller en premier si tu as un problème au travail ?",a:["Les élus du CSE ou le syndicat","Personne","Ton voisin","Seulement un avocat"],c:0,e:"Tu peux toujours contacter les élus du personnel et le syndicat."}
+];
+
+const JEU_SCENES = [
+  {
+    titre: "1. Prise de poste",
+    intro: "Avant de démarrer, repère ce qui ne va pas.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Prise de poste avec un chariot">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect y="170" width="320" height="30" fill="#c5cad1"/>
+<line x1="0" y1="170" x2="320" y2="170" stroke="#ffcc00" stroke-width="3"/>
+<g class="hs" data-id="casque">
+<rect x="18" y="40" width="46" height="130" fill="transparent"/>
+<circle cx="40" cy="68" r="11" fill="#8a5a3c"/>
+<rect x="28" y="82" width="24" height="46" rx="3" fill="#ffcc00"/>
+<rect x="30" y="128" width="8" height="42" fill="#333"/>
+<rect x="42" y="128" width="8" height="42" fill="#333"/>
+</g>
+<rect x="110" y="112" width="120" height="48" rx="4" fill="#004aad"/>
+<rect x="104" y="92" width="44" height="40" fill="#1d3f7a"/>
+<g class="hs" data-id="ceinture">
+<rect x="110" y="98" width="30" height="24" fill="transparent"/>
+<rect x="112" y="108" width="24" height="10" fill="#333"/>
+<line x1="112" y1="113" x2="136" y2="113" stroke="#ffcc00" stroke-width="2"/>
+</g>
+<rect x="236" y="60" width="6" height="100" fill="#555"/>
+<rect x="236" y="148" width="50" height="5" fill="#333"/>
+<circle cx="130" cy="166" r="11" fill="#111"/>
+<circle cx="206" cy="166" r="11" fill="#111"/>
+<g class="hs" data-id="controle">
+<rect x="262" y="104" width="50" height="62" fill="transparent"/>
+<rect x="270" y="112" width="36" height="46" rx="2" fill="#f5f5f5" stroke="#888"/>
+<line x1="276" y1="124" x2="300" y2="124" stroke="#999"/>
+<line x1="276" y1="134" x2="300" y2="134" stroke="#999"/>
+<line x1="276" y1="144" x2="300" y2="144" stroke="#999"/>
+</g>
+</svg>`,
+    dangers: {
+      casque: { nom: "Casque non porté", regle: "Le casque est obligatoire dans les zones où circulent des engins ou des charges en hauteur.", risque: "Choc à la tête par une charge qui tombe." },
+      ceinture: { nom: "Ceinture de sécurité non attachée", regle: "Sur un engin avec protection, la ceinture maintient le conducteur dans l'habitacle en cas de renversement.", risque: "Éjection ou écrasement lors d'un basculement." },
+      controle: { nom: "Contrôle de prise de poste non fait", regle: "Avant chaque prise de poste, freins, direction, avertisseur et fourches sont contrôlés, et le contrôle est tracé.", risque: "Un engin défectueux n'est pas repéré avant qu'il ne cause un accident." }
+    },
+    decision: {
+      q: "Le frein d'un chariot tire d'un côté. Que fais-tu ?",
+      a: ["Je l'utilise prudemment jusqu'à la fin du poste", "Je signale le défaut et je ne l'utilise pas", "Je le répare moi-même vite fait"],
+      c: 1,
+      e: "Un engin défectueux se signale et se met hors service jusqu'à sa réparation. Aucun gain de temps ne vaut un risque de renversement."
+    }
+  },
+  {
+    titre: "2. Allée de préparation",
+    intro: "Observe les allées, les zones piétons et les sorties.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Allée de préparation">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect x="0" y="0" width="320" height="34" fill="#9aa1ab"/>
+<rect x="8" y="6" width="26" height="22" fill="#d9b87c"/>
+<rect x="40" y="6" width="26" height="22" fill="#e8c98f"/>
+<rect x="72" y="6" width="26" height="22" fill="#d9b87c"/>
+<rect x="0" y="34" width="320" height="10" fill="#8a94a0"/>
+<rect x="0" y="92" width="320" height="2" fill="#ffcc00"/>
+<rect x="0" y="176" width="320" height="24" fill="#cfe0f5"/>
+<line x1="0" y1="176" x2="320" y2="176" stroke="#2a78d6" stroke-width="3"/>
+<text x="6" y="192" font-size="9" fill="#2a78d6" font-family="Arial">CHEMINEMENT PIÉTON</text>
+<rect x="262" y="40" width="50" height="58" fill="#2e7d32"/>
+<text x="268" y="74" font-size="10" fill="#fff" font-family="Arial" font-weight="700">SORTIE</text>
+<g class="hs" data-id="palette">
+<rect x="138" y="96" width="76" height="46" fill="transparent"/>
+<rect x="150" y="110" width="50" height="34" fill="#d9b87c"/>
+<rect x="150" y="98" width="60" height="16" fill="#e8c98f"/>
+<rect x="142" y="140" width="66" height="6" fill="#8a6a3f"/>
+</g>
+<g class="hs" data-id="pieton">
+<rect x="78" y="106" width="34" height="70" fill="transparent"/>
+<circle cx="95" cy="118" r="7" fill="#f0c08a"/>
+<rect x="87" y="126" width="16" height="30" rx="3" fill="#2a78d6"/>
+<rect x="88" y="156" width="6" height="18" fill="#333"/>
+<rect x="96" y="156" width="6" height="18" fill="#333"/>
+</g>
+<g class="hs" data-id="issue">
+<rect x="250" y="70" width="70" height="60" fill="transparent"/>
+<rect x="252" y="80" width="64" height="40" fill="#d9b87c" stroke="#8a6a3f"/>
+<rect x="258" y="88" width="24" height="24" fill="#e8c98f"/>
+<rect x="286" y="88" width="24" height="24" fill="#e8c98f"/>
+</g>
+</svg>`,
+    dangers: {
+      pieton: { nom: "Piéton sur la voie des engins", regle: "Piétons et engins doivent être séparés. Un piéton reste sur le cheminement signalé.", risque: "Collision avec un engin dont le conducteur ne voit pas la personne." },
+      palette: { nom: "Palette qui déborde sur l'allée", regle: "Une charge qui déborde gêne la circulation et peut accrocher un engin ou tomber.", risque: "Chute de la charge sur un passant ou choc avec un chariot." },
+      issue: { nom: "Sortie de secours encombrée", regle: "Les issues de secours doivent toujours rester dégagées.", risque: "Évacuation bloquée en cas d'incendie ou d'urgence." }
+    },
+    decision: {
+      q: "Tu vois un collègue marcher sur la voie d'un chariot qui approche. Que fais-tu ?",
+      a: ["Je continue, il va bien se pousser", "J'interpelle le collègue et je préviens le conducteur", "Je ne dis rien, ce n'est pas mon affaire"],
+      c: 1,
+      e: "Interpeller et prévenir évite la collision. Un conducteur ne voit pas toujours une personne à pied : la sécurité du groupe repose sur la vigilance de chacun."
+    }
+  },
+  {
+    titre: "3. Quai de dépose",
+    intro: "Un camion est en cours de déchargement. Repère ce qui n'est pas sécurisé.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Quai de dépose avec un camion">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect x="0" y="120" width="200" height="80" fill="#b8bec6"/>
+<rect x="0" y="116" width="200" height="6" fill="#ffcc00"/>
+<rect x="200" y="40" width="120" height="120" rx="4" fill="#f4f6f8" stroke="#9aa1ab"/>
+<rect x="200" y="100" width="120" height="8" fill="#2a78d6"/>
+<rect x="136" y="110" width="66" height="50" fill="none" stroke="#999" stroke-dasharray="4 3"/>
+<g class="hs" data-id="barriere">
+<rect x="150" y="104" width="50" height="16" fill="transparent"/>
+<line x1="150" y1="112" x2="200" y2="112" stroke="#c8102e" stroke-dasharray="6 4" stroke-width="2"/>
+</g>
+<circle cx="236" cy="172" r="12" fill="#111"/>
+<circle cx="296" cy="172" r="12" fill="#111"/>
+<g class="hs" data-id="cale">
+<rect x="236" y="148" width="32" height="38" fill="transparent"/>
+<polygon points="244,184 258,184 258,164" fill="none" stroke="#c8102e" stroke-dasharray="3 2"/>
+</g>
+<g class="hs" data-id="personne">
+<rect x="120" y="60" width="50" height="110" fill="transparent"/>
+<circle cx="150" cy="88" r="8" fill="#f0c08a"/>
+<rect x="141" y="97" width="18" height="34" rx="3" fill="#ffcc00"/>
+<rect x="142" y="130" width="6" height="28" fill="#333"/>
+<rect x="152" y="130" width="6" height="28" fill="#333"/>
+</g>
+</svg>`,
+    dangers: {
+      personne: { nom: "Personne dans la zone de manœuvre", regle: "Pendant une manœuvre de camion, personne ne doit se trouver entre le camion et le quai.", risque: "Écrasement entre le camion et le quai." },
+      cale: { nom: "Camion non calé", regle: "Le camion doit être calé avant d'utiliser un pont de quai ou de charger.", risque: "Le camion peut s'éloigner du quai et provoquer une chute." },
+      barriere: { nom: "Bord de quai non protégé", regle: "Un bord de quai ouvert doit être protégé par une barrière ou un dispositif équivalent.", risque: "Chute de hauteur d'une personne ou d'un engin." }
+    },
+    decision: {
+      q: "Le chauffeur te fait signe d'avancer le chariot alors qu'une personne se trouve encore entre le camion et le quai. Que fais-tu ?",
+      a: ["J'avance, il faut aller vite", "Je ne bouge pas, je fais signe et j'attends que la zone soit libre", "Je démarre sans regarder"],
+      c: 1,
+      e: "Une zone de manœuvre doit être dégagée avant tout mouvement. Attendre et signaler un danger est une règle de sécurité, pas un manque de coopération."
+    }
+  },
+  {
+    titre: "4. Fin de poste",
+    intro: "Ton poste se termine. Sécurise ton engin avant de partir.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Fin de poste, chariot à l'arrêt">
+<rect width="320" height="200" fill="#d5d9de"/>
+<rect x="0" y="0" width="320" height="30" fill="#9aa1ab"/>
+<rect x="8" y="6" width="26" height="20" fill="#d9b87c"/>
+<rect x="40" y="6" width="26" height="20" fill="#e8c98f"/>
+<rect x="0" y="164" width="320" height="36" fill="#c5cad1"/>
+<line x1="0" y1="168" x2="320" y2="168" stroke="#ffcc00" stroke-width="2" stroke-dasharray="8 6"/>
+<g class="hs" data-id="passage">
+<rect x="96" y="96" width="120" height="78" fill="transparent"/>
+<rect x="110" y="120" width="96" height="40" rx="4" fill="#004aad"/>
+<rect x="104" y="100" width="34" height="44" fill="#1d3f7a"/>
+<rect x="206" y="60" width="6" height="100" fill="#555"/>
+<g class="hs" data-id="cle">
+<rect x="112" y="124" width="22" height="20" fill="transparent"/>
+<rect x="114" y="128" width="16" height="10" rx="2" fill="#ffcc00"/>
+</g>
+<circle cx="126" cy="164" r="11" fill="#111"/>
+<circle cx="190" cy="164" r="11" fill="#111"/>
+</g>
+<g class="hs" data-id="fourches">
+<rect x="204" y="44" width="62" height="24" fill="transparent"/>
+<rect x="212" y="54" width="54" height="5" fill="#333"/>
+</g>
+</svg>`,
+    dangers: {
+      passage: { nom: "Engin garé dans le passage", regle: "Le stationnement ne doit jamais gêner une issue, un passage ou une zone de circulation.", risque: "Passage bloqué, et obstacle en cas d'évacuation." },
+      cle: { nom: "Engin laissé avec la clé en place", regle: "Un engin non surveillé est arrêté, moteur coupé, clé retirée, et stationné à l'emplacement prévu.", risque: "Mise en mouvement par une personne non formée." },
+      fourches: { nom: "Fourches laissées en hauteur", regle: "En fin de poste, les fourches sont abaissées au sol.", risque: "Chute de la fourche sur une personne qui passe dessous." }
+    },
+    decision: {
+      q: "Ton engin tombe en panne à côté d'une allée, et ta fin de poste approche. Que fais-tu ?",
+      a: ["Je le laisse là, je le signalerai demain", "Je le sécurise (fourches abaissées, clé retirée) et je préviens ma hiérarchie", "Je le pousse à la main jusqu'à la zone de charge"],
+      c: 1,
+      e: "Sécuriser l'engin et prévenir la hiérarchie protège les autres. Un engin laissé sans précaution, ou déplacé sans contrôle, peut blesser quelqu'un qui n'y pense pas."
     }
   }
-});
+];
+
+const SITUATIONS = {
+  securite: {
+    titre: "🦺 Sécurité",
+    items: [
+      { q: "Mon chariot a un défaut : que faire ?", r: "Ne l'utilise pas. Signale le défaut par écrit à ta hiérarchie (main courante ou cahier de consignes) et demande la mise hors service de l'engin. Un chariot défectueux doit être consigné par l'employeur.", f: "Vérification et anomalies des chariots" },
+      { q: "Je vois une personne dans une zone de manœuvre : que faire ?", r: "Ne bouge pas l'engin. Fais un signe clair au chauffeur ou au responsable, et attends que la zone soit dégagée. Signale la situation à ta hiérarchie et, si besoin, au CSE.", f: "Circulation et signalétique en entrepôt" },
+      { q: "Je suis en danger immédiat : que faire ?", r: "Arrête ton poste et préviens immédiatement ton employeur ou son représentant. Tu peux exercer ton droit de retrait sans sanction. En cas de blessure, appelle les secours.", f: "Danger grave et imminent" },
+      { q: "On m'a demandé de conduire sans formation : que faire ?", r: "Refuse de conduire tant que tu n'as pas reçu la formation et l'autorisation de conduite écrite. Sans cette autorisation, tu ne dois pas utiliser l'engin.", f: "Prise de poste avec un chariot automoteur" }
+    ]
+  },
+  conges: {
+    titre: "✈️ Congés et temps de travail",
+    items: [
+      { q: "Combien de congés payés j'acquiers ?", r: "Tu acquiers 2,5 jours ouvrables par mois travaillé, soit 5 semaines par an. Les règles précises peuvent être améliorées par un accord ou la convention collective.", f: "Congés payés" },
+      { q: "Combien de temps de repos entre deux journées ?", r: "En principe, tu dois avoir 11 heures consécutives de repos entre deux journées de travail.", f: "Heures supplémentaires" },
+      { q: "Droit à une pause : quand ?", r: "Au-delà de 6 heures de travail par jour, une pause d'au moins 20 minutes est obligatoire. Les modalités exactes peuvent être précisées par la convention collective.", f: "Heures supplémentaires" },
+      { q: "Mon employeur me demande de rester sans être payé : est-ce permis ?", r: "Non. Le temps de travail effectif doit être rémunéré. Note les dates et heures, et demande une régularisation par écrit.", f: "Heures supplémentaires" }
+    ]
+  },
+  droits: {
+    titre: "⚖️ Droits et sanctions",
+    items: [
+      { q: "Je suis convoqué à un entretien : que faire ?", r: "Tu as droit à un délai minimum de 5 jours ouvrables entre la convocation et l'entretien. Tu peux te faire accompagner par un élu du personnel ou un salarié de l'entreprise.", f: "Convocation par la direction" },
+      { q: "On me remet un courrier en main propre : que faire ?", r: "Demande un exemplaire daté et signé, et garde une copie. Une lettre de licenciement doit toujours être envoyée en recommandé avec accusé de réception.", f: "Remise en main propre d'un courrier" },
+      { q: "Je suis en arrêt maladie : que faire ?", r: "Préviens l'employeur dans les 48 heures. Tu peux être contrôlé par la Sécurité sociale pendant ton arrêt.", f: "Arrêt maladie" },
+      { q: "Je subis du harcèlement : que faire ?", r: "Ce comportement est interdit. Tu peux alerter le CSE, l'inspection du travail, ou contacter le syndicat directement. Garde trace des faits (dates, messages, témoins).", f: "Harcèlement moral ou sexuel" },
+      { q: "J'ai reçu un avertissement : que faire ?", r: "Tu peux demander des explications par écrit, puis envoyer une lettre de contestation à l'employeur en recommandé avec accusé de réception. Si la sanction est maintenue, tu peux saisir le conseil de prud'hommes dans un délai de 2 ans après la notification.", f: "Contester un avertissement" },
+      { q: "Mon employeur me sanctionne pour des faits anciens : est-ce permis ?", r: "Non, en principe. L'employeur dispose de 2 mois à compter du jour où il a connaissance des faits pour engager la procédure. Au-delà, les faits sont prescrits.", f: "Contester un avertissement" }
+    ]
+  },
+  sante: {
+    titre: "🩺 Santé au travail",
+    items: [
+      { q: "Je veux voir le médecin du travail : comment faire ?", r: "Tu peux demander un rendez-vous toi-même, sans l'accord de ton employeur et sans justification. Tu ne peux pas être sanctionné pour cela. Le rendez-vous peut avoir lieu pendant ton temps de travail, sans perte de salaire, ou à distance.", f: "Médecine du travail" },
+      { q: "Mon travail abîme ma santé : que faire ?", r: "Demande un rendez-vous à la médecine du travail et décris les gênes que tu ressens. Le médecin peut proposer des aménagements de ton poste. Tu peux aussi alerter le CSE.", f: "Médecine du travail" },
+      { q: "J'ai eu un accident au travail : que faire ?", r: "Préviens immédiatement ton employeur, fais constater tes blessures par un médecin et garde une copie du certificat. L'employeur doit déclarer l'accident à la CPAM. Note les faits et les témoins.", f: "Accident du travail" }
+    ]
+  }
+};
 </script>
 </body>
 </html>
