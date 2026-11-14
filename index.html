@@ -339,6 +339,7 @@ body.grand{font-size:19px}
       <button class="opt" onclick="sitCategorie('securite')">🦺 Sécurité</button>
       <button class="opt" onclick="sitCategorie('conges')">✈️ Congés et temps de travail</button>
       <button class="opt" onclick="sitCategorie('droits')">⚖️ Droits et sanctions</button>
+      <button class="opt" onclick="sitCategorie('sante')">🩺 Santé au travail</button>
     </div>
     <div id="sit-etape2" hidden></div>
     <div id="sit-reponse" class="expl" hidden></div>
@@ -538,6 +539,23 @@ body.grand{font-size:19px}
     <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019017133" target="_blank" rel="noopener">📖 Article L1221-19 du Code du travail</a>
   </div>
 
+<div class="droit-item">
+  <h3>📝 Contester un avertissement</h3>
+  <p>Tu peux demander des explications par écrit, puis envoyer une lettre de contestation à l'employeur en recommandé avec accusé de réception. Si la sanction est maintenue, tu peux saisir le conseil de prud'hommes. Tu as 2 ans à compter de la notification pour agir. Garde toutes les preuves (mails, témoins, plannings). L'employeur ne peut sanctionner que dans un délai de 2 mois après avoir eu connaissance des faits.</p>
+  <a class="lf-link" href="https://www.justice.fr/fiche/sanctions-disciplinaires-secteur-prive" target="_blank" rel="noopener">📖 Sanctions disciplinaires (justice.fr)</a>
+</div>
+
+<div class="droit-item">
+  <h3>🩺 Médecine du travail</h3>
+  <p>Tu peux demander un rendez-vous toi-même au service de santé au travail, sans l'accord de ton employeur et sans avoir à te justifier. Tu ne peux pas être sanctionné pour cela. Le rendez-vous peut se tenir pendant ton temps de travail, sans perte de salaire, ou à distance. Ce que tu dis au médecin n'est pas transmis à l'employeur : il ne reçoit qu'une attestation de suivi.</p>
+  <a class="lf-link" href="https://www.service-public.gouv.fr/particuliers/vosdroits/F2211" target="_blank" rel="noopener">📖 Médecine du travail (service-public.gouv.fr)</a>
+</div>
+
+<div class="droit-item">
+  <h3>🩹 Accident du travail</h3>
+  <p>Préviens immédiatement ton employeur, même si la blessure semble légère. Fais établir un certificat médical et garde une copie. L'employeur doit déclarer l'accident à la Caisse primaire d'assurance maladie (CPAM). Note les faits (heure, lieu, témoins) et demande l'appui du CSE si besoin.</p>
+  <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/" target="_blank" rel="noopener">📖 Code du travail sur Légifrance</a>
+</div>
   <a href="tel:0626711687" class="btn contact-btn">📞 M'appeler directement (06 26 71 16 87)</a>
   <a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:10px;">✉️ Écrire au syndicat</a>
   </div>
@@ -1928,25 +1946,45 @@ $("ia-btn").onclick = async () => {
 
 // ==== PARCOURS « QUELLE EST MA SITUATION ? » ====
 const SITUATIONS = {
-  securite: { titre: "🦺 Sécurité", items: [
-    { q: "Mon chariot a un défaut : que faire ?", r: "Ne l'utilise pas. Signale le défaut par écrit à ta hiérarchie et demande la mise hors service de l'engin.", f: "Vérification et anomalies des chariots" },
-    { q: "Je vois une personne dans une zone de manœuvre : que faire ?", r: "Ne bouge pas l'engin. Fais un signe clair au chauffeur ou au responsable, et attends que la zone soit dégagée.", f: "Circulation et signalétique en entrepôt" },
-    { q: "Je suis en danger immédiat : que faire ?", r: "Arrête ton poste et préviens immédiatement ton employeur. Tu peux exercer ton droit de retrait sans sanction.", f: "Danger grave et imminent" },
-    { q: "On m'a demandé de conduire sans formation : que faire ?", r: "Refuse de conduire tant que tu n'as pas reçu la formation et l'autorisation de conduite écrite.", f: "Prise de poste avec un chariot automoteur" }
-  ]},
-  conges: { titre: "✈️ Congés et temps de travail", items: [
-    { q: "Combien de congés payés j'acquiers ?", r: "Tu acquiers 2,5 jours ouvrables par mois travaillé, soit 5 semaines par an.", f: "Congés payés" },
-    { q: "Combien de temps de repos entre deux journées ?", r: "En principe, tu dois avoir 11 heures consécutives de repos entre deux journées.", f: "Heures supplémentaires" },
-    { q: "Droit à une pause : quand ?", r: "Au-delà de 6 heures de travail par jour, une pause d'au moins 20 minutes est obligatoire.", f: "Heures supplémentaires" },
-    { q: "Mon employeur me demande de rester sans être payé : est-ce permis ?", r: "Non. Le temps de travail effectif doit être rémunéré.", f: "Heures supplémentaires" }
-  ]},
-  droits: { titre: "⚖️ Droits et sanctions", items: [
-    { q: "Je suis convoqué à un entretien : que faire ?", r: "Tu as droit à un délai minimum de 5 jours ouvrables. Tu peux te faire accompagner par un élu.", f: "Convocation par la direction" },
-    { q: "On me remet un courrier en main propre : que faire ?", r: "Demande un exemplaire daté et signé, et garde une copie.", f: "Remise en main propre d'un courrier" },
-    { q: "Je suis en arrêt maladie : que faire ?", r: "Préviens l'employeur dans les 48 heures.", f: "Arrêt maladie" },
-    { q: "Je subis du harcèlement : que faire ?", r: "Ce comportement est interdit. Tu peux alerter le CSE, l'inspection du travail, ou le syndicat.", f: "Harcèlement moral ou sexuel" }
-  ]}
+  securite: {
+    titre: "🦺 Sécurité",
+    items: [
+      { q: "Mon chariot a un défaut : que faire ?", r: "Ne l'utilise pas. Signale le défaut par écrit à ta hiérarchie (main courante ou cahier de consignes) et demande la mise hors service de l'engin. Un chariot défectueux doit être consigné par l'employeur.", f: "Vérification et anomalies des chariots" },
+      { q: "Je vois une personne dans une zone de manœuvre : que faire ?", r: "Ne bouge pas l'engin. Fais un signe clair au chauffeur ou au responsable, et attends que la zone soit dégagée. Signale la situation à ta hiérarchie et, si besoin, au CSE.", f: "Circulation et signalétique en entrepôt" },
+      { q: "Je suis en danger immédiat : que faire ?", r: "Arrête ton poste et préviens immédiatement ton employeur ou son représentant. Tu peux exercer ton droit de retrait sans sanction. En cas de blessure, appelle les secours.", f: "Danger grave et imminent" },
+      { q: "On m'a demandé de conduire sans formation : que faire ?", r: "Refuse de conduire tant que tu n'as pas reçu la formation et l'autorisation de conduite écrite. Sans cette autorisation, tu ne dois pas utiliser l'engin.", f: "Prise de poste avec un chariot automoteur" }
+    ]
+  },
+  conges: {
+    titre: "✈️ Congés et temps de travail",
+    items: [
+      { q: "Combien de congés payés j'acquiers ?", r: "Tu acquiers 2,5 jours ouvrables par mois travaillé, soit 5 semaines par an.", f: "Congés payés" },
+      { q: "Combien de temps de repos entre deux journées ?", r: "En principe, tu dois avoir 11 heures consécutives de repos entre deux journées de travail.", f: "Heures supplémentaires" },
+      { q: "Droit à une pause : quand ?", r: "Au-delà de 6 heures de travail par jour, une pause d'au moins 20 minutes est obligatoire.", f: "Heures supplémentaires" },
+      { q: "Mon employeur me demande de rester sans être payé : est-ce permis ?", r: "Non. Le temps de travail effectif doit être rémunéré. Note les dates et heures, et demande une régularisation par écrit.", f: "Heures supplémentaires" }
+    ]
+  },
+  droits: {
+    titre: "⚖️ Droits et sanctions",
+    items: [
+      { q: "Je suis convoqué à un entretien : que faire ?", r: "Tu as droit à un délai minimum de 5 jours ouvrables entre la convocation et l'entretien. Tu peux te faire accompagner par un élu du personnel ou un salarié de l'entreprise.", f: "Convocation par la direction" },
+      { q: "On me remet un courrier en main propre : que faire ?", r: "Demande un exemplaire daté et signé, et garde une copie. Une lettre de licenciement doit toujours être envoyée en recommandé avec accusé de réception.", f: "Remise en main propre d'un courrier" },
+      { q: "Je suis en arrêt maladie : que faire ?", r: "Préviens l'employeur dans les 48 heures. Tu peux être contrôlé par la Sécurité sociale pendant ton arrêt.", f: "Arrêt maladie" },
+      { q: "Je subis du harcèlement : que faire ?", r: "Ce comportement est interdit. Tu peux alerter le CSE, l'inspection du travail, ou contacter le syndicat directement. Garde trace des faits (dates, messages, témoins).", f: "Harcèlement moral ou sexuel" },
+      { q: "J'ai reçu un avertissement : que faire ?", r: "Tu peux demander des explications par écrit, puis envoyer une lettre de contestation à l'employeur en recommandé avec accusé de réception. Si la sanction est maintenue, tu peux saisir le conseil de prud'hommes dans un délai de 2 ans après la notification.", f: "Contester un avertissement" },
+      { q: "Mon employeur me sanctionne pour des faits anciens : est-ce permis ?", r: "Non, en principe. L'employeur dispose de 2 mois à compter du jour où il a connaissance des faits pour engager la procédure. Au-delà, les faits sont prescrits.", f: "Contester un avertissement" }
+    ]
+  },
+  sante: {
+    titre: "🩺 Santé au travail",
+    items: [
+      { q: "Je veux voir le médecin du travail : comment faire ?", r: "Tu peux demander un rendez-vous toi-même, sans l'accord de ton employeur et sans justification. Tu ne peux pas être sanctionné pour cela. Le rendez-vous peut avoir lieu pendant ton temps de travail, sans perte de salaire, ou à distance.", f: "Médecine du travail" },
+      { q: "Mon travail abîme ma santé : que faire ?", r: "Demande un rendez-vous à la médecine du travail et décris les gênes que tu ressens. Le médecin peut proposer des aménagements de ton poste. Tu peux aussi alerter le CSE.", f: "Médecine du travail" },
+      { q: "J'ai eu un accident au travail : que faire ?", r: "Préviens immédiatement ton employeur, fais constater tes blessures par un médecin et garde une copie du certificat. L'employeur doit déclarer l'accident à la CPAM. Note les faits et les témoins.", f: "Accident du travail" }
+    ]
+  }
 };
+
 let sitCat = null;
 function sitCategorie(cat){
   sitCat = cat;
