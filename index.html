@@ -164,146 +164,125 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 
   <div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes kTruck{0%{transform:translateX(-340px)}12%,88%{transform:translateX(0)}96%,100%{transform:translateX(-340px)}}
-@keyframes kFork1{0%,11.9%{transform:translateX(0);opacity:0}12%{transform:translateX(0);opacity:1}24%,30%{transform:translateX(110px);opacity:1}36%,39%{transform:translateX(0);opacity:1}40%,100%{transform:translateX(0);opacity:0}}
-@keyframes kPk1{0%,11.9%{opacity:0}12%,25%{opacity:1}26%,100%{opacity:0}}
-@keyframes kPc{0%,25.9%{opacity:0;transform:translateX(0)}26%{opacity:1;transform:translateX(0)}32%{opacity:1;transform:translateX(48px)}33%,100%{opacity:0;transform:translateX(48px)}}
-@keyframes kTsV{0%,31.9%{transform:translateY(0)}36%,40%{transform:translateY(-22px)}44%,100%{transform:translateY(0)}}
-@keyframes kTsH{0%,35.9%{transform:translateX(0)}38%,41%{transform:translateX(22px)}44%,100%{transform:translateX(0)}}
-@keyframes kTsP{0%,33.9%{opacity:0}34%,40.9%{opacity:1}41%,100%{opacity:0}}
-@keyframes kStore{0%,40.9%{opacity:0}41%,100%{opacity:1}}
-@keyframes kPrep{0%,43.9%{opacity:0;transform:translateX(0)}44%{opacity:1;transform:translateX(0)}57%{opacity:1;transform:translateX(40px)}60%,100%{opacity:0;transform:translateX(40px)}}
-@keyframes kPkp{0%,43.9%{opacity:0}44%,79.9%{opacity:1}80%,100%{opacity:0}}
-@keyframes kCa{0%,49.9%{opacity:0}50%,100%{opacity:1}}
-@keyframes kCb{0%,53.9%{opacity:0}54%,100%{opacity:1}}
-@keyframes kCc{0%,57.9%{opacity:0}58%,100%{opacity:1}}
-@keyframes kFilm{0%,61.9%{opacity:0}62%,75.9%{opacity:1}76%,100%{opacity:0}}
-@keyframes kF2{0%,79.9%{transform:translateX(0);opacity:0}80%{transform:translateX(0);opacity:1}86%{transform:translateX(-200px);opacity:1}87%,100%{transform:translateX(-200px);opacity:0}}
-@keyframes ldSpin{to{transform:rotate(360deg)}}
-.ld-truck{animation:kTruck 40s linear infinite}
-.ld-fk1{animation:kFork1 40s linear infinite}
-.ld-pk1{animation:kPk1 40s linear infinite}
-.ld-pc{animation:kPc 40s linear infinite}
-.ld-tsv{animation:kTsV 40s linear infinite}
-.ld-tsh{animation:kTsH 40s linear infinite}
-.ld-tsp{animation:kTsP 40s linear infinite}
-.ld-store{animation:kStore 40s linear infinite}
-.ld-prep{animation:kPrep 40s linear infinite}
-.ld-pkp{animation:kPkp 40s linear infinite}
-.ld-ca{animation:kCa 40s linear infinite}
-.ld-cb{animation:kCb 40s linear infinite}
-.ld-cc{animation:kCc 40s linear infinite}
-.ld-film{animation:kFilm 40s linear infinite}
-.ld-f2{animation:kF2 40s linear infinite}
-.ld-spin{transform-box:fill-box;transform-origin:center;animation:ldSpin 1.4s linear infinite}
-.ld-roll{transform-box:fill-box;transform-origin:center;animation:ldSpin .8s linear infinite}
+@keyframes kRcv{0%{transform:translate(0,0);opacity:1}9%{transform:translate(34px,-40px);opacity:1}10%,100%{transform:translate(34px,-40px);opacity:0}}
+@keyframes kCv{0%,9%{opacity:0;transform:translateX(0)}10%{opacity:1;transform:translateX(0)}30%{opacity:1;transform:translateX(120px)}31%,100%{opacity:0;transform:translateX(120px)}}
+@keyframes kTs{0%,30%{transform:translateY(0)}36%,41%{transform:translateY(-34px)}46%,100%{transform:translateY(0)}}
+@keyframes kTsP{0%,30%{opacity:0}31%,40%{opacity:1}41%,100%{opacity:0}}
+@keyframes kRk{0%,41%{opacity:0}42%,57%{opacity:1}58%,100%{opacity:0}}
+@keyframes kSo{0%,56%{opacity:0;transform:translateX(0)}57%,69%{opacity:1;transform:translateX(0)}70%,100%{opacity:1;transform:translateX(-80px)}}
+@keyframes kPr{0%,71%{transform:translateX(0)}78%,84%{transform:translateX(30px)}90%,100%{transform:translateX(0)}}
+@keyframes kPp{0%,75%{opacity:0;transform:translateX(0)}76%,88%{opacity:1;transform:translateX(0)}89%,95%{opacity:1;transform:translateX(135px)}96%,100%{opacity:0;transform:translateX(135px)}}
+@keyframes kB1{0%,76%{opacity:0}77%,100%{opacity:1}}
+@keyframes kB2{0%,79%{opacity:0}80%,100%{opacity:1}}
+@keyframes kB3{0%,83%{opacity:0}84%,100%{opacity:1}}
+@keyframes kFilm{0%,89%{opacity:0}90%,95%{opacity:1}96%,100%{opacity:0}}
+@keyframes kSpin{to{transform:rotate(360deg)}}
+@keyframes kLoad{0%,95%{opacity:0}96%,100%{opacity:1}}
+@keyframes kC1{0%,9%{opacity:1}10%,100%{opacity:0}}
+@keyframes kC2{0%,9%{opacity:0}10%,44%{opacity:1}45%,100%{opacity:0}}
+@keyframes kC3{0%,45%{opacity:0}46%,69%{opacity:1}70%,100%{opacity:0}}
+@keyframes kC4{0%,70%{opacity:0}71%,88%{opacity:1}89%,100%{opacity:0}}
+@keyframes kC5{0%,88%{opacity:0}89%,100%{opacity:1}}
+.a-rcv{animation:kRcv 40s linear infinite}
+.a-cv{animation:kCv 40s linear infinite}
+.a-ts{animation:kTs 40s linear infinite}
+.a-tsp{animation:kTsP 40s linear infinite}
+.a-rk{animation:kRk 40s linear infinite}
+.a-so{animation:kSo 40s linear infinite}
+.a-pr{animation:kPr 40s linear infinite}
+.a-pp{animation:kPp 40s linear infinite}
+.a-b1{animation:kB1 40s linear infinite}
+.a-b2{animation:kB2 40s linear infinite}
+.a-b3{animation:kB3 40s linear infinite}
+.a-film{animation:kFilm 40s linear infinite}
+.a-spin{transform-box:fill-box;transform-origin:center;animation:kSpin 1.4s linear infinite}
+.a-load{animation:kLoad 40s linear infinite}
+.a-c1{animation:kC1 40s linear infinite}
+.a-c2{animation:kC2 40s linear infinite}
+.a-c3{animation:kC3 40s linear infinite}
+.a-c4{animation:kC4 40s linear infinite}
+.a-c5{animation:kC5 40s linear infinite}
 </style>
 <h2 style="border:none; margin:0 0 6px 0; padding:0;">🏭 La journée d'une palette</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Du camion à quai au camion de départ, dans un entrepôt complet. Schéma animé, en boucle.</p>
-<svg viewBox="0 0 360 220" width="100%" style="max-width:380px; display:block; margin:0 auto;" role="img" aria-label="Entrepôt : camion à quai, cariste, convoyeur, transstockeur, picking, filmeuse et chargement">
-<rect x="0" y="170" width="360" height="50" fill="#c5cad1"/>
-<rect x="0" y="40" width="80" height="130" fill="#b8bec6"/>
-<text x="40" y="34" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">QUAI</text>
-<rect x="82" y="60" width="8" height="110" fill="#7b8794"/>
-<rect x="95" y="150" width="70" height="8" fill="#55606c"/>
-<rect class="ld-roll" x="99" y="151" width="6" height="6" fill="#8a94a0"/>
-<rect class="ld-roll" x="113" y="151" width="6" height="6" fill="#8a94a0"/>
-<rect class="ld-roll" x="127" y="151" width="6" height="6" fill="#8a94a0"/>
-<rect class="ld-roll" x="141" y="151" width="6" height="6" fill="#8a94a0"/>
-<rect class="ld-roll" x="155" y="151" width="6" height="6" fill="#8a94a0"/>
-<text x="130" y="142" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">CONVOYEUR</text>
-<rect x="190" y="60" width="4" height="110" fill="#55606c"/>
-<rect x="230" y="60" width="4" height="110" fill="#55606c"/>
-<rect x="270" y="60" width="4" height="110" fill="#55606c"/>
-<rect x="310" y="60" width="4" height="110" fill="#55606c"/>
-<rect x="346" y="60" width="4" height="110" fill="#55606c"/>
-<rect x="190" y="95" width="160" height="3" fill="#55606c"/>
-<rect x="190" y="130" width="160" height="3" fill="#55606c"/>
-<rect x="190" y="165" width="160" height="3" fill="#55606c"/>
-<rect x="196" y="82" width="14" height="13" fill="#d9b87c"/>
-<rect x="234" y="82" width="14" height="13" fill="#e8c98f"/>
-<rect x="274" y="117" width="14" height="13" fill="#d9b87c"/>
-<rect x="314" y="117" width="14" height="13" fill="#e8c98f"/>
-<rect x="236" y="152" width="14" height="13" fill="#d9b87c"/>
-<text x="212" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE A</text>
-<text x="252" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE B</text>
-<text x="292" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE C</text>
-<rect x="172" y="60" width="4" height="110" fill="#004aad"/>
-<text x="180" y="200" text-anchor="middle" font-size="7" font-weight="700" fill="#004aad">TRANSSTOCKEUR</text>
-<text x="290" y="200" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">PICKING</text>
-<g class="ld-truck">
-  <rect x="0" y="100" width="80" height="50" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
-  <rect x="-22" y="122" width="22" height="28" fill="#004aad"/>
-  <rect x="8" y="128" width="22" height="22" fill="#d9b87c"/>
-  <rect x="36" y="128" width="22" height="22" fill="#e8c98f"/>
-  <circle cx="-10" cy="156" r="6" fill="#111"/><circle cx="12" cy="156" r="6" fill="#111"/><circle cx="62" cy="156" r="6" fill="#111"/>
-  <text x="40" y="116" text-anchor="middle" font-size="7" font-weight="700" fill="#004aad">CAMION</text>
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Du camion à quai au camion de départ. Schéma animé, en boucle.</p>
+<svg viewBox="0 0 360 240" width="100%" style="max-width:380px; display:block; margin:0 auto;" role="img" aria-label="Entrepôt : réception, convoyeur, transstockeur, picking, filmage et chargement">
+<rect width="360" height="240" fill="#d5d9de"/>
+<rect y="200" width="360" height="40" fill="#c5cad1"/>
+<text x="30" y="108" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">RÉCEPTION</text>
+<rect x="0" y="116" width="60" height="50" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
+<circle cx="14" cy="170" r="5" fill="#111"/><circle cx="46" cy="170" r="5" fill="#111"/>
+<rect x="66" y="116" width="8" height="84" fill="#7b8794"/>
+<rect x="88" y="100" width="150" height="5" fill="#55606c"/>
+<rect x="96" y="105" width="4" height="95" fill="#55606c"/>
+<rect x="150" y="105" width="4" height="95" fill="#55606c"/>
+<rect x="220" y="105" width="4" height="95" fill="#55606c"/>
+<text x="180" y="122" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">CONVOYEUR</text>
+<rect x="205" y="28" width="31" height="72" fill="#e6e9ed" stroke="#9aa1ab"/>
+<rect x="252" y="28" width="83" height="72" fill="#e6e9ed" stroke="#9aa1ab"/>
+<line x1="205" y1="46" x2="236" y2="46" stroke="#9aa1ab"/>
+<line x1="205" y1="84" x2="236" y2="84" stroke="#9aa1ab"/>
+<line x1="252" y1="46" x2="335" y2="46" stroke="#9aa1ab"/>
+<line x1="252" y1="84" x2="335" y2="84" stroke="#9aa1ab"/>
+<rect x="236" y="22" width="16" height="78" fill="#cfe0f5"/>
+<text x="262" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">STOCK · allée 1</text>
+<rect x="238" y="20" width="3" height="80" fill="#333"/>
+<rect x="150" y="128" width="90" height="4" fill="#55606c"/>
+<rect x="150" y="160" width="90" height="4" fill="#55606c"/>
+<rect x="150" y="128" width="4" height="48" fill="#55606c"/>
+<rect x="236" y="128" width="4" height="48" fill="#55606c"/>
+<text x="195" y="150" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">PICKING · 2 niveaux</text>
+<rect x="284" y="116" width="6" height="60" fill="#7b8794"/>
+<rect x="290" y="110" width="56" height="62" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
+<rect x="346" y="128" width="12" height="44" fill="#004aad"/>
+<circle cx="300" cy="176" r="5" fill="#111"/><circle cx="338" cy="176" r="5" fill="#111"/><circle cx="352" cy="176" r="5" fill="#111"/>
+<text x="318" y="104" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">EXPÉDITION</text>
+<g class="a-rcv">
+  <rect x="62" y="136" width="16" height="36" fill="#ffcc00"/>
+  <rect x="64" y="128" width="12" height="8" fill="#1d3f7a" opacity=".4"/>
+  <rect x="79" y="112" width="3" height="62" fill="#555"/>
+  <rect x="80" y="140" width="16" height="3" fill="#333"/>
+  <rect x="80" y="128" width="22" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <circle cx="66" cy="174" r="4" fill="#111"/><circle cx="76" cy="174" r="4" fill="#111"/>
 </g>
-<g class="ld-fk1">
-  <rect x="20" y="152" width="20" height="3" fill="#333"/>
-  <rect x="34" y="110" width="4" height="42" fill="#555"/>
-  <rect x="38" y="126" width="24" height="22" rx="3" fill="#ffcc00"/>
-  <rect x="40" y="112" width="18" height="14" fill="#1d3f7a" opacity=".35"/>
-  <circle cx="49" cy="120" r="4" fill="#f0c08a"/>
-  <circle cx="42" cy="152" r="4" fill="#111"/><circle cx="60" cy="152" r="4" fill="#111"/>
-  <rect class="ld-pk1" x="20" y="140" width="22" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect class="a-cv" x="114" y="88" width="26" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<g class="a-ts">
+  <rect x="236" y="96" width="14" height="4" fill="#004aad"/>
+  <rect class="a-tsp" x="236" y="84" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
 </g>
-<rect class="ld-pc" x="128" y="132" width="22" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<g class="ld-tsv">
-  <rect x="172" y="124" width="14" height="24" fill="#004aad"/>
-  <g class="ld-tsh">
-    <rect x="186" y="130" width="6" height="6" fill="#333"/>
-    <rect class="ld-tsp" x="176" y="132" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  </g>
+<rect class="a-rk" x="208" y="60" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<g class="a-so">
+  <rect x="232" y="116" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect x="262" y="112" width="14" height="20" fill="#ffcc00"/>
+  <rect x="264" y="104" width="10" height="8" fill="#1d3f7a" opacity=".4"/>
+  <circle cx="265" cy="134" r="3" fill="#111"/><circle cx="273" cy="134" r="3" fill="#111"/>
 </g>
-<rect class="ld-store" x="198" y="110" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<g transform="translate(200,0)">
-  <g class="ld-prep">
-    <circle cx="0" cy="140" r="4" fill="#f0c08a"/>
-    <rect x="-4" y="145" width="8" height="16" rx="2" fill="#ffcc00"/>
-    <rect x="-3" y="161" width="2" height="9" fill="#333"/><rect x="1" y="161" width="2" height="9" fill="#333"/>
-  </g>
+<g class="a-pr">
+  <circle cx="112" cy="156" r="4" fill="#f0c08a"/>
+  <rect x="108" y="161" width="8" height="14" rx="2" fill="#ffcc00"/>
+  <rect x="109" y="175" width="2" height="9" fill="#333"/><rect x="113" y="175" width="2" height="9" fill="#333"/>
 </g>
-<g transform="translate(240,0)">
-  <g class="ld-pkp">
-    <rect x="0" y="158" width="36" height="10" fill="#8a6a3f"/>
-    <g class="ld-ca">
-      <rect x="2" y="146" width="14" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-      <text x="9" y="155" text-anchor="middle" font-size="4" font-weight="700" fill="#333">CMD 1</text>
-    </g>
-    <g class="ld-cb">
-      <rect x="19" y="146" width="14" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-      <text x="26" y="155" text-anchor="middle" font-size="4" font-weight="700" fill="#333">CMD 2</text>
-    </g>
-    <g class="ld-cc">
-      <rect x="10" y="134" width="14" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-      <text x="17" y="143" text-anchor="middle" font-size="4" font-weight="700" fill="#333">CMD 3</text>
-    </g>
-  </g>
-  <g class="ld-film">
-    <g class="ld-spin">
-      <ellipse cx="18" cy="154" rx="26" ry="14" fill="none" stroke="#7b8794" stroke-width="2" stroke-dasharray="4 3"/>
-    </g>
-  </g>
+<g class="a-pp">
+  <rect x="118" y="176" width="30" height="6" fill="#8a6a3f"/>
+  <rect class="a-b1" x="120" y="164" width="12" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="a-b2" x="134" y="164" width="12" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="a-b3" x="127" y="152" width="12" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect x="98" y="166" width="14" height="16" fill="#ffcc00"/>
+  <rect x="112" y="178" width="8" height="2" fill="#333"/>
+  <circle cx="102" cy="186" r="3" fill="#111"/><circle cx="110" cy="186" r="3" fill="#111"/>
 </g>
-<g transform="translate(220,0)">
-  <g class="ld-f2">
-    <rect x="20" y="152" width="20" height="3" fill="#333"/>
-    <rect x="34" y="110" width="4" height="42" fill="#555"/>
-    <rect x="38" y="126" width="24" height="22" rx="3" fill="#ffcc00"/>
-    <rect x="40" y="112" width="18" height="14" fill="#1d3f7a" opacity=".35"/>
-    <circle cx="49" cy="120" r="4" fill="#f0c08a"/>
-    <circle cx="42" cy="152" r="4" fill="#111"/><circle cx="60" cy="152" r="4" fill="#111"/>
-    <rect x="20" y="140" width="22" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-    <rect x="22" y="130" width="8" height="10" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-    <rect x="32" y="130" width="8" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  </g>
+<g class="a-film">
+  <g class="a-spin"><ellipse cx="268" cy="160" rx="22" ry="26" fill="none" stroke="#7b8794" stroke-width="2" stroke-dasharray="4 3"/></g>
 </g>
-<text x="180" y="20" text-anchor="middle" font-size="9" font-weight="700" fill="#333">Réception → stock → picking → filmage → chargement</text>
+<rect class="a-load" x="298" y="150" width="30" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<text class="a-c1" x="180" y="234" text-anchor="middle" font-size="8" font-weight="700" fill="#333">1 · Réception : le réceptionnaire dépose la palette sur le convoyeur</text>
+<text class="a-c2" x="180" y="234" text-anchor="middle" font-size="8" font-weight="700" fill="#333">2 · Le transstockeur range la palette dans l'allée</text>
+<text class="a-c3" x="180" y="234" text-anchor="middle" font-size="8" font-weight="700" fill="#333">3 · Destockage : le cariste alimente le picking sur 2 niveaux</text>
+<text class="a-c4" x="180" y="234" text-anchor="middle" font-size="8" font-weight="700" fill="#333">4 · Le préparateur monte sa palette de commandes</text>
+<text class="a-c5" x="180" y="234" text-anchor="middle" font-size="8" font-weight="700" fill="#333">5 · La palette est filmée, puis chargée dans le camion</text>
 </svg>
 <p style="font-size:.8rem; color:var(--mute); margin:6px 0 0 0;">🚜 cariste · 🏗️ transstockeur · 🧑‍🏭 préparateur · 📦 palette · 🎞️ filmeuse</p>
 </div>
- 
+
   <h2>Connaître ses droits</h2>
     <input type="search" id="recherche-droits" placeholder="🔍 Rechercher : arrêt maladie, chariot, congés…" style="width:100%; padding:12px; border:2px solid var(--line); border-radius:8px; font:inherit; margin-bottom:16px; background:var(--surface); color:var(--ink);">
     <div class="card" style="border-left:6px solid var(--blue); margin-bottom:16px;">
