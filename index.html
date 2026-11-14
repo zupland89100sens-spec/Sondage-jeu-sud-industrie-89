@@ -1850,65 +1850,168 @@ const JEU_SCENES = [
   }
 ];
 
+// ===== MISSION SÉCURITÉ : VERSION AMÉLIORÉE =====
 const JEU_BEST_KEY = "sudMissionBest";
 let jeuIdx = 0, jeuScore = 0, jeuTrouves = [], jeuFini = false, jeuChoisi = false;
+let jeuErreurs = 0, jeuOublis = [], jeuMode = "score", jeuChrono = false, jeuDebut = 0, jeuTimer = null;
+
+// 4. Décisions plus proches du terrain (une par scène, dans l'ordre)
+const JEU_DECISIONS_TERRAIN = [
+  { q: "Le frein d'un chariot tire d'un côté, et ton chef te demande de finir la tournée. Que fais-tu ?", a: ["Je finis prudemment, le frein tiendra", "Je signale le défaut et je mets l'engin hors service", "Je change d'engin sans prévenir personne"], c: 1, e: "Un engin défectueux se signale et se met hors service. Changer d'engin sans prévenir laisse le défaut en place." },
+  { q: "Tu vois un collègue marcher sur la voie d'un chariot qui approche, et le conducteur a le nez sur son écran. Que fais-tu ?", a: ["Je continue, il va bien se pousser", "J'interpelle le collègue et je préviens le conducteur", "Je ne dis rien, ce n'est pas mon affaire"], c: 1, e: "Le conducteur ne voit pas toujours une personne à pied. Interpeller et prévenir évite la collision." },
+  { q: "Le chauffeur te fait signe d'avancer alors qu'un collègue est encore entre le camion et le quai. Le planning est serré. Que fais-tu ?", a: ["J'avance, le planning est serré", "Je ne bouge pas, je fais signe et j'attends que la zone soit libre", "Je démarre sans regarder"], c: 1, e: "Une zone de manœuvre doit être dégagée avant tout mouvement, même quand le planning presse." },
+  { q: "Ton chariot tombe en panne à côté d'une allée, et ta fin de poste approche. Le collègue suivant attend. Que fais-tu ?", a: ["Je le laisse là, le collègue s'en occupera", "Je le sécurise (fourches baissées, clé retirée) et je préviens ma hiérarchie", "Je le pousse à la main jusqu'à la zone de charge"], c: 1, e: "Sécuriser l'engin et prévenir la hiérarchie protège le collègue suivant et les autres." },
+  { q: "Le chauffeur veut partir alors que la charge n'est pas sanglée, il est déjà en retard. Que fais-tu ?", a: ["Je le laisse partir, c'est son problème", "Je lui demande de sangler la charge avant de partir", "Je ne dis rien, ce n'est pas mon rôle"], c: 1, e: "Une charge non sanglée peut tomber sur la route ou sur une personne au déchargement." },
+  { q: "Un collègue te demande de l'aider à changer une ampoule en haut d'un rayon, sans attendre l'équipe sécurité. Que fais-tu ?", a: ["Je le tiens par le bas de l'échelle pendant qu'il monte", "Je lui propose un moyen d'accès stable et je préviens le responsable", "Je monte moi-même sur une palette"], c: 1, e: "Un moyen d'accès stable et adapté évite la chute. La rapidité ne vaut pas un accident." }
+];
+JEU_SCENES.forEach((sc, i) => { if(JEU_DECISIONS_TERRAIN[i]) sc.decision = JEU_DECISIONS_TERRAIN[i]; });
+
+// Affichage d'un message dans la zone de règles
+function jeuMessage(html, erreur){
+  const r = $("jeu-regle");
+  r.innerHTML = html;
+  r.style.borderLeftColor = erreur ? "var(--acc)" : "var(--blue)";
+  r.hidden = false;
+}
+
+// 5/6. Barre de réglages (mode entraînement et chrono)
+function jeuBarreOptions(){
+  let bar = $("jeu-options");
+  if(!bar){
+    bar = document.createElement("div");
+    bar.id = "jeu-options";
+    bar.style.cssText = "display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0";
+    bar.innerHTML =
+      '<button id="jeu-btn-mode" onclick="jeuToggleMode()" style="width:auto;margin:0;padding:8px 12px;min-height:0;font-size:.85rem;background:var(--bg);color:var(--ink);box-shadow:none;border:2px solid var(--blue)"></button>' +
+      '<button id="jeu-btn-chrono" onclick="jeuToggleChrono()" style="width:auto;margin:0;padding:8px 12px;min-height:0;font-size:.85rem;background:var(--bg);color:var(--ink);box-shadow:none;border:2px solid var(--blue)"></button>';
+    $("jeu-zone").before(bar);
+  }
+  $("jeu-btn-mode").textContent = jeuMode === "entrainement" ? "🎓 Entraînement : ON" : "🎓 Entraînement : OFF";
+  $("jeu-btn-chrono").textContent = jeuChrono ? "⏱️ Chrono : ON" : "⏱️ Chrono : OFF";
+}
+function jeuToggleMode(){
+  if(jeuIdx > 0 || jeuTrouves.length > 0){
+    if(!confirm("Changer ce réglage recommence le jeu. Continuer ?")) return;
+  }
+  jeuMode = jeuMode === "score" ? "entrainement" : "score";
+  jeuLancer();
+}
+function jeuToggleChrono(){
+  if(jeuIdx > 0 || jeuTrouves.length > 0){
+    if(!confirm("Changer ce réglage recommence le jeu. Continuer ?")) return;
+  }
+  jeuChrono = !jeuChrono;
+  jeuLancer();
+}
+
+// 1. Compteur de dangers restants et chronomètre
+function jeuStatut(){
+  let st = $("jeu-statut");
+  if(!st){
+    st = document.createElement("p");
+    st.id = "jeu-statut";
+    st.className = "note";
+    $("jeu-zone").before(st);
+  }
+  return st;
+}
+function jeuMajStatut(){
+  const sc = JEU_SCENES[jeuIdx];
+  const restants = Object.keys(sc.dangers).length - jeuTrouves.length;
+  let txt = "🔎 Dangers restants : " + restants;
+  if(jeuChrono && !jeuFini) txt += " · ⏱️ " + Math.floor((Date.now() - jeuDebut) / 1000) + " s";
+  jeuStatut().textContent = txt;
+}
+function jeuArreterChrono(){ clearInterval(jeuTimer); jeuTimer = null; }
+function jeuDemarrerChrono(){
+  jeuArreterChrono();
+  jeuDebut = Date.now();
+  jeuTimer = setInterval(jeuMajStatut, 1000);
+}
 
 function jeuLancer(){
-  jeuIdx = 0; jeuScore = 0;
+  jeuIdx = 0; jeuScore = 0; jeuErreurs = 0; jeuOublis = []; jeuFini = false;
+  jeuArreterChrono();
   document.querySelectorAll("#jeu-badges .badge").forEach(b => b.classList.remove("obtenu"));
   $("jeu-fin").hidden = true;
   jeuAfficher();
 }
+
 function jeuAfficher(){
   const sc = JEU_SCENES[jeuIdx];
   jeuTrouves = []; jeuFini = false; jeuChoisi = false;
   $("jeu-scene").textContent = (jeuIdx + 1) + " / " + JEU_SCENES.length;
   $("jeu-score").textContent = jeuScore;
-  $("jeu-best").textContent = localStorage.getItem(JEU_BEST_KEY) || 0;
+  $("jeu-best").textContent = jeuMode === "score" ? (localStorage.getItem(JEU_BEST_KEY) || 0) : "—";
+  jeuBarreOptions();
   $("jeu-zone").innerHTML = '<p style="font-weight:700;margin:0 0 4px 0">' + sc.titre + '</p><p style="font-size:.9rem;color:var(--mute);margin:0 0 8px 0">' + sc.intro + '</p>' + sc.svg;
-  $("jeu-regle").hidden = true;
+
+  // 6. En mode entraînement, les règles de la scène sont affichées dès le départ
+  if(jeuMode === "entrainement"){
+    jeuMessage("<strong>🎓 Règles de cette scène :</strong>" + Object.values(sc.dangers).map(d => "<br>• <strong>" + d.nom + "</strong> : " + d.regle).join(""), false);
+  } else {
+    $("jeu-regle").hidden = true;
+    $("jeu-regle").innerHTML = "";
+  }
   $("jeu-decision").hidden = true;
   $("jeu-decision").innerHTML = "";
   $("jeu-suite").hidden = true;
   $("jeu-bilan").hidden = false;
   $("jeu-fin").hidden = true;
+
+  jeuMajStatut();
+  if(jeuChrono) jeuDemarrerChrono(); else jeuArreterChrono();
 }
+
+// 2. Retour sur les zones sans danger
 function jeuClic(e){
   if(jeuFini) return;
   const sc = JEU_SCENES[jeuIdx];
   const hs = e.target.closest(".hs");
-  if(!hs) return;
+  if(!hs){
+    if(e.target.closest("svg")) jeuMessage("👀 Rien à signaler ici. Continue de chercher.", false);
+    return;
+  }
   const id = hs.dataset.id;
   const d = sc.dangers[id];
-  if(!d || jeuTrouves.indexOf(id) !== -1) return;
+  if(!d){
+    jeuErreurs++;
+    jeuMessage("⚠️ Ce n'est pas un danger. Rien à signaler ici.", true);
+    return;
+  }
+  if(jeuTrouves.indexOf(id) !== -1){
+    jeuMessage("✅ Déjà repéré, continue de chercher.", false);
+    return;
+  }
   jeuTrouves.push(id);
   hs.classList.add("trouve");
   jeuScore += 10;
   $("jeu-score").textContent = jeuScore;
-  const badge = document.querySelector('#jeu-badges .badge[data-badge="premier"]');
-  if(badge) badge.classList.add("obtenu");
-  $("jeu-regle").innerHTML = "<strong>✅ " + d.nom + "</strong><br>" + d.regle + "<br><em>Risque évité : " + d.risque + "</em>";
-  $("jeu-regle").hidden = false;
+  if(jeuMode === "score"){
+    const badge = document.querySelector('#jeu-badges .badge[data-badge="premier"]');
+    if(badge) badge.classList.add("obtenu");
+  }
+  jeuMessage("<strong>✅ " + d.nom + "</strong><br>" + d.regle + "<br><em>Risque évité : " + d.risque + "</em>", false);
+  jeuMajStatut();
   if(jeuTrouves.length === Object.keys(sc.dangers).length) jeuBilan();
 }
-document.addEventListener("keydown", (e) => {
+$("jeu-zone").addEventListener("click", jeuClic);
+
+// Accessibilité clavier (Entrée ou Espace sur une zone)
+document.addEventListener("keydown", e => {
   if(e.key !== "Enter" && e.key !== " ") return;
   const hs = document.activeElement && document.activeElement.closest ? document.activeElement.closest(".hs") : null;
-  if(hs && document.getElementById("jeu") && !document.getElementById("jeu").hidden){
-    e.preventDefault(); hs.click();
-  }
+  if(hs && !$("jeu").hidden){ e.preventDefault(); hs.click(); }
 });
+
+// 3. Bilan de la scène avec la liste des oublis
 function jeuBilan(){
   if(jeuFini) return;
   jeuFini = true;
+  jeuArreterChrono();
   const sc = JEU_SCENES[jeuIdx];
   const manques = Object.keys(sc.dangers).filter(id => jeuTrouves.indexOf(id) === -1);
-  if(manques.length === 0){
-    jeuScore += 10;
-    $("jeu-score").textContent = jeuScore;
-    const b = document.querySelector('#jeu-badges .badge[data-badge="sansfaute"]');
-    if(b) b.classList.add("obtenu");
-  }
+  manques.forEach(id => jeuOublis.push("scène " + (jeuIdx + 1) + " : " + sc.dangers[id].nom));
   document.querySelectorAll("#jeu-zone .hs").forEach(el => {
     if(manques.indexOf(el.dataset.id) !== -1) el.classList.add("rate");
   });
@@ -1922,18 +2025,21 @@ function jeuBilan(){
   } else {
     html = "<strong>🎉 Tu as repéré tous les dangers de cette scène !</strong>";
   }
-  $("jeu-regle").innerHTML = html;
-  $("jeu-regle").hidden = false;
-  const dec = sc.decision;
-  const box = $("jeu-decision");
+  jeuMessage(html, manques.length > 0);
+
+  const dec = sc.decision, box = $("jeu-decision");
   box.innerHTML = '<p style="font-weight:700;margin:0 0 8px 0">🤔 ' + dec.q + '</p>';
   dec.a.forEach((t, i) => {
-    const b = document.createElement("button"); b.className = "opt"; b.textContent = t;
-    b.onclick = () => jeuChoisir(i, b); box.appendChild(b);
+    const b = document.createElement("button");
+    b.className = "opt"; b.textContent = t;
+    b.onclick = () => jeuChoisir(i, b);
+    box.appendChild(b);
   });
   box.hidden = false;
   $("jeu-bilan").hidden = true;
+  jeuMajStatut();
 }
+
 function jeuChoisir(i, btn){
   if(jeuChoisi) return;
   jeuChoisi = true;
@@ -1944,10 +2050,11 @@ function jeuChoisir(i, btn){
   });
   if(i === dec.c){
     jeuScore += 10;
-    $("jeu-score").textContent = jeuScore;
   } else {
+    jeuErreurs++;
     btn.classList.add("ko");
   }
+  $("jeu-score").textContent = jeuScore;
   const p = document.createElement("p");
   p.style.margin = "10px 0 0 0";
   p.innerHTML = "<strong>💡 " + (i === dec.c ? "Bonne décision. " : "Pas tout à fait. ") + "</strong>" + dec.e;
@@ -1955,27 +2062,47 @@ function jeuChoisir(i, btn){
   $("jeu-suite").textContent = jeuIdx === JEU_SCENES.length - 1 ? "🏁 Voir mon résultat" : "Scène suivante ➡️";
   $("jeu-suite").hidden = false;
 }
+
+// 3 + 7. Fin de partie : récapitulatif, badges et « Sans faute » réel
 function jeuFinir(){
-  const max = JEU_SCENES.reduce((s, sc) => s + (Object.keys(sc.dangers).length + 2) * 10, 0);
+  const max = JEU_SCENES.reduce((s, sc) => s + (Object.keys(sc.dangers).length + 1) * 10, 0);
   const pct = Math.round(jeuScore / max * 100);
-  const prev = +(localStorage.getItem(JEU_BEST_KEY) || 0);
-  if(jeuScore > prev) localStorage.setItem(JEU_BEST_KEY, jeuScore);
-  if(pct >= 50){ const b = document.querySelector('#jeu-badges .badge[data-badge="moitie"]'); if(b) b.classList.add("obtenu"); }
-  if(pct >= 90){ const b = document.querySelector('#jeu-badges .badge[data-badge="gardien"]'); if(b) b.classList.add("obtenu"); }
+  const entrainement = jeuMode === "entrainement";
+  let prev = +(localStorage.getItem(JEU_BEST_KEY) || 0);
+
+  if(!entrainement){
+    if(jeuScore > prev) localStorage.setItem(JEU_BEST_KEY, jeuScore);
+    if(pct >= 50){ const b = document.querySelector('#jeu-badges .badge[data-badge="moitie"]'); if(b) b.classList.add("obtenu"); }
+    if(pct >= 90){ const b = document.querySelector('#jeu-badges .badge[data-badge="gardien"]'); if(b) b.classList.add("obtenu"); }
+    if(jeuOublis.length === 0 && jeuErreurs === 0){
+      const b = document.querySelector('#jeu-badges .badge[data-badge="sansfaute"]');
+      if(b){ b.classList.add("obtenu"); b.textContent = "🎯 Sans faute"; }
+    }
+  }
+
   $("jeu-zone").innerHTML = "";
   ["jeu-regle", "jeu-decision", "jeu-suite", "jeu-bilan"].forEach(id => $(id).hidden = true);
+  if($("jeu-statut")) $("jeu-statut").textContent = "";
   $("jeu-badge").textContent = pct >= 90 ? "🛡️" : pct >= 60 ? "🌟" : "📚";
   $("jeu-titre").textContent = pct >= 90 ? "Gardien de la sécurité" : pct >= 60 ? "Vigilant, mais quelques angles morts" : "À revoir : la sécurité commence par l'observation";
-  $("jeu-resultat").textContent = "Score : " + jeuScore + " / " + max + " (" + pct + " %)" + (jeuScore > prev ? " 🎊 Nouveau meilleur score !" : "");
+
+  let res = "Score : " + jeuScore + " / " + max + " (" + pct + " %)";
+  if(entrainement) res += " · mode entraînement, score non enregistré";
+  else if(jeuScore > prev) res += " 🎊 Nouveau meilleur score !";
+  res += "<br><br><strong>Récapitulatif :</strong><br>";
+  res += jeuOublis.length ? "Dangers oubliés : " + jeuOublis.join(", ") + "." : "Aucun danger oublié, bravo.";
+  res += "<br>Erreurs : " + jeuErreurs;
+  $("jeu-resultat").innerHTML = res;
   $("jeu-fin").hidden = false;
   if(window.goatcounter) goatcounter.count({ path: "jeu-fini", title: "Jeu fini", event: true });
 }
-$("jeu-zone").addEventListener("click", jeuClic);
+
 $("jeu-bilan").onclick = jeuBilan;
 $("jeu-suite").onclick = () => {
   if(jeuIdx < JEU_SCENES.length - 1){ jeuIdx++; jeuAfficher(); }
   else jeuFinir();
 };
+
 
 // ==== ASSISTANT INFORMATIF ====
 $("ia-btn").onclick = async () => {
