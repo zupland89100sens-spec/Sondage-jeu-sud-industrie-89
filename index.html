@@ -2123,6 +2123,15 @@ function jdRejouer(){
   jdAfficherDernierBilanSiExiste();
 }
 jdAfficherDernierBilanSiExiste();
+// Supprime les fiches droits en double (même titre)
+(function(){
+  const vus = new Set();
+  document.querySelectorAll("#droits .droit-item").forEach(el => {
+    const titre = el.querySelector("h3")?.textContent.trim();
+    if(vus.has(titre)) el.remove();
+    else vus.add(titre);
+  });
+})();
 </script>
 </body>
 </html>
