@@ -200,6 +200,86 @@ if(!localStorage.getItem("sudVoixVue")){
   <p style="margin:0 0 6px 0;">🗳️ <strong>Octobre 2027</strong> : élections professionnelles.</p>
   <p style="margin:0; font-size:.85rem; color:var(--mute);">Les échéances passées sont retirées régulièrement.</p>
 </div>
+<div class="card" style="padding:14px;">
+<style>
+.inf-det{margin:0 0 8px 0;background:var(--bg);border-radius:8px;padding:8px 12px}
+.inf-det summary{font-weight:700;cursor:pointer;color:var(--blue);padding:6px 0;font-size:1rem}
+.inf-det p,.inf-det li{font-size:.92rem;color:var(--ink);margin:4px 0}
+.inf-det ul{padding-left:20px;margin:4px 0}
+.inf-chk label{display:flex;gap:8px;align-items:flex-start;padding:6px 0;font-size:.92rem;color:var(--ink)}
+.inf-chk input{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--acc)}
+body.grand{font-size:19px}
+</style>
+<h2 style="border:none; margin:0 0 10px 0; padding:0;">📘 Infos utiles</h2>
+
+<button class="inf-taille" style="width:auto; padding:10px 16px; min-height:0;" onclick="document.body.classList.toggle('grand')">🔠 Agrandir / réduire le texte</button>
+
+<details class="inf-det" open>
+  <summary>🧭 Mode d'emploi en 3 étapes</summary>
+  <ol>
+    <li><strong>Lire ses droits :</strong> onglet Mes Droits, ou la carte « Quelle est ma situation ? ».</li>
+    <li><strong>Poser une question :</strong> onglet Questions, sans nom ni numéro.</li>
+    <li><strong>Répondre au sondage :</strong> onglet Sondage, il est anonyme.</li>
+  </ol>
+</details>
+
+<details class="inf-det">
+  <summary>📖 Lexique du terrain</summary>
+  <ul>
+    <li><strong>CSE :</strong> Comité social et économique, qui représente les salariés dans l'entreprise.</li>
+    <li><strong>CACES :</strong> certificat d'aptitude à la conduite en sécurité, obligatoire pour conduire un engin.</li>
+    <li><strong>VGP :</strong> vérification générale périodique des équipements de travail.</li>
+    <li><strong>Droit de retrait :</strong> possibilité de quitter son poste en cas de danger grave et imminent.</li>
+    <li><strong>Transstockeur :</strong> engin qui range et sort les palettes dans les alvéoles d'une allée de stock.</li>
+    <li><strong>Picking :</strong> zone où l'on prélève les produits pour préparer une commande.</li>
+    <li><strong>Convoyeur :</strong> rouleaux ou tapis qui déplacent les palettes ou les colis.</li>
+    <li><strong>Niveleur :</strong> plateforme qui relie le quai à la remorque du camion.</li>
+  </ul>
+</details>
+
+<details class="inf-det">
+  <summary>👥 Qui fait quoi</summary>
+  <ul>
+    <li><strong>Élus titulaires (Tony, Ilda) :</strong> siègent au CSE et portent vos questions en réunion.</li>
+    <li><strong>Élus suppléants (Mélanie, Christopher) :</strong> remplacent un titulaire absent.</li>
+    <li><strong>Délégué syndical (Aziz) :</strong> représente le syndicat dans l'entreprise.</li>
+    <li><strong>Pour une situation personnelle :</strong> utilisez le bouton « Écrire au syndicat » ou appelez le 06 26 71 16 87.</li>
+  </ul>
+</details>
+
+<details class="inf-det">
+  <summary>📅 Formations et permanences</summary>
+  <p>Aucune date renseignée pour le moment.</p>
+  <p><em>À compléter à la main : date, heure, lieu, et personne à contacter.</em></p>
+</details>
+
+<details class="inf-det">
+  <summary>✅ Rappel avant la prise de poste</summary>
+  <p>Cochez au fur et à mesure. Rien n'est enregistré.</p>
+  <div class="inf-chk">
+    <label><input type="checkbox"> Casque et gilet portés</label>
+    <label><input type="checkbox"> Chaussures de sécurité en bon état</label>
+    <label><input type="checkbox"> Autorisation de conduite (CACES) à jour</label>
+    <label><input type="checkbox"> Freins, direction et avertisseur testés</label>
+    <label><input type="checkbox"> Fourches et chaîne sans anomalie</label>
+    <label><input type="checkbox"> Ceinture attachée</label>
+    <label><input type="checkbox"> Allée dégagée, signalétique visible</label>
+    <label><input type="checkbox"> Anomalie signalée par écrit si besoin</label>
+  </div>
+</details>
+
+<details class="inf-det">
+  <summary>🚑 En cas d'accident</summary>
+  <ol>
+    <li><strong>Protéger :</strong> mettre en sécurité la zone et arrêter l'engin.</li>
+    <li><strong>Alerter :</strong> 112 (urgence), 15 (SAMU) ou 18 (pompiers).</li>
+    <li><strong>Secourir :</strong> ne pas déplacer la victime sauf danger, et rester auprès d'elle.</li>
+    <li><strong>Prévenir</strong> le responsable, et noter les faits (heure, lieu, témoins).</li>
+  </ol>
+  <p><em>Trousse de secours : emplacement à compléter.</em></p>
+  <p><em>Sauveteur secouriste du travail (SST) : nom à compléter.</em></p>
+</details>
+</div>
 <div class="tabs" role="group">
   <button class="tab" data-t="droits" aria-pressed="true">🛡️ Mes Droits</button>
   <button class="tab" data-t="victoires" aria-pressed="false">🏆 Victoires</button>
