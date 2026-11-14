@@ -275,187 +275,411 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 <text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Réception : 10 palettes déchargées, puis envoyées au stock</text>
 </svg>
 </div>
+
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes sVert{0%{transform:translateY(0)}8%{transform:translateY(0)}14%{transform:translateY(-68px)}23%{transform:translateY(-68px)}24.5%{transform:translateY(0)}33%{transform:translateY(0)}39%{transform:translateY(-68px)}48%{transform:translateY(-68px)}49.5%{transform:translateY(0)}58%{transform:translateY(0)}64%{transform:translateY(-28px)}73%{transform:translateY(-28px)}74.5%{transform:translateY(0)}83%{transform:translateY(0)}89%{transform:translateY(-28px)}98%{transform:translateY(-28px)}100%{transform:translateY(0)}}
-@keyframes sHor{0%,14.9%{transform:translateX(0)}17%,20.9%{transform:translateX(22px)}23%,39.9%{transform:translateX(0)}42%,45.9%{transform:translateX(62px)}48%,64.9%{transform:translateX(0)}67%,70.9%{transform:translateX(22px)}73%,89.9%{transform:translateX(0)}92%,95.9%{transform:translateX(62px)}98%,100%{transform:translateX(0)}}
-@keyframes sCarry{0%,0.9%{opacity:0}1%,16.9%{opacity:1}17%,25.9%{opacity:0}26%,41.9%{opacity:1}42%,50.9%{opacity:0}51%,66.9%{opacity:1}67%,75.9%{opacity:0}76%,91.9%{opacity:1}92%,100%{opacity:0}}
-@keyframes sConv{0%,6.9%{opacity:1}7%,24.9%{opacity:0}25%,31.9%{opacity:1}32%,49.9%{opacity:0}50%,56.9%{opacity:1}57%,74.9%{opacity:0}75%,81.9%{opacity:1}82%,100%{opacity:0}}
-@keyframes sC1{0%,16.9%{opacity:0}17%,98.9%{opacity:1}99%,100%{opacity:0}}
-@keyframes sC2{0%,41.9%{opacity:0}42%,98.9%{opacity:1}99%,100%{opacity:0}}
-@keyframes sC3{0%,66.9%{opacity:0}67%,98.9%{opacity:1}99%,100%{opacity:0}}
-@keyframes sC4{0%,91.9%{opacity:0}92%,98.9%{opacity:1}99%,100%{opacity:0}}
-.s-vert{animation:sVert 40s linear infinite}
-.s-hor{animation:sHor 40s linear infinite}
-.s-carry{animation:sCarry 40s linear infinite}
-.s-conv{animation:sConv 40s linear infinite}
-.s-c1{animation:sC1 40s linear infinite}
-.s-c2{animation:sC2 40s linear infinite}
-.s-c3{animation:sC3 40s linear infinite}
-.s-c4{animation:sC4 40s linear infinite}
-</style>
-  
-<div class="card" style="text-align:center; padding:14px;">
-<style>
-@keyframes tG{0%,2%{transform:translateX(0)}5%,6%{transform:translateX(46px)}9%,12%{transform:translateX(0)}15%,16%{transform:translateX(58px)}19%,22%{transform:translateX(0)}25%,26%{transform:translateX(70px)}29%,32%{transform:translateX(0)}35%,36%{transform:translateX(82px)}39%,42%{transform:translateX(0)}45%,46%{transform:translateX(94px)}49%,52%{transform:translateX(0)}55%,56%{transform:translateX(106px)}59%,62%{transform:translateX(0)}65%,66%{transform:translateX(118px)}69%,72%{transform:translateX(0)}75%,76%{transform:translateX(130px)}79%,82%{transform:translateX(0)}85%,86%{transform:translateX(142px)}89%,92%{transform:translateX(0)}95%,96%{transform:translateX(154px)}99%,100%{transform:translateX(0)}}
-@keyframes tPal{0%,59.9%{opacity:1}60%,100%{opacity:0}}
-@keyframes sl0{0%,6%{opacity:0}6.1%,100%{opacity:1}}
-@keyframes sl1{0%,16%{opacity:0}16.1%,100%{opacity:1}}
-@keyframes sl2{0%,26%{opacity:0}26.1%,100%{opacity:1}}
-@keyframes sl3{0%,36%{opacity:0}36.1%,100%{opacity:1}}
-@keyframes sl4{0%,46%{opacity:0}46.1%,100%{opacity:1}}
-@keyframes sl5{0%,56%{opacity:0}56.1%,100%{opacity:1}}
-@keyframes sl6{0%,66%{opacity:0}66.1%,100%{opacity:1}}
-@keyframes sl7{0%,76%{opacity:0}76.1%,100%{opacity:1}}
-@keyframes sl8{0%,86%{opacity:0}86.1%,100%{opacity:1}}
-@keyframes sl9{0%,96%{opacity:0}96.1%,100%{opacity:1}}
-.tg{animation:tG 40s linear infinite}
-.tp{animation:tPal 4s linear infinite}
-.st0{animation:sl0 40s linear infinite}
-.st1{animation:sl1 40s linear infinite}
-.st2{animation:sl2 40s linear infinite}
-.st3{animation:sl3 40s linear infinite}
-.st4{animation:sl4 40s linear infinite}
-.st5{animation:sl5 40s linear infinite}
-.st6{animation:sl6 40s linear infinite}
-.st7{animation:sl7 40s linear infinite}
-.st8{animation:sl8 40s linear infinite}
-.st9{animation:sl9 40s linear infinite}
+@keyframes stTour{0%{transform:translate(0px,0px)}3.5%{transform:translate(0px,0px)}5%{transform:translate(49px,-4px)}6.5%{transform:translate(0px,0px)}8%{transform:translate(75px,-4px)}9.5%{transform:translate(0px,0px)}11%{transform:translate(101px,-4px)}12.5%{transform:translate(0px,0px)}14%{transform:translate(127px,-4px)}15.5%{transform:translate(0px,0px)}17%{transform:translate(153px,-4px)}18.5%{transform:translate(0px,0px)}20%{transform:translate(179px,-4px)}21.5%{transform:translate(0px,0px)}23%{transform:translate(49px,-28px)}24.5%{transform:translate(0px,0px)}26%{transform:translate(75px,-28px)}27.5%{transform:translate(0px,0px)}29%{transform:translate(101px,-28px)}30.5%{transform:translate(0px,0px)}32%{transform:translate(127px,-28px)}33.5%{transform:translate(0px,0px)}35%{transform:translate(153px,-28px)}36.5%{transform:translate(0px,0px)}38%{transform:translate(179px,-28px)}39.5%{transform:translate(0px,0px)}41%{transform:translate(49px,-52px)}42.5%{transform:translate(0px,0px)}44%{transform:translate(75px,-52px)}45.5%{transform:translate(0px,0px)}47%{transform:translate(101px,-52px)}48.5%{transform:translate(0px,0px)}50%{transform:translate(127px,-52px)}51.5%{transform:translate(0px,0px)}53%{transform:translate(153px,-52px)}54.5%{transform:translate(0px,0px)}56%{transform:translate(179px,-52px)}57.5%{transform:translate(0px,0px)}59%{transform:translate(49px,-76px)}60.5%{transform:translate(0px,0px)}62%{transform:translate(75px,-76px)}63.5%{transform:translate(0px,0px)}65%{transform:translate(101px,-76px)}66.5%{transform:translate(0px,0px)}68%{transform:translate(127px,-76px)}69.5%{transform:translate(0px,0px)}71%{transform:translate(153px,-76px)}72.5%{transform:translate(0px,0px)}74%{transform:translate(179px,-76px)}75.5%{transform:translate(0px,0px)}77%{transform:translate(49px,-100px)}78.5%{transform:translate(0px,0px)}80%{transform:translate(75px,-100px)}81.5%{transform:translate(0px,0px)}83%{transform:translate(101px,-100px)}84.5%{transform:translate(0px,0px)}86%{transform:translate(127px,-100px)}87.5%{transform:translate(0px,0px)}89%{transform:translate(153px,-100px)}90.5%{transform:translate(0px,0px)}92%{transform:translate(179px,-100px)}95.5%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
+@keyframes stCv{0%{transform:translateX(0px);opacity:1}15%{transform:translateX(100px);opacity:1}15.1%,100%{transform:translateX(100px);opacity:0}}
+@keyframes st0{0%,4.8%{opacity:0}5%,100%{opacity:1}}
+@keyframes st1{0%,7.8%{opacity:0}8%,100%{opacity:1}}
+@keyframes st2{0%,10.8%{opacity:0}11%,100%{opacity:1}}
+@keyframes st3{0%,13.8%{opacity:0}14%,100%{opacity:1}}
+@keyframes st4{0%,16.8%{opacity:0}17%,100%{opacity:1}}
+@keyframes st5{0%,19.8%{opacity:0}20%,100%{opacity:1}}
+@keyframes st6{0%,22.8%{opacity:0}23%,100%{opacity:1}}
+@keyframes st7{0%,25.8%{opacity:0}26%,100%{opacity:1}}
+@keyframes st8{0%,28.8%{opacity:0}29%,100%{opacity:1}}
+@keyframes st9{0%,31.8%{opacity:0}32%,100%{opacity:1}}
+@keyframes st10{0%,34.8%{opacity:0}35%,100%{opacity:1}}
+@keyframes st11{0%,37.8%{opacity:0}38%,100%{opacity:1}}
+@keyframes st12{0%,40.8%{opacity:0}41%,100%{opacity:1}}
+@keyframes st13{0%,43.8%{opacity:0}44%,100%{opacity:1}}
+@keyframes st14{0%,46.8%{opacity:0}47%,100%{opacity:1}}
+@keyframes st15{0%,49.8%{opacity:0}50%,100%{opacity:1}}
+@keyframes st16{0%,52.8%{opacity:0}53%,100%{opacity:1}}
+@keyframes st17{0%,55.8%{opacity:0}56%,100%{opacity:1}}
+@keyframes st18{0%,58.8%{opacity:0}59%,100%{opacity:1}}
+@keyframes st19{0%,61.8%{opacity:0}62%,100%{opacity:1}}
+@keyframes st20{0%,64.8%{opacity:0}65%,100%{opacity:1}}
+@keyframes st21{0%,67.8%{opacity:0}68%,100%{opacity:1}}
+@keyframes st22{0%,70.8%{opacity:0}71%,100%{opacity:1}}
+@keyframes st23{0%,73.8%{opacity:0}74%,100%{opacity:1}}
+@keyframes st24{0%,76.8%{opacity:0}77%,100%{opacity:1}}
+@keyframes st25{0%,79.8%{opacity:0}80%,100%{opacity:1}}
+@keyframes st26{0%,82.8%{opacity:0}83%,100%{opacity:1}}
+@keyframes st27{0%,85.8%{opacity:0}86%,100%{opacity:1}}
+@keyframes st28{0%,88.8%{opacity:0}89%,100%{opacity:1}}
+@keyframes st29{0%,91.8%{opacity:0}92%,100%{opacity:1}}
 </style>
 <h2 style="border:none; margin:0 0 6px 0; padding:0;">🏗️ Zone stock</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le transstockeur prend chaque palette au bout du convoyeur et la range dans l'allée, une alvéole après l'autre.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Le transstockeur prend les palettes et les range une à une dans les alvéoles de l'allée">
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Les 30 palettes arrivent une à une au bout du convoyeur. Le transstockeur les prend et les range dans les 30 alvéoles, sur 5 niveaux.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Le transstockeur prend les 30 palettes du convoyeur et les range dans les 5 niveaux de l'allée">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="10" y="146" width="110" height="6" fill="#55606c"/>
-<rect x="12" y="152" width="4" height="14" fill="#55606c"/>
-<rect x="116" y="152" width="4" height="14" fill="#55606c"/>
-<text x="65" y="136" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">CONVOYEUR D'ENTRÉE</text>
-<rect x="176" y="100" width="4" height="60" fill="#7b8794"/>
-<rect x="306" y="100" width="4" height="60" fill="#7b8794"/>
-<rect x="176" y="126" width="134" height="3" fill="#55606c"/>
-<rect x="176" y="143" width="134" height="3" fill="#55606c"/>
-<text x="243" y="96" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">STOCK · ALLÉE 1</text>
-<rect x="180" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="192" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="204" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="216" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="228" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="240" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="252" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="264" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="276" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect x="288" y="130" width="10" height="12" fill="none" stroke="#9aa1ab" stroke-width=".5"/>
-<rect class="st0" x="180" y="130" width="10" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st1" x="192" y="130" width="10" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st2" x="204" y="130" width="10" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st3" x="216" y="130" width="10" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st4" x="228" y="130" width="10" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st5" x="240" y="130" width="10" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st6" x="252" y="130" width="10" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st7" x="264" y="130" width="10" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st8" x="276" y="130" width="10" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="st9" x="288" y="130" width="10" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<g class="tg">
-  <rect x="118" y="168" width="20" height="4" fill="#333"/>
-  <rect x="124" y="40" width="8" height="128" fill="#004aad"/>
-  <rect x="132" y="142" width="18" height="3" fill="#333"/>
-  <rect class="tp" x="134" y="130" width="10" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect x="4" y="146" width="120" height="5" fill="#55606c"/>
+<rect x="10" y="151" width="4" height="14" fill="#55606c"/>
+<rect x="116" y="151" width="4" height="14" fill="#55606c"/>
+<text x="64" y="142" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">CONVOYEUR D'ENTRÉE</text>
+<rect x="156" y="26" width="160" height="128" fill="none" stroke="#9aa1ab"/>
+<text x="236" y="20" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">STOCK · ALLÉE 1 · 5 NIVEAUX</text>
+<rect x="160" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="160" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="160" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="160" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="160" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect style="animation:st0 40s linear infinite" x="163" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st1 40s linear infinite" x="189" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st2 40s linear infinite" x="215" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st3 40s linear infinite" x="241" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st4 40s linear infinite" x="267" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st5 40s linear infinite" x="293" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st6 40s linear infinite" x="163" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st7 40s linear infinite" x="189" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st8 40s linear infinite" x="215" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st9 40s linear infinite" x="241" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st10 40s linear infinite" x="267" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st11 40s linear infinite" x="293" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st12 40s linear infinite" x="163" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st13 40s linear infinite" x="189" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st14 40s linear infinite" x="215" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st15 40s linear infinite" x="241" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st16 40s linear infinite" x="267" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st17 40s linear infinite" x="293" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st18 40s linear infinite" x="163" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st19 40s linear infinite" x="189" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st20 40s linear infinite" x="215" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st21 40s linear infinite" x="241" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st22 40s linear infinite" x="267" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st23 40s linear infinite" x="293" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st24 40s linear infinite" x="163" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st25 40s linear infinite" x="189" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st26 40s linear infinite" x="215" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st27 40s linear infinite" x="241" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st28 40s linear infinite" x="267" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:st29 40s linear infinite" x="293" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-4s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-2.8s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-1.6s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-0.4s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-39.2s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-38s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-36.8s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-35.6s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-34.4s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-33.2s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-32s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-30.8s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-29.6s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-28.4s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-27.2s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-26s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-24.8s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-23.6s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-22.4s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-21.2s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-20s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-18.8s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-17.6s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-16.4s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-15.2s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-14s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-12.8s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-11.6s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-10.4s" x="6" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:stCv 40s linear infinite;animation-delay:-9.2s" x="6" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<g style="animation:stTour 40s linear infinite">
+  <rect x="114" y="118" width="8" height="30" fill="#004aad"/>
+  <rect x="108" y="128" width="18" height="14" fill="#004aad"/>
+  <rect x="126" y="138" width="20" height="3" fill="#333"/>
 </g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Stock : le transstockeur range 10 palettes</text>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Stock : 30 palettes rangées sur 5 niveaux</text>
 </svg>
 </div>
-
 
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes dsP{0%,2%{transform:translate(0,0);opacity:0}3%,10%{transform:translate(0,0);opacity:1}18%,100%{transform:translate(120px,0);opacity:1}}
-@keyframes dsT{0%,100%{transform:translateX(0)}}
-.ds-p{animation:dsP 48s linear infinite}
+@keyframes stTour{0%{transform:translate(0px,0px)}3.5%{transform:translate(0px,0px)}5%{transform:translate(49px,-4px)}6.5%{transform:translate(0px,0px)}8%{transform:translate(75px,-4px)}9.5%{transform:translate(0px,0px)}11%{transform:translate(101px,-4px)}12.5%{transform:translate(0px,0px)}14%{transform:translate(127px,-4px)}15.5%{transform:translate(0px,0px)}17%{transform:translate(153px,-4px)}18.5%{transform:translate(0px,0px)}20%{transform:translate(179px,-4px)}21.5%{transform:translate(0px,0px)}23%{transform:translate(49px,-28px)}24.5%{transform:translate(0px,0px)}26%{transform:translate(75px,-28px)}27.5%{transform:translate(0px,0px)}29%{transform:translate(101px,-28px)}30.5%{transform:translate(0px,0px)}32%{transform:translate(127px,-28px)}33.5%{transform:translate(0px,0px)}35%{transform:translate(153px,-28px)}36.5%{transform:translate(0px,0px)}38%{transform:translate(179px,-28px)}39.5%{transform:translate(0px,0px)}41%{transform:translate(49px,-52px)}42.5%{transform:translate(0px,0px)}44%{transform:translate(75px,-52px)}45.5%{transform:translate(0px,0px)}47%{transform:translate(101px,-52px)}48.5%{transform:translate(0px,0px)}50%{transform:translate(127px,-52px)}51.5%{transform:translate(0px,0px)}53%{transform:translate(153px,-52px)}54.5%{transform:translate(0px,0px)}56%{transform:translate(179px,-52px)}57.5%{transform:translate(0px,0px)}59%{transform:translate(49px,-76px)}60.5%{transform:translate(0px,0px)}62%{transform:translate(75px,-76px)}63.5%{transform:translate(0px,0px)}65%{transform:translate(101px,-76px)}66.5%{transform:translate(0px,0px)}68%{transform:translate(127px,-76px)}69.5%{transform:translate(0px,0px)}71%{transform:translate(153px,-76px)}72.5%{transform:translate(0px,0px)}74%{transform:translate(179px,-76px)}75.5%{transform:translate(0px,0px)}77%{transform:translate(49px,-100px)}78.5%{transform:translate(0px,0px)}80%{transform:translate(75px,-100px)}81.5%{transform:translate(0px,0px)}83%{transform:translate(101px,-100px)}84.5%{transform:translate(0px,0px)}86%{transform:translate(127px,-100px)}87.5%{transform:translate(0px,0px)}89%{transform:translate(153px,-100px)}90.5%{transform:translate(0px,0px)}92%{transform:translate(179px,-100px)}95.5%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
+@keyframes dsEx{0%{transform:translateX(0px);opacity:1}15%{transform:translateX(-100px);opacity:1}15.1%,100%{transform:translateX(-100px);opacity:0}}
+@keyframes dr0{0%,5%{opacity:1}5.2%,100%{opacity:0}}
+@keyframes dr1{0%,8%{opacity:1}8.2%,100%{opacity:0}}
+@keyframes dr2{0%,11%{opacity:1}11.2%,100%{opacity:0}}
+@keyframes dr3{0%,14%{opacity:1}14.2%,100%{opacity:0}}
+@keyframes dr4{0%,17%{opacity:1}17.2%,100%{opacity:0}}
+@keyframes dr5{0%,20%{opacity:1}20.2%,100%{opacity:0}}
+@keyframes dr6{0%,23%{opacity:1}23.2%,100%{opacity:0}}
+@keyframes dr7{0%,26%{opacity:1}26.2%,100%{opacity:0}}
+@keyframes dr8{0%,29%{opacity:1}29.2%,100%{opacity:0}}
+@keyframes dr9{0%,32%{opacity:1}32.2%,100%{opacity:0}}
+@keyframes dr10{0%,35%{opacity:1}35.2%,100%{opacity:0}}
+@keyframes dr11{0%,38%{opacity:1}38.2%,100%{opacity:0}}
+@keyframes dr12{0%,41%{opacity:1}41.2%,100%{opacity:0}}
+@keyframes dr13{0%,44%{opacity:1}44.2%,100%{opacity:0}}
+@keyframes dr14{0%,47%{opacity:1}47.2%,100%{opacity:0}}
+@keyframes dr15{0%,50%{opacity:1}50.2%,100%{opacity:0}}
+@keyframes dr16{0%,53%{opacity:1}53.2%,100%{opacity:0}}
+@keyframes dr17{0%,56%{opacity:1}56.2%,100%{opacity:0}}
+@keyframes dr18{0%,59%{opacity:1}59.2%,100%{opacity:0}}
+@keyframes dr19{0%,62%{opacity:1}62.2%,100%{opacity:0}}
+@keyframes dr20{0%,65%{opacity:1}65.2%,100%{opacity:0}}
+@keyframes dr21{0%,68%{opacity:1}68.2%,100%{opacity:0}}
+@keyframes dr22{0%,71%{opacity:1}71.2%,100%{opacity:0}}
+@keyframes dr23{0%,74%{opacity:1}74.2%,100%{opacity:0}}
+@keyframes dr24{0%,77%{opacity:1}77.2%,100%{opacity:0}}
+@keyframes dr25{0%,80%{opacity:1}80.2%,100%{opacity:0}}
+@keyframes dr26{0%,83%{opacity:1}83.2%,100%{opacity:0}}
+@keyframes dr27{0%,86%{opacity:1}86.2%,100%{opacity:0}}
+@keyframes dr28{0%,89%{opacity:1}89.2%,100%{opacity:0}}
+@keyframes dr29{0%,92%{opacity:1}92.2%,100%{opacity:0}}
 </style>
 <h2 style="border:none; margin:0 0 6px 0; padding:0;">📤 Destockage</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le transstockeur sort les palettes des alvéoles et les dépose sur les convoyeurs de sortie.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Le transstockeur sort les palettes du stock et les dépose sur les convoyeurs de sortie">
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le transstockeur sort les 30 palettes des alvéoles et les dépose sur le convoyeur de sortie, qui les amène au cariste.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Le transstockeur sort les 30 palettes des alvéoles et les dépose sur le convoyeur de sortie">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="200" y="36" width="3" height="104" fill="#7b8794"/>
-<rect x="244" y="36" width="3" height="104" fill="#7b8794"/>
-<rect x="292" y="36" width="3" height="104" fill="#7b8794"/>
-<rect x="60" y="136" width="250" height="6" fill="#55606c"/>
-<rect x="62" y="142" width="4" height="14" fill="#55606c"/>
-<rect x="306" y="142" width="4" height="14" fill="#55606c"/>
-<text x="180" y="128" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">CONVOYEUR DE SORTIE</text>
-<rect x="30" y="60" width="150" height="90" fill="#e6e9ed" stroke="#9aa1ab"/>
-<text x="105" y="52" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">STOCK · ALLÉE 1</text>
-<rect class="ds-p" x="40" y="72" width="24" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect x="30" y="60" width="150" height="90" fill="none" stroke="#9aa1ab"/>
-<rect x="100" y="40" width="6" height="110" fill="#004aad"/>
-<text x="160" y="180" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Destockage : les palettes partent vers les convoyeurs de sortie</text>
+<rect x="4" y="146" width="120" height="5" fill="#55606c"/>
+<rect x="10" y="151" width="4" height="14" fill="#55606c"/>
+<rect x="116" y="151" width="4" height="14" fill="#55606c"/>
+<text x="64" y="142" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">CONVOYEUR DE SORTIE</text>
+<rect x="156" y="26" width="160" height="128" fill="none" stroke="#9aa1ab"/>
+<text x="236" y="20" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">STOCK · ALLÉE 1 · 5 NIVEAUX</text>
+<rect x="160" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="126" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="160" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="102" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="160" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="78" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="160" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="54" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="160" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="186" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="212" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="238" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="264" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect x="290" y="30" width="22" height="20" fill="none" stroke="#9aa1ab"/>
+<rect style="animation:dr0 40s linear infinite" x="163" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr1 40s linear infinite" x="189" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr2 40s linear infinite" x="215" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr3 40s linear infinite" x="241" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr4 40s linear infinite" x="267" y="129" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr5 40s linear infinite" x="293" y="129" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr6 40s linear infinite" x="163" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr7 40s linear infinite" x="189" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr8 40s linear infinite" x="215" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr9 40s linear infinite" x="241" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr10 40s linear infinite" x="267" y="105" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr11 40s linear infinite" x="293" y="105" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr12 40s linear infinite" x="163" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr13 40s linear infinite" x="189" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr14 40s linear infinite" x="215" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr15 40s linear infinite" x="241" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr16 40s linear infinite" x="267" y="81" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr17 40s linear infinite" x="293" y="81" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr18 40s linear infinite" x="163" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr19 40s linear infinite" x="189" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr20 40s linear infinite" x="215" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr21 40s linear infinite" x="241" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr22 40s linear infinite" x="267" y="57" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr23 40s linear infinite" x="293" y="57" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr24 40s linear infinite" x="163" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr25 40s linear infinite" x="189" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr26 40s linear infinite" x="215" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr27 40s linear infinite" x="241" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr28 40s linear infinite" x="267" y="33" width="16" height="14" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dr29 40s linear infinite" x="293" y="33" width="16" height="14" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-37.4s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-36.2s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-35s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-33.8s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-32.6s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-31.4s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-30.2s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-29s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-27.8s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-26.6s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-25.4s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-24.2s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-23s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-21.8s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-20.6s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-19.4s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-18.2s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-17s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-15.8s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-14.6s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-13.4s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-12.2s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-11s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-9.8s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-8.6s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-7.4s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-6.2s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-5s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-3.8s" x="106" y="132" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:dsEx 40s linear infinite;animation-delay:-2.6s" x="106" y="132" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<g style="animation:stTour 40s linear infinite">
+  <rect x="114" y="118" width="8" height="30" fill="#004aad"/>
+  <rect x="108" y="128" width="18" height="14" fill="#004aad"/>
+  <rect x="126" y="138" width="20" height="3" fill="#333"/>
+</g>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Destockage : 30 palettes vers le convoyeur de sortie</text>
 </svg>
 </div>
 
-  <div class="card" style="text-align:center; padding:14px;">
+<div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes pkP{0%,30%{transform:translateX(0);opacity:1}40%,70%{transform:translateX(-30px);opacity:1}80%,100%{transform:translateX(0);opacity:1}}
-@keyframes pkM{0%,20%{opacity:0}30%,80%{opacity:1}90%,100%{opacity:0}}
-.pk-a{animation:pkP 48s linear infinite}
-.pk-b{animation:pkM 48s linear infinite}
+@keyframes pkPath{0%{transform:translate(0px,0px)}18%{transform:translate(0px,0px)}30%{transform:translate(100px,0px)}48%{transform:translate(100px,0px)}60%{transform:translate(200px,0px)}78%{transform:translate(200px,0px)}90%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
+@keyframes pkCa{0%,17.9%{opacity:0}18%,100%{opacity:1}}
+@keyframes pkCb{0%,47.9%{opacity:0}48%,100%{opacity:1}}
+@keyframes pkCc{0%,77.9%{opacity:0}78%,100%{opacity:1}}
 </style>
 <h2 style="border:none; margin:0 0 6px 0; padding:0;">🛒 Picking</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le cariste approvisionne le picking sur deux niveaux, et le préparateur monte sa palette de commande.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Picking sur deux niveaux avec un préparateur qui monte une palette de commande">
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le préparateur sur chariot passe dans les allées A, B et C, prélève ses produits et monte sa palette de commande.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Préparateur sur chariot qui passe dans trois allées de picking et charge sa palette">
 <rect width="320" height="200" fill="#d5d9de"/>
-<rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="20" y="70" width="280" height="4" fill="#55606c"/>
-<rect x="20" y="120" width="280" height="4" fill="#55606c"/>
-<rect x="20" y="70" width="4" height="102" fill="#55606c"/>
-<rect x="296" y="70" width="4" height="102" fill="#55606c"/>
-<text x="160" y="62" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">PICKING · NIVEAU 2</text>
-<text x="160" y="112" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">PICKING · NIVEAU 1</text>
-<rect x="40" y="48" width="36" height="22" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect x="100" y="98" width="36" height="22" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<g class="pk-a">
-  <rect x="200" y="130" width="50" height="10" fill="#8a6a3f"/>
-  <rect x="202" y="118" width="14" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect x="218" y="118" width="14" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect x="210" y="104" width="14" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-</g>
-<g class="pk-b">
-  <circle cx="176" cy="150" r="4" fill="#f0c08a"/>
-  <rect x="172" y="155" width="8" height="12" rx="2" fill="#ffcc00"/>
+<rect y="146" width="320" height="26" fill="#c5cad1"/>
+<rect x="20" y="24" width="70" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
+<rect x="20" y="60" width="70" height="3" fill="#55606c"/>
+<rect x="20" y="100" width="70" height="3" fill="#55606c"/>
+<rect x="120" y="24" width="70" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
+<rect x="120" y="60" width="70" height="3" fill="#55606c"/>
+<rect x="120" y="100" width="70" height="3" fill="#55606c"/>
+<rect x="220" y="24" width="70" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
+<rect x="220" y="60" width="70" height="3" fill="#55606c"/>
+<rect x="220" y="100" width="70" height="3" fill="#55606c"/>
+<text x="55" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE A</text>
+<text x="155" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE B</text>
+<text x="255" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE C</text>
+<rect x="26" y="48" width="9" height="12" fill="#ffcc00"/>
+<rect x="38" y="48" width="9" height="12" fill="#2a78d6"/>
+<rect x="50" y="48" width="9" height="12" fill="#2e7d32"/>
+<rect x="26" y="88" width="9" height="12" fill="#eb6834"/>
+<rect x="38" y="88" width="9" height="12" fill="#7b1fa2"/>
+<rect x="50" y="88" width="9" height="12" fill="#ffcc00"/>
+<rect x="126" y="48" width="9" height="12" fill="#2a78d6"/>
+<rect x="138" y="48" width="9" height="12" fill="#eb6834"/>
+<rect x="150" y="48" width="9" height="12" fill="#2e7d32"/>
+<rect x="126" y="88" width="9" height="12" fill="#ffcc00"/>
+<rect x="138" y="88" width="9" height="12" fill="#7b1fa2"/>
+<rect x="150" y="88" width="9" height="12" fill="#2a78d6"/>
+<rect x="226" y="48" width="9" height="12" fill="#2e7d32"/>
+<rect x="238" y="48" width="9" height="12" fill="#ffcc00"/>
+<rect x="250" y="48" width="9" height="12" fill="#eb6834"/>
+<rect x="226" y="88" width="9" height="12" fill="#7b1fa2"/>
+<rect x="238" y="88" width="9" height="12" fill="#2a78d6"/>
+<rect x="250" y="88" width="9" height="12" fill="#2e7d32"/>
+<g style="animation:pkPath 40s linear infinite">
+  <circle cx="36" cy="158" r="4" fill="#111"/>
+  <circle cx="56" cy="158" r="4" fill="#111"/>
+  <rect x="30" y="134" width="30" height="14" fill="#004aad"/>
+  <circle cx="40" cy="126" r="5" fill="#f0c08a"/>
+  <rect x="36" y="131" width="8" height="5" fill="#ffcc00"/>
+  <rect x="62" y="104" width="4" height="44" fill="#555"/>
+  <rect x="64" y="146" width="20" height="3" fill="#333"/>
+  <rect x="64" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect style="animation:pkCa 40s linear infinite" x="66" y="124" width="7" height="10" fill="#c9a46a"/>
+  <rect style="animation:pkCb 40s linear infinite" x="74" y="124" width="7" height="10" fill="#e8c98f"/>
+  <rect style="animation:pkCc 40s linear infinite" x="70" y="114" width="7" height="10" fill="#c9a46a"/>
 </g>
 <text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Picking : le préparateur monte sa palette de commande</text>
 </svg>
 </div>
 
-  <div class="card" style="text-align:center; padding:14px;">
+<div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes exL{0%,10%{transform:translateX(0);opacity:1}30%,60%{transform:translateX(160px);opacity:1}70%,100%{transform:translateX(160px);opacity:0}}
-@keyframes exF{0%,30%{opacity:0}35%,55%{opacity:1}60%,100%{opacity:0}}
-@keyframes exS{to{transform:rotate(360deg)}}
-.ex-l{animation:exL 48s linear infinite}
-.ex-f{animation:exF 48s linear infinite}
-.ex-s{transform-box:fill-box;transform-origin:center;animation:exS 1.4s linear infinite}
+@keyframes exCh{0%{transform:translate(0px,0px)}22%{transform:translate(50px,0px)}50%{transform:translate(50px,0px)}70%{transform:translate(164px,0px)}74%{transform:translate(164px,0px)}92%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
+@keyframes exPal{0%{opacity:1}70%{opacity:1}70.2%,100%{opacity:0}}
+@keyframes exSp{to{transform:rotate(360deg)}}
+@keyframes exT0{0%,69.9%{opacity:0}70%,100%{opacity:1}}
+@keyframes exT1{0%,72.4%{opacity:0}72.5%,100%{opacity:1}}
+@keyframes exT2{0%,74.9%{opacity:0}75%,100%{opacity:1}}
+@keyframes exT3{0%,77.4%{opacity:0}77.5%,100%{opacity:1}}
+@keyframes exT4{0%,79.9%{opacity:0}80%,100%{opacity:1}}
+@keyframes exT5{0%,82.4%{opacity:0}82.5%,100%{opacity:1}}
+@keyframes exT6{0%,84.9%{opacity:0}85%,100%{opacity:1}}
+@keyframes exT7{0%,87.4%{opacity:0}87.5%,100%{opacity:1}}
+@keyframes exT8{0%,89.9%{opacity:0}90%,100%{opacity:1}}
+@keyframes exT9{0%,92.4%{opacity:0}92.5%,100%{opacity:1}}
 </style>
 <h2 style="border:none; margin:0 0 6px 0; padding:0;">🚛 Expédition</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">La palette de commande est filmée à quai, puis chargée dans le camion de départ.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Palette de commande filmée à quai puis chargée dans le camion">
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le cariste amène la palette à la filmeuse, puis la charge dans le camion garé à quai. Les 10 palettes sont chargées une à une.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Cariste qui amène la palette à la filmeuse puis la charge dans le camion à quai">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="0" y="50" width="70" height="120" fill="#b8bec6"/>
-<text x="35" y="42" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">QUAI</text>
-<rect x="200" y="62" width="112" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
-<text x="256" y="56" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION DE DÉPART</text>
-<circle cx="222" cy="170" r="7" fill="#111"/><circle cx="246" cy="170" r="7" fill="#111"/><circle cx="296" cy="170" r="7" fill="#111"/>
-<g class="ex-l">
-  <rect x="20" y="128" width="30" height="20" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <g class="ex-f">
-    <g class="ex-s"><ellipse cx="35" cy="138" rx="22" ry="14" fill="none" stroke="#7b8794" stroke-width="2" stroke-dasharray="4 3"/></g>
-  </g>
+<rect x="0" y="60" width="50" height="112" fill="#b8bec6"/>
+<text x="25" y="52" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">QUAI</text>
+<rect x="96" y="112" width="34" height="48" fill="#7b8794"/>
+<text x="113" y="104" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">FILMEUSE</text>
+<ellipse cx="113" cy="136" rx="16" ry="26" fill="none" stroke="#e8ecf0" stroke-width="3" stroke-dasharray="4 3" style="transform-box:fill-box;transform-origin:center;animation:exSp 1.2s linear infinite"/>
+<rect x="208" y="62" width="104" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
+<text x="260" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION DE DÉPART</text>
+<circle cx="226" cy="166" r="6" fill="#111"/>
+<circle cx="250" cy="166" r="6" fill="#111"/>
+<circle cx="290" cy="166" r="6" fill="#111"/>
+<rect style="animation:exT0 40s linear infinite" x="216" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT1 40s linear infinite" x="234" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT2 40s linear infinite" x="252" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT3 40s linear infinite" x="270" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT4 40s linear infinite" x="288" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT5 40s linear infinite" x="216" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT6 40s linear infinite" x="234" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT7 40s linear infinite" x="252" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT8 40s linear infinite" x="270" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<rect style="animation:exT9 40s linear infinite" x="288" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<g style="animation:exCh 40s linear infinite">
+  <circle cx="16" cy="158" r="4" fill="#111"/>
+  <circle cx="36" cy="158" r="4" fill="#111"/>
+  <rect x="10" y="134" width="30" height="14" fill="#004aad"/>
+  <circle cx="20" cy="126" r="5" fill="#f0c08a"/>
+  <rect x="16" y="131" width="8" height="5" fill="#ffcc00"/>
+  <rect x="42" y="104" width="4" height="44" fill="#555"/>
+  <rect x="44" y="146" width="20" height="3" fill="#333"/>
+  <rect style="animation:exPal 40s linear infinite" x="44" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
 </g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Expédition : la commande est filmée puis chargée</text>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Expédition : la palette est filmée puis chargée</text>
 </svg>
 </div>
+
 
   
     <div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
