@@ -100,6 +100,12 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;cursor:zoom-out;animation:fadeUp .2s ease}
 .lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
 .lightbox .fermer{position:absolute;top:15px;right:20px;color:#fff;font-size:2rem;font-weight:700;background:rgba(255,255,255,.15);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:0}
+/* Zones du jeu accessibles au clavier */
+.hs{cursor:pointer;transition:opacity .2s;outline:none}
+.hs:hover,.hs:focus{opacity:.8}
+.hs:focus-visible{filter:drop-shadow(0 0 6px #004aad)}
+.hs.trouve{opacity:.35;filter:drop-shadow(0 0 4px #2e7d32)}
+.hs.rate *{stroke:#c8102e;stroke-width:3px;stroke-dasharray:4 3}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -110,6 +116,12 @@ section:not([hidden]){animation:fadeUp .5s ease both}
   <h1>SUD <span>INDUSTRIE</span> ELE</h1>
   <p class="sub"><span class="bob">✊</span> Votre Espace Salarié <span class="bob">🗳️</span></p>
 </header>
+
+<div id="bienvenue" class="card" hidden style="background:var(--yellow); color:#000; text-align:center;">
+  <p style="margin:0 0 10px 0; font-weight:700;">👋 Bienvenue ! Tes droits sont à un clic, et le sondage est anonyme.</p>
+  <button onclick="fermerBienvenue()">Compris</button>
+</div>
+
 <p style="margin:12px 0 0 0; color:#fff; font-size:.95rem;">Tes droits en quelques clics, sans rien à installer. Le sondage est anonyme.</p>
 
 <div class="card" style="text-align:center; padding:12px;">
@@ -120,6 +132,9 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 </div>
 <script>
 const VOIX_TEXTE = "Bonjour chère collègue. Nous développons en ce moment une application pour améliorer la communication entre vous et le syndicat Sud Industrie E.L.E. Vous y trouverez vos droits, un parcours pour trouver votre situation, des photos et des vidéos pour vous guidez et vous orientez aux mieux, et une boîte pour poser vos questions. Nous sommes ouverts à toutes vos suggestions. Ce site est là pour vous aider, mais il ne remplace ni les échanges avec les élus, ni le syndicat, ni le Code du travail. Pour votre situation personnelle, contactez-nous directement. Merci pour votre confiance.";
+
+// Préchauffe la liste des voix (certains navigateurs renvoient [] au premier appel)
+if("speechSynthesis" in window) speechSynthesis.getVoices();
 
 function voixMaj(etat, actif){
   document.getElementById("vo-etat").textContent = etat;
@@ -152,7 +167,7 @@ function voixOff(){
   if(v) u.voice = v;
   voixMaj("Lecture en cours…", true);
   u.onend = () => voixMaj("", false);
-  u.onerror = () => voixMaj("", false);
+  u.onerror = () => voixMaj("La lecture n'a pas pu démarrer.", false);
   speechSynthesis.speak(u);
 }
 
@@ -170,10 +185,6 @@ if(!localStorage.getItem("sudVoixVue")){
 }
 </script>
 
-<div id="bienvenue" class="card" hidden style="background:var(--yellow); color:#000; text-align:center;">
-  <p style="margin:0 0 10px 0; font-weight:700;">👋 Bienvenue ! Tes droits sont à un clic, et le sondage est anonyme.</p>
-  <button onclick="fermerBienvenue()">Compris</button>
-</div>
 <p style="text-align:center; font-weight:700; margin:0 0 14px 0;">🗳️ Élections professionnelles : <span id="compteur-accueil"></span></p>
 <div class="card" style="border-left:6px solid var(--acc); margin-bottom:16px;">
   <h2 style="border:none; margin:0 0 8px 0; padding:0;">📢 Actualités</h2>
@@ -1031,6 +1042,7 @@ body.grand{font-size:19px}
     <h2>Sondage Sécurité et Conditions de travail</h2>
     <p style="font-size:.9rem; color:var(--mute); margin-bottom:15px;">Ce sondage est anonyme. Tes réponses seront analysées et transmises à la direction pour exiger des changements. Un seul vote par téléphone.</p>
     <form id="form-sondage">
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
       <div class="question">
         <span class="q-title">1. Comment te sens-tu en sécurité à ton poste de travail ?</span>
         <div class="radio-group">
@@ -1195,7 +1207,7 @@ body.grand{font-size:19px}
       </div>
       <div class="question">
         <label class="q-title" for="message-libre">22. Un exemple concret ou une remarque à partager ? (optionnel)</label>
-        <textarea id="message-libre" name="Q22_Remarque_Libre" rows="4" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : une situation qui t'a inquiété..."></textarea>
+        <textarea id="message-libre" name="Q22_Remarque_Libre" rows="4" maxlength="1000" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : une situation qui t'a inquiété..."></textarea>
       </div>
       <button type="submit" id="btn-submit" style="margin-top:20px; background:var(--success);">Envoyer mes réponses anonymement</button>
     </form>
@@ -1261,7 +1273,8 @@ body.grand{font-size:19px}
     <h2>💬 Poser une question</h2>
     <p style="font-size:.9rem; color:var(--mute); margin-bottom:10px;">Écris ta question ci-dessous. Elle est envoyée sans nom ni numéro de téléphone. Réponse sous 7 jours.</p>
     <p style="font-size:.85rem; color:var(--mute); margin-bottom:12px;">⚠️ Ne cite pas de noms de collègues ou de chefs. En cas de danger immédiat, préviens ton responsable ou les secours : ce formulaire ne remplace pas un signalement urgent.</p>
-    <textarea id="question-texte" rows="5" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : quelles sont mes règles pour les congés en juillet ?"></textarea>
+    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+    <textarea id="question-texte" rows="5" maxlength="1000" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : quelles sont mes règles pour les congés en juillet ?"></textarea>
     <button id="btn-question">Envoyer ma question</button>
     <div id="res-question" style="display:none; background:var(--success); color:#fff; padding:20px; border-radius:8px; text-align:center; font-weight:bold; margin-top:15px;">
       ✅ Merci ! Ta question a bien été envoyée.
@@ -1274,7 +1287,7 @@ body.grand{font-size:19px}
       <p style="margin:0 0 6px 0; font-size:.9rem;">Cet assistant donne des informations générales. Ses réponses peuvent être incomplètes ou inexactes, et ne remplacent ni un conseil juridique ni l'avis du syndicat.</p>
       <p style="margin:0; font-size:.9rem;"><strong>Pour votre situation personnelle, rapprochez-vous de Sud Industrie ELE</strong> : bouton « Écrire au syndicat » ou appel au 06 26 71 16 87.</p>
     </div>
-    <textarea id="ia-question" rows="3" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : combien de jours de congés payés par mois ?"></textarea>
+    <textarea id="ia-question" rows="3" maxlength="1000" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit;" placeholder="Ex : combien de jours de congés payés par mois ?"></textarea>
     <button id="ia-btn">Poser ma question</button>
     <div id="ia-reponse" class="expl" hidden></div>
     <p class="note">Pour une situation personnelle, utilise le bouton « Écrire au syndicat » ou appelle le 06 26 71 16 87.</p>
@@ -1283,12 +1296,6 @@ body.grand{font-size:19px}
 <!-- ONGLET JEU -->
 <section id="jeu" hidden>
   <div class="card" style="text-align:center;">
-    <style>
-      .hs{cursor:pointer;transition:opacity .2s}
-      .hs:hover{opacity:.8}
-      .hs.trouve{opacity:.35;filter:drop-shadow(0 0 4px #2e7d32)}
-      .hs.rate *{stroke:#c8102e;stroke-width:3px;stroke-dasharray:4 3}
-    </style>
     <h2>🎯 Mission sécurité</h2>
     <p style="font-size:.95rem; color:var(--mute);">Quatre scènes de ta journée à l'entrepôt. Repère les dangers, puis choisis la bonne décision. Chaque erreur te montre ce qu'elle peut provoquer.</p>
     <p class="note">Scène <span id="jeu-scene">1</span> · Score : <strong id="jeu-score">0</strong> · Meilleur : <strong id="jeu-best">0</strong></p>
@@ -1325,23 +1332,28 @@ body.grand{font-size:19px}
 </main>
 
 <script>
+// ==== CONFIGURATION ====
+// ⚠️ Remplace "" par l'URL publique de ton site (ex. "https://sud-industrie-ele.github.io/espace/")
+// Sans cela, le QR code pointe vers le chemin local du fichier ouvert, inutilisable sur un autre téléphone.
 const APP_URL = "";
 const FORMSPREE_URL = "https://formspree.io/f/xljbejjl";
-const $ = id => document.getElementById(id);
+const QUESTIONS_URL = "https://formspree.io/f/xyewzday";
+const IA_URL = "https://assistant-sud.kg4fnd86k2-c01.workers.dev/";
 const LEGI = "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/";
+const $ = id => document.getElementById(id);
 
-// Compte à rebours
-function updateTimer(){
+// ==== COMPTEURS (élections) ====
+function majCompteurs(){
   const fin = new Date("Oct 1, 2027 08:00:00").getTime();
-  const distance = fin - new Date().getTime();
-  if(distance < 0){ $("timer").innerHTML = "C'EST LE MOMENT DE VOTER !"; return; }
-  const jours = Math.floor(distance / (1000*60*60*24));
-  $("timer").innerHTML = jours + " JOURS RESTANTS";
+  const d = fin - Date.now();
+  const txt = d < 0 ? "C'EST LE MOMENT DE VOTER !" : Math.floor(d / 86400000) + " JOURS RESTANTS";
+  const t = $("timer"); if(t) t.textContent = txt;
+  const a = $("compteur-accueil"); if(a) a.textContent = txt;
 }
-setInterval(updateTimer, 1000);
-updateTimer();
+setInterval(majCompteurs, 1000);
+majCompteurs();
 
-// Onglets
+// ==== ONGLETS ====
 document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", x === b));
   ["droits","victoires","elections","sondage","quiz","photos","videos","questions","jeu","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
@@ -1353,7 +1365,7 @@ document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   if(window.goatcounter) goatcounter.count({ path: "onglet-" + b.dataset.t, title: "Onglet " + b.dataset.t, event: true });
 });
 
-// ===== QUIZ =====
+// ==== QUIZ ====
 const QUIZ = [
   {img:"📨",q:"Quel est le délai minimum entre la convocation écrite à un entretien préalable de licenciement et l'entretien ?",a:["2 jours","5 jours ouvrables","1 mois","15 jours"],c:1,e:"Le délai minimum est de 5 jours ouvrables. Tu peux te faire assister pendant l'entretien.",art:"L1232-2"},
   {img:"✉️",q:"On te remet une lettre en main propre. Que dois-tu faire ?",a:["La signer sans la lire","Demander un exemplaire daté et signé, et garder une copie","La jeter","Répondre seulement à l'oral"],c:1,e:"Une copie datée et signée te protège en cas de litige."},
@@ -1442,7 +1454,7 @@ $("quiz-go").onclick = startQuiz;
 $("quiz-again").onclick = startQuiz;
 $("best").textContent = bestScore();
 
-// ===== SONDAGE =====
+// ==== SONDAGE ====
 $("form-sondage").onsubmit = async function(e){
   e.preventDefault();
   const btn = $("btn-submit");
@@ -1471,7 +1483,7 @@ $("form-sondage").onsubmit = async function(e){
   }
 };
 
-// ===== QR CODE =====
+// ==== QR CODE ====
 function drawQR(){
   const el = $("qrb"); el.innerHTML = "";
   if(typeof QRCode === "undefined"){ el.textContent = "QR code indisponible."; return; }
@@ -1479,7 +1491,7 @@ function drawQR(){
   new QRCode(el, {text: url, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M});
 }
 
-// ===== GALERIE PHOTOS =====
+// ==== GALERIE PHOTOS (noms de fichiers inchangés) ====
 const PHOTOS = [
   "photo1.jpg",
   "Photo2.jpg",
@@ -1520,7 +1532,6 @@ function chargerGalerie(){
   });
 }
 
-// Lightbox plein écran
 function ouvrirLightbox(src){
   const lb = document.createElement("div");
   lb.className = "lightbox";
@@ -1536,7 +1547,7 @@ function ouvrirLightbox(src){
   document.body.appendChild(lb);
 }
 
-// ===== VIDÉOS =====
+// ==== VIDÉOS (liste inchangée) ====
 const VIDEOS = [
   "video1.mp4",
   "video2.mp4",
@@ -1570,7 +1581,6 @@ function chargerVideos(){
   });
 }
 
-// Lecteur vidéo plein écran
 function ouvrirVideo(src){
   const lb = document.createElement("div");
   lb.className = "lightbox";
@@ -1590,7 +1600,7 @@ function ouvrirVideo(src){
   document.body.appendChild(lb);
 }
 
-// ===== RECHERCHE DANS MES DROITS (protégée) =====
+// ==== RECHERCHE DANS MES DROITS (protégée) ====
 const rechercheDroits = $("recherche-droits");
 if (rechercheDroits) {
   rechercheDroits.addEventListener("input", () => {
@@ -1601,7 +1611,7 @@ if (rechercheDroits) {
   });
 }
 
-// ===== MESSAGE DE BIENVENUE (une seule fois) =====
+// ==== MESSAGE DE BIENVENUE (une seule fois) ====
 if(!localStorage.getItem("sudBienvenue")){
   $("bienvenue").hidden = false;
 }
@@ -1610,14 +1620,7 @@ function fermerBienvenue(){
   $("bienvenue").hidden = true;
 }
 
-// ===== COMPTEUR SUR LA PAGE D'ACCUEIL =====
-setInterval(() => {
-  const el = $("compteur-accueil");
-  if(el) el.textContent = $("timer").textContent;
-}, 1000);
-
-// ===== QUESTIONS =====
-const QUESTIONS_URL = "https://formspree.io/f/xyewzday";
+// ==== QUESTIONS ====
 $("btn-question").onclick = async () => {
   const btn = $("btn-question");
   const texte = $("question-texte").value.trim();
@@ -1643,7 +1646,8 @@ $("btn-question").onclick = async () => {
   }
 };
 
-// ===== MISSION SÉCURITÉ (jeu) =====
+// ==== MISSION SÉCURITÉ (jeu) ====
+// Les <g class="hs"> sont maintenant accessibles au clavier via tabindex + role + aria-label
 const JEU_SCENES = [
   {
     titre: "1. Prise de poste",
@@ -1652,7 +1656,7 @@ const JEU_SCENES = [
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="170" width="320" height="30" fill="#c5cad1"/>
 <line x1="0" y1="170" x2="320" y2="170" stroke="#ffcc00" stroke-width="3"/>
-<g class="hs" data-id="casque">
+<g class="hs" data-id="casque" tabindex="0" role="button" aria-label="Danger : casque non porté">
 <rect x="18" y="40" width="46" height="130" fill="transparent"/>
 <circle cx="40" cy="68" r="11" fill="#8a5a3c"/>
 <rect x="28" y="82" width="24" height="46" rx="3" fill="#ffcc00"/>
@@ -1661,7 +1665,7 @@ const JEU_SCENES = [
 </g>
 <rect x="110" y="112" width="120" height="48" rx="4" fill="#004aad"/>
 <rect x="104" y="92" width="44" height="40" fill="#1d3f7a"/>
-<g class="hs" data-id="ceinture">
+<g class="hs" data-id="ceinture" tabindex="0" role="button" aria-label="Danger : ceinture non attachée">
 <rect x="110" y="98" width="30" height="24" fill="transparent"/>
 <rect x="112" y="108" width="24" height="10" fill="#333"/>
 <line x1="112" y1="113" x2="136" y2="113" stroke="#ffcc00" stroke-width="2"/>
@@ -1670,7 +1674,7 @@ const JEU_SCENES = [
 <rect x="236" y="148" width="50" height="5" fill="#333"/>
 <circle cx="130" cy="166" r="11" fill="#111"/>
 <circle cx="206" cy="166" r="11" fill="#111"/>
-<g class="hs" data-id="controle">
+<g class="hs" data-id="controle" tabindex="0" role="button" aria-label="Danger : contrôle de prise de poste non fait">
 <rect x="262" y="104" width="50" height="62" fill="transparent"/>
 <rect x="270" y="112" width="36" height="46" rx="2" fill="#f5f5f5" stroke="#888"/>
 <line x1="276" y1="124" x2="300" y2="124" stroke="#999"/>
@@ -1706,20 +1710,20 @@ const JEU_SCENES = [
 <text x="6" y="192" font-size="9" fill="#2a78d6" font-family="Arial">CHEMINEMENT PIÉTON</text>
 <rect x="262" y="40" width="50" height="58" fill="#2e7d32"/>
 <text x="268" y="74" font-size="10" fill="#fff" font-family="Arial" font-weight="700">SORTIE</text>
-<g class="hs" data-id="palette">
+<g class="hs" data-id="palette" tabindex="0" role="button" aria-label="Danger : palette qui déborde sur l'allée">
 <rect x="138" y="96" width="76" height="46" fill="transparent"/>
 <rect x="150" y="110" width="50" height="34" fill="#d9b87c"/>
 <rect x="150" y="98" width="60" height="16" fill="#e8c98f"/>
 <rect x="142" y="140" width="66" height="6" fill="#8a6a3f"/>
 </g>
-<g class="hs" data-id="pieton">
+<g class="hs" data-id="pieton" tabindex="0" role="button" aria-label="Danger : piéton sur la voie des engins">
 <rect x="78" y="106" width="34" height="70" fill="transparent"/>
 <circle cx="95" cy="118" r="7" fill="#f0c08a"/>
 <rect x="87" y="126" width="16" height="30" rx="3" fill="#2a78d6"/>
 <rect x="88" y="156" width="6" height="18" fill="#333"/>
 <rect x="96" y="156" width="6" height="18" fill="#333"/>
 </g>
-<g class="hs" data-id="issue">
+<g class="hs" data-id="issue" tabindex="0" role="button" aria-label="Danger : sortie de secours encombrée">
 <rect x="250" y="70" width="70" height="60" fill="transparent"/>
 <rect x="252" y="80" width="64" height="40" fill="#d9b87c" stroke="#8a6a3f"/>
 <rect x="258" y="88" width="24" height="24" fill="#e8c98f"/>
@@ -1748,17 +1752,17 @@ const JEU_SCENES = [
 <rect x="200" y="40" width="120" height="120" rx="4" fill="#f4f6f8" stroke="#9aa1ab"/>
 <rect x="200" y="100" width="120" height="8" fill="#2a78d6"/>
 <rect x="136" y="110" width="66" height="50" fill="none" stroke="#999" stroke-dasharray="4 3"/>
-<g class="hs" data-id="barriere">
+<g class="hs" data-id="barriere" tabindex="0" role="button" aria-label="Danger : bord de quai non protégé">
 <rect x="150" y="104" width="50" height="16" fill="transparent"/>
 <line x1="150" y1="112" x2="200" y2="112" stroke="#c8102e" stroke-dasharray="6 4" stroke-width="2"/>
 </g>
 <circle cx="236" cy="172" r="12" fill="#111"/>
 <circle cx="296" cy="172" r="12" fill="#111"/>
-<g class="hs" data-id="cale">
+<g class="hs" data-id="cale" tabindex="0" role="button" aria-label="Danger : camion non calé">
 <rect x="236" y="148" width="32" height="38" fill="transparent"/>
 <polygon points="244,184 258,184 258,164" fill="none" stroke="#c8102e" stroke-dasharray="3 2"/>
 </g>
-<g class="hs" data-id="personne">
+<g class="hs" data-id="personne" tabindex="0" role="button" aria-label="Danger : personne dans la zone de manœuvre">
 <rect x="120" y="60" width="50" height="110" fill="transparent"/>
 <circle cx="150" cy="88" r="8" fill="#f0c08a"/>
 <rect x="141" y="97" width="18" height="34" rx="3" fill="#ffcc00"/>
@@ -1788,19 +1792,19 @@ const JEU_SCENES = [
 <rect x="40" y="6" width="26" height="20" fill="#e8c98f"/>
 <rect x="0" y="164" width="320" height="36" fill="#c5cad1"/>
 <line x1="0" y1="168" x2="320" y2="168" stroke="#ffcc00" stroke-width="2" stroke-dasharray="8 6"/>
-<g class="hs" data-id="passage">
+<g class="hs" data-id="passage" tabindex="0" role="button" aria-label="Danger : engin garé dans le passage">
 <rect x="96" y="96" width="120" height="78" fill="transparent"/>
 <rect x="110" y="120" width="96" height="40" rx="4" fill="#004aad"/>
 <rect x="104" y="100" width="34" height="44" fill="#1d3f7a"/>
 <rect x="206" y="60" width="6" height="100" fill="#555"/>
-<g class="hs" data-id="cle">
+<g class="hs" data-id="cle" tabindex="0" role="button" aria-label="Danger : clé laissée sur l'engin">
 <rect x="112" y="124" width="22" height="20" fill="transparent"/>
 <rect x="114" y="128" width="16" height="10" rx="2" fill="#ffcc00"/>
 </g>
 <circle cx="126" cy="164" r="11" fill="#111"/>
 <circle cx="190" cy="164" r="11" fill="#111"/>
 </g>
-<g class="hs" data-id="fourches">
+<g class="hs" data-id="fourches" tabindex="0" role="button" aria-label="Danger : fourches laissées en hauteur">
 <rect x="204" y="44" width="62" height="24" fill="transparent"/>
 <rect x="212" y="54" width="54" height="5" fill="#333"/>
 </g>
@@ -1862,6 +1866,16 @@ function jeuClic(e){
   $("jeu-regle").hidden = false;
   if(jeuTrouves.length === Object.keys(sc.dangers).length) jeuBilan();
 }
+
+// Accessibilité clavier : Entrée ou Espace sur les zones cliquables
+document.addEventListener("keydown", (e) => {
+  if(e.key !== "Enter" && e.key !== " ") return;
+  const hs = document.activeElement && document.activeElement.closest ? document.activeElement.closest(".hs") : null;
+  if(hs && document.getElementById("jeu") && !document.getElementById("jeu").hidden){
+    e.preventDefault();
+    hs.click();
+  }
+});
 
 function jeuBilan(){
   if(jeuFini) return;
@@ -1940,8 +1954,7 @@ $("jeu-suite").onclick = () => {
   else jeuFinir();
 };
 
-// ===== ASSISTANT INFORMATIF =====
-const IA_URL = "https://assistant-sud.kg4fnd86k2-c01.workers.dev/";
+// ==== ASSISTANT INFORMATIF ====
 $("ia-btn").onclick = async () => {
   const btn = $("ia-btn");
   const q = $("ia-question").value.trim();
@@ -1964,7 +1977,7 @@ $("ia-btn").onclick = async () => {
   btn.disabled = false; btn.textContent = "Poser ma question";
 };
 
-// ===== PARCOURS « QUELLE EST MA SITUATION ? » =====
+// ==== PARCOURS « QUELLE EST MA SITUATION ? » ====
 const SITUATIONS = {
   securite: {
     titre: "🦺 Sécurité",
