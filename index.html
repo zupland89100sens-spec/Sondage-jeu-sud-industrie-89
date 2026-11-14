@@ -313,7 +313,7 @@ body.grand{font-size:19px}
     <input type="text" id="recherche-droits" placeholder="🔎 Rechercher dans mes droits (ex : congés, arrêt maladie)" style="width:100%; padding:14px; border-radius:8px; border:2px solid var(--blue); font:inherit; background:var(--surface); color:var(--ink);">
   </div>
 
-  <div class="card" style="padding:16px;">
+ <div class="card" style="padding:16px;">
     <h2 style="border:none; margin:0 0 10px 0; padding:0;">🧭 Quelle est ma situation ?</h2>
     <div id="sit-etape1">
       <button class="opt" onclick="sitCategorie('securite')">🦺 Sécurité</button>
@@ -729,29 +729,89 @@ body.grand{font-size:19px}
 <text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Destockage : 30 palettes vers le convoyeur de sortie</text>
 </svg>
 </div>
+
+<!-- ============================================================ -->
+<!-- SCÈNE 4 — APPROVISIONNEMENT DU PICKING (refaite)             -->
+<!-- ============================================================ -->
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes apCar{0%{transform:translate(0px,0px)}8%{transform:translate(0px,0px)}22%{transform:translate(150px,0px)}30%{transform:translate(150px,0px)}36%{transform:translate(150px,-40px)}44%{transform:translate(150px,-40px)}52%{transform:translate(0px,-40px)}56%{transform:translate(0px,0px)}70%{transform:translate(0px,0px)}84%{transform:translate(150px,0px)}92%{transform:translate(150px,0px)}100%{transform:translate(0px,0px)}}
-@keyframes apPal{0%,8%{opacity:0}9%,22%{opacity:1}23%,100%{opacity:0}}
-@keyframes apPl{0%,30%{opacity:0}31%,52%{opacity:1}53%,100%{opacity:0}}
-@keyframes apPl2{0%,44%{opacity:0}45%,84%{opacity:1}85%,100%{opacity:0}}
-@keyframes apBelt{0%,8%{opacity:1}9%,100%{opacity:1}}
-@keyframes apRl{to{transform:rotate(360deg)}}
-.ap-car{animation:apCar 40s linear infinite}
-.ap-pal{animation:apPal 40s linear infinite}
-.ap-pl{animation:apPl 40s linear infinite}
-.ap-pl2{animation:apPl2 40s linear infinite}
-.ap-rl{transform-box:fill-box;transform-origin:center;animation:apRl .8s linear infinite}
+/* Convoyeur qui tourne : tapis + rouleaux */
+@keyframes apRouleau{to{transform:rotate(360deg)}}
+/* Palette qui avance sur le convoyeur : 3 palettes décalées */
+@keyframes apPal1{0%,4%{transform:translateX(0px);opacity:1}28%,32%{transform:translateX(140px);opacity:1}34%,100%{transform:translateX(140px);opacity:0}}
+@keyframes apPal2{0%,28%{transform:translateX(0px);opacity:1}52%,56%{transform:translateX(140px);opacity:1}58%,100%{transform:translateX(140px);opacity:0}}
+@keyframes apPal3{0%,52%{transform:translateX(0px);opacity:1}76%,80%{transform:translateX(140px);opacity:1}82%,100%{transform:translateX(140px);opacity:0}}
+/* Cariste : va chercher en bout, recule, monte au niveau 1, dépose, redescend, niveau 2, dépose, revient */
+@keyframes apCariste{
+  0%{transform:translate(0px,0px)}
+  8%{transform:translate(0px,0px)}
+  18%{transform:translate(150px,0px)}    /* arrive au bout du convoyeur */
+  22%{transform:translate(150px,0px)}    /* prend la palette */
+  30%{transform:translate(100px,-20px)}  /* monte vers N1 (au-dessus du picking) */
+  36%{transform:translate(100px,-20px)}  /* dépose N1 */
+  44%{transform:translate(100px,0px)}    /* redescend */
+  50%{transform:translate(100px,0px)}    /* revient au convoyeur */
+  58%{transform:translate(150px,0px)}
+  62%{transform:translate(150px,0px)}
+  70%{transform:translate(100px,-40px)}  /* monte vers N2 */
+  76%{transform:translate(100px,-40px)}  /* dépose N2 */
+  84%{transform:translate(100px,0px)}
+  92%{transform:translate(0px,0px)}
+  100%{transform:translate(0px,0px)}
+}
+/* Palette portée par le cariste */
+@keyframes apPalPortee{
+  0%,20%{opacity:0}
+  22%,28%{opacity:1;transform:translate(0,0)}
+  36%,44%{opacity:0;transform:translate(0,0)}
+  50%,56%{opacity:0}
+  58%,62%{opacity:1}
+  70%,76%{opacity:1;transform:translate(0,0)}
+  84%,100%{opacity:0}
+}
+/* Palettes qui apparaissent sur le picking */
+@keyframes apStockN1{0%,35%{opacity:0}36%,100%{opacity:1}}
+@keyframes apStockN2{0%,75%{opacity:0}76%,100%{opacity:1}}
+.ap-rouleau{transform-box:fill-box;transform-origin:center;animation:apRouleau .8s linear infinite}
+.ap-pal1{animation:apPal1 24s linear infinite}
+.ap-pal2{animation:apPal2 24s linear infinite}
+.ap-pal3{animation:apPal3 24s linear infinite}
+.ap-cariste{animation:apCariste 24s linear infinite}
+.ap-pal-portee{animation:apPalPortee 24s linear infinite}
+.ap-stock-n1{animation:apStockN1 24s linear infinite}
+.ap-stock-n2{animation:apStockN2 24s linear infinite}
 </style>
 <h2 style="border:none; margin:0 0 6px 0; padding:0;">🚜 Approvisionnement du picking</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le cariste de sortie récupère les palettes en bout de convoyeur et les dépose sur les deux niveaux du picking.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Le cariste récupère les palettes en bout de convoyeur et les dépose sur les deux niveaux du picking">
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Les palettes arrivent sur le convoyeur qui tourne. Le cariste les récupère une par une en bout de convoyeur, puis les range sur les niveaux du picking.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Convoyeur animé qui amène les palettes, cariste qui les récupère et les range sur les deux niveaux du picking">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="172" width="320" height="28" fill="#c5cad1"/>
-<rect x="6" y="140" width="110" height="5" fill="#55606c"/>
-<rect x="10" y="145" width="4" height="16" fill="#55606c"/>
-<rect x="112" y="145" width="4" height="16" fill="#55606c"/>
-<text x="60" y="132" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">CONVOYEUR DE SORTIE</text>
+<!-- Convoyeur : structure -->
+<rect x="4" y="140" width="150" height="8" fill="#3a4550" rx="2"/>
+<rect x="4" y="148" width="150" height="4" fill="#55606c"/>
+<rect x="8" y="152" width="4" height="14" fill="#55606c"/>
+<rect x="146" y="152" width="4" height="14" fill="#55606c"/>
+<text x="79" y="134" text-anchor="middle" font-size="7" font-weight="700" fill="#55606c">CONVOYEUR D'ALIMENTATION</text>
+<!-- Rouleaux du convoyeur -->
+<g fill="#8a94a0">
+  <circle class="ap-rouleau" cx="16" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="28" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="40" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="52" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="64" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="76" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="88" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="100" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="112" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="124" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="136" cy="144" r="2.5"/>
+  <circle class="ap-rouleau" cx="148" cy="144" r="2.5"/>
+</g>
+<!-- 3 palettes qui avancent sur le convoyeur -->
+<g class="ap-pal1"><rect x="10" y="132" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/></g>
+<g class="ap-pal2"><rect x="10" y="132" width="20" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/></g>
+<g class="ap-pal3"><rect x="10" y="132" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/></g>
+<!-- Picking : structure 2 niveaux -->
 <rect x="196" y="60" width="4" height="100" fill="#55606c"/>
 <rect x="290" y="60" width="4" height="100" fill="#55606c"/>
 <rect x="196" y="60" width="98" height="4" fill="#55606c"/>
@@ -760,137 +820,318 @@ body.grand{font-size:19px}
 <text x="245" y="52" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">PICKING · 2 NIVEAUX</text>
 <text x="245" y="96" text-anchor="middle" font-size="7" font-weight="700" fill="#004aad">NIVEAU 2</text>
 <text x="245" y="136" text-anchor="middle" font-size="7" font-weight="700" fill="#004aad">NIVEAU 1</text>
-<rect class="ap-pl2" x="210" y="82" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect class="ap-pl" x="210" y="122" width="20" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<g class="ap-car">
+<!-- Palettes stockées sur le picking (apparaissent une par une) -->
+<rect class="ap-stock-n1" x="210" y="122" width="20" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+<rect class="ap-stock-n2" x="240" y="82" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+<!-- Cariste : groupe animé -->
+<g class="ap-cariste">
+  <!-- roues -->
   <circle cx="30" cy="162" r="4" fill="#111"/>
   <circle cx="50" cy="162" r="4" fill="#111"/>
-  <rect x="24" y="138" width="30" height="14" fill="#004aad"/>
+  <!-- châssis -->
+  <rect x="24" y="138" width="30" height="14" fill="#004aad" rx="2"/>
+  <!-- conducteur -->
   <circle cx="34" cy="130" r="5" fill="#f0c08a"/>
   <rect x="30" y="135" width="8" height="5" fill="#ffcc00"/>
+  <!-- mât -->
   <rect x="56" y="108" width="4" height="44" fill="#555"/>
+  <!-- fourches -->
   <rect x="58" y="150" width="20" height="3" fill="#333"/>
-  <rect class="ap-pal" x="58" y="138" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <!-- palette portée par le cariste -->
+  <rect class="ap-pal-portee" x="58" y="138" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
 </g>
-<circle class="ap-rl" cx="130" cy="150" r="4" fill="#111"/>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Approvisionnement : le cariste alimente le picking</text>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Approvisionnement : le cariste récupère et range les palettes</text>
 </svg>
 </div>
 
+<!-- ============================================================ -->
+<!-- SCÈNE 5 — PICKING MULTI-ALLÉES (refaite)                     -->
+<!-- ============================================================ -->
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes pkPath{0%{transform:translate(0px,0px)}18%{transform:translate(0px,0px)}30%{transform:translate(100px,0px)}48%{transform:translate(100px,0px)}60%{transform:translate(200px,0px)}78%{transform:translate(200px,0px)}90%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
-@keyframes pkCa{0%,17.9%{opacity:0}18%,100%{opacity:1}}
-@keyframes pkCb{0%,47.9%{opacity:0}48%,100%{opacity:1}}
-@keyframes pkCc{0%,77.9%{opacity:0}78%,100%{opacity:1}}
+/* Le préparateur roule dans une allée, s'arrête, prélève, va dans la suivante, etc., puis sort à droite */
+@keyframes pkTrajet{
+  0%{transform:translate(0px,0px)}
+  8%{transform:translate(0px,0px)}          /* démarre allée A */
+  18%{transform:translate(70px,0px)}        /* arrive allée A */
+  26%{transform:translate(70px,0px)}        /* prélève dans A */
+  36%{transform:translate(140px,0px)}       /* va vers allée B */
+  44%{transform:translate(140px,0px)}       /* prélève dans B */
+  54%{transform:translate(210px,0px)}       /* va vers allée C */
+  62%{transform:translate(210px,0px)}       /* prélève dans C */
+  72%{transform:translate(280px,0px)}       /* va vers allée D */
+  80%{transform:translate(280px,0px)}       /* prélève dans D */
+  88%{transform:translate(280px,0px)}
+  92%{transform:translate(280px,0px)}       /* sort tout à droite */
+  100%{transform:translate(280px,0px)}
+}
+/* Produits qui disparaissent des étagères quand le préparateur prélève */
+@keyframes pkProdA{0%,20%{opacity:1}22%,100%{opacity:0}}
+@keyframes pkProdB{0%,40%{opacity:1}42%,100%{opacity:0}}
+@keyframes pkProdC{0%,58%{opacity:1}60%,100%{opacity:0}}
+@keyframes pkProdD{0%,76%{opacity:1}78%,100%{opacity:0}}
+/* Produits qui apparaissent sur la palette du chariot */
+@keyframes pkPalA{0%,22%{opacity:0}23%,100%{opacity:1}}
+@keyframes pkPalB{0%,42%{opacity:0}43%,100%{opacity:1}}
+@keyframes pkPalC{0%,60%{opacity:0}61%,100%{opacity:1}}
+@keyframes pkPalD{0%,78%{opacity:0}79%,100%{opacity:1}}
+.pk-chariot{animation:pkTrajet 24s linear infinite}
+.pk-prod-a{animation:pkProdA 24s linear infinite}
+.pk-prod-b{animation:pkProdB 24s linear infinite}
+.pk-prod-c{animation:pkProdC 24s linear infinite}
+.pk-prod-d{animation:pkProdD 24s linear infinite}
+.pk-pal-a{animation:pkPalA 24s linear infinite}
+.pk-pal-b{animation:pkPalB 24s linear infinite}
+.pk-pal-c{animation:pkPalC 24s linear infinite}
+.pk-pal-d{animation:pkPalD 24s linear infinite}
 </style>
-<h2 style="border:none; margin:0 0 6px 0; padding:0;">🛒 Picking</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le préparateur sur chariot passe dans les allées A, B et C, prélève ses produits et monte sa palette de commande.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Préparateur sur chariot qui passe dans trois allées de picking et charge sa palette">
+<h2 style="border:none; margin:0 0 6px 0; padding:0;">🛒 Picking multi-allées</h2>
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le préparateur enchaîne les allées A, B, C et D, prélève des produits sur chaque étagère, les monte sur sa palette, puis sort à droite pour livrer sa commande à l'expédition.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Préparateur qui passe dans quatre allées de picking, prélève des produits et sort à droite avec sa palette complète">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="146" width="320" height="26" fill="#c5cad1"/>
-<rect x="20" y="24" width="70" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
-<rect x="20" y="60" width="70" height="3" fill="#55606c"/>
-<rect x="20" y="100" width="70" height="3" fill="#55606c"/>
-<rect x="120" y="24" width="70" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
-<rect x="120" y="60" width="70" height="3" fill="#55606c"/>
-<rect x="120" y="100" width="70" height="3" fill="#55606c"/>
-<rect x="220" y="24" width="70" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
-<rect x="220" y="60" width="70" height="3" fill="#55606c"/>
-<rect x="220" y="100" width="70" height="3" fill="#55606c"/>
-<text x="55" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE A</text>
-<text x="155" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE B</text>
-<text x="255" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE C</text>
-<rect x="26" y="48" width="9" height="12" fill="#ffcc00"/>
+<!-- Allée A -->
+<rect x="20" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
+<rect x="20" y="60" width="60" height="3" fill="#55606c"/>
+<rect x="20" y="100" width="60" height="3" fill="#55606c"/>
+<text x="50" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE A</text>
+<rect class="pk-prod-a" x="26" y="48" width="9" height="12" fill="#ffcc00"/>
 <rect x="38" y="48" width="9" height="12" fill="#2a78d6"/>
-<rect x="50" y="48" width="9" height="12" fill="#2e7d32"/>
-<rect x="26" y="88" width="9" height="12" fill="#eb6834"/>
-<rect x="38" y="88" width="9" height="12" fill="#7b1fa2"/>
-<rect x="50" y="88" width="9" height="12" fill="#ffcc00"/>
-<rect x="126" y="48" width="9" height="12" fill="#2a78d6"/>
-<rect x="138" y="48" width="9" height="12" fill="#eb6834"/>
-<rect x="150" y="48" width="9" height="12" fill="#2e7d32"/>
-<rect x="126" y="88" width="9" height="12" fill="#ffcc00"/>
-<rect x="138" y="88" width="9" height="12" fill="#7b1fa2"/>
-<rect x="150" y="88" width="9" height="12" fill="#2a78d6"/>
-<rect x="226" y="48" width="9" height="12" fill="#2e7d32"/>
-<rect x="238" y="48" width="9" height="12" fill="#ffcc00"/>
-<rect x="250" y="48" width="9" height="12" fill="#eb6834"/>
-<rect x="226" y="88" width="9" height="12" fill="#7b1fa2"/>
-<rect x="238" y="88" width="9" height="12" fill="#2a78d6"/>
-<rect x="250" y="88" width="9" height="12" fill="#2e7d32"/>
-<g style="animation:pkPath 20s linear infinite">
-  <circle cx="36" cy="158" r="4" fill="#111"/>
-  <circle cx="56" cy="158" r="4" fill="#111"/>
-  <rect x="30" y="134" width="30" height="14" fill="#004aad"/>
-  <circle cx="40" cy="126" r="5" fill="#f0c08a"/>
-  <rect x="36" y="131" width="8" height="5" fill="#ffcc00"/>
-  <rect x="62" y="104" width="4" height="44" fill="#555"/>
-  <rect x="64" y="146" width="20" height="3" fill="#333"/>
-  <rect x="64" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-  <rect style="animation:pkCa 20s linear infinite" x="66" y="124" width="7" height="10" fill="#c9a46a"/>
-  <rect style="animation:pkCb 20s linear infinite" x="74" y="124" width="7" height="10" fill="#e8c98f"/>
-  <rect style="animation:pkCc 20s linear infinite" x="70" y="114" width="7" height="10" fill="#c9a46a"/>
+<rect class="pk-prod-a" x="50" y="88" width="9" height="12" fill="#eb6834"/>
+<rect x="62" y="88" width="9" height="12" fill="#7b1fa2"/>
+<!-- Allée B -->
+<rect x="90" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
+<rect x="90" y="60" width="60" height="3" fill="#55606c"/>
+<rect x="90" y="100" width="60" height="3" fill="#55606c"/>
+<text x="120" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE B</text>
+<rect class="pk-prod-b" x="96" y="48" width="9" height="12" fill="#2e7d32"/>
+<rect x="108" y="48" width="9" height="12" fill="#eb6834"/>
+<rect class="pk-prod-b" x="120" y="88" width="9" height="12" fill="#ffcc00"/>
+<rect x="132" y="88" width="9" height="12" fill="#2a78d6"/>
+<!-- Allée C -->
+<rect x="160" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
+<rect x="160" y="60" width="60" height="3" fill="#55606c"/>
+<rect x="160" y="100" width="60" height="3" fill="#55606c"/>
+<text x="190" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE C</text>
+<rect class="pk-prod-c" x="166" y="48" width="9" height="12" fill="#7b1fa2"/>
+<rect x="178" y="48" width="9" height="12" fill="#2a78d6"/>
+<rect class="pk-prod-c" x="190" y="88" width="9" height="12" fill="#2e7d32"/>
+<rect x="202" y="88" width="9" height="12" fill="#eb6834"/>
+<!-- Allée D -->
+<rect x="230" y="24" width="60" height="100" fill="#e6e9ed" stroke="#9aa1ab"/>
+<rect x="230" y="60" width="60" height="3" fill="#55606c"/>
+<rect x="230" y="100" width="60" height="3" fill="#55606c"/>
+<text x="260" y="18" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">ALLÉE D</text>
+<rect class="pk-prod-d" x="236" y="48" width="9" height="12" fill="#ffcc00"/>
+<rect x="248" y="48" width="9" height="12" fill="#2e7d32"/>
+<rect class="pk-prod-d" x="260" y="88" width="9" height="12" fill="#2a78d6"/>
+<rect x="272" y="88" width="9" height="12" fill="#eb6834"/>
+<!-- Préparateur et son chariot -->
+<g class="pk-chariot">
+  <!-- roues -->
+  <circle cx="12" cy="158" r="4" fill="#111"/>
+  <circle cx="32" cy="158" r="4" fill="#111"/>
+  <!-- châssis -->
+  <rect x="6" y="134" width="30" height="14" fill="#004aad" rx="2"/>
+  <!-- conducteur -->
+  <circle cx="16" cy="126" r="5" fill="#f0c08a"/>
+  <rect x="12" y="131" width="8" height="5" fill="#ffcc00"/>
+  <!-- mât -->
+  <rect x="38" y="104" width="4" height="44" fill="#555"/>
+  <!-- fourches -->
+  <rect x="40" y="146" width="20" height="3" fill="#333"/>
+  <!-- palette du chariot -->
+  <rect x="40" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <!-- produits prélevés qui apparaissent sur la palette -->
+  <rect class="pk-pal-a" x="42" y="124" width="7" height="10" fill="#ffcc00"/>
+  <rect class="pk-pal-b" x="50" y="124" width="7" height="10" fill="#2e7d32"/>
+  <rect class="pk-pal-c" x="46" y="114" width="7" height="10" fill="#7b1fa2"/>
+  <rect class="pk-pal-d" x="54" y="114" width="7" height="10" fill="#eb6834"/>
 </g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Picking : le préparateur monte sa palette de commande</text>
+<!-- Flèche de sortie vers la droite -->
+<polygon points="296,140 306,146 296,152" fill="#2e7d32"/>
+<text x="290" y="170" text-anchor="middle" font-size="7" font-weight="700" fill="#2e7d32">SORTIE →</text>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Picking : le préparateur prélève dans 4 allées puis sort à droite</text>
 </svg>
 </div>
 
+<!-- ============================================================ -->
+<!-- SCÈNE 6 — EXPÉDITION (refaite)                               -->
+<!-- ============================================================ -->
 <div class="card" style="text-align:center; padding:14px;">
 <style>
-@keyframes exCh{0%{transform:translate(0px,0px)}22%{transform:translate(50px,0px)}50%{transform:translate(50px,0px)}70%{transform:translate(164px,0px)}74%{transform:translate(164px,0px)}92%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
-@keyframes exPal{0%{opacity:1}70%{opacity:1}70.2%,100%{opacity:0}}
-@keyframes exSp{to{transform:rotate(360deg)}}
-@keyframes exT0{0%,69.9%{opacity:0}70%,100%{opacity:1}}
-@keyframes exT1{0%,72.4%{opacity:0}72.5%,100%{opacity:1}}
-@keyframes exT2{0%,74.9%{opacity:0}75%,100%{opacity:1}}
-@keyframes exT3{0%,77.4%{opacity:0}77.5%,100%{opacity:1}}
-@keyframes exT4{0%,79.9%{opacity:0}80%,100%{opacity:1}}
-@keyframes exT5{0%,82.4%{opacity:0}82.5%,100%{opacity:1}}
-@keyframes exT6{0%,84.9%{opacity:0}85%,100%{opacity:1}}
-@keyframes exT7{0%,87.4%{opacity:0}87.5%,100%{opacity:1}}
-@keyframes exT8{0%,89.9%{opacity:0}90%,100%{opacity:1}}
-@keyframes exT9{0%,92.4%{opacity:0}92.5%,100%{opacity:1}}
+/* Camion qui recule au quai au début */
+@keyframes exCamion{
+  0%{transform:translateX(120px)}
+  8%{transform:translateX(0px)}
+  100%{transform:translateX(0px)}
+}
+/* Niveleur qui se déploie après le camion */
+@keyframes exNiveleur{
+  0%,10%{transform:scaleX(0)}
+  14%,100%{transform:scaleX(1)}
+}
+.ex-niveleur{transform-box:fill-box;transform-origin:left center;animation:exNiveleur 40s linear infinite}
+.ex-camion{animation:exCamion 40s linear infinite}
+/* Film qui tourne autour de la palette sur la filmeuse */
+@keyframes exFilm{to{transform:rotate(360deg)}}
+.ex-film{transform-box:fill-box;transform-origin:center;animation:exFilm 1.2s linear infinite}
+/* Palette qui tourne sur la filmeuse */
+@keyframes exPalTourne{to{transform:rotate(360deg)}}
+.ex-pal-tourne{transform-box:fill-box;transform-origin:center;animation:exPalTourne 2.4s linear infinite}
+/* Cycle du chargeur : 10 allers-retours (convoyeur -> filmeuse -> camion) */
+@keyframes exChargeur{
+  /* Boucle de 40 s pour 10 palettes = 4 s par palette */
+  0%{transform:translate(0px,0px)}
+  /* Palette 1 */
+  2%{transform:translate(0px,0px)}
+  4%{transform:translate(60px,0px)}   /* va à la filmeuse */
+  6%{transform:translate(60px,0px)}   /* filmeuse */
+  8%{transform:translate(140px,0px)}  /* va au camion */
+  10%{transform:translate(140px,0px)} /* dépose */
+  12%{transform:translate(0px,0px)}   /* retour */
+  /* Palette 2 */
+  14%{transform:translate(60px,0px)}
+  16%{transform:translate(60px,0px)}
+  18%{transform:translate(140px,0px)}
+  20%{transform:translate(140px,0px)}
+  22%{transform:translate(0px,0px)}
+  /* Palette 3 */
+  24%{transform:translate(60px,0px)}
+  26%{transform:translate(60px,0px)}
+  28%{transform:translate(140px,0px)}
+  30%{transform:translate(140px,0px)}
+  32%{transform:translate(0px,0px)}
+  /* Palette 4 */
+  34%{transform:translate(60px,0px)}
+  36%{transform:translate(60px,0px)}
+  38%{transform:translate(140px,0px)}
+  40%{transform:translate(140px,0px)}
+  42%{transform:translate(0px,0px)}
+  /* Palette 5 */
+  44%{transform:translate(60px,0px)}
+  46%{transform:translate(60px,0px)}
+  48%{transform:translate(140px,0px)}
+  50%{transform:translate(140px,0px)}
+  52%{transform:translate(0px,0px)}
+  /* Palette 6 */
+  54%{transform:translate(60px,0px)}
+  56%{transform:translate(60px,0px)}
+  58%{transform:translate(140px,0px)}
+  60%{transform:translate(140px,0px)}
+  62%{transform:translate(0px,0px)}
+  /* Palette 7 */
+  64%{transform:translate(60px,0px)}
+  66%{transform:translate(60px,0px)}
+  68%{transform:translate(140px,0px)}
+  70%{transform:translate(140px,0px)}
+  72%{transform:translate(0px,0px)}
+  /* Palette 8 */
+  74%{transform:translate(60px,0px)}
+  76%{transform:translate(60px,0px)}
+  78%{transform:translate(140px,0px)}
+  80%{transform:translate(140px,0px)}
+  82%{transform:translate(0px,0px)}
+  /* Palette 9 */
+  84%{transform:translate(60px,0px)}
+  86%{transform:translate(60px,0px)}
+  88%{transform:translate(140px,0px)}
+  90%{transform:translate(140px,0px)}
+  92%{transform:translate(0px,0px)}
+  /* Palette 10 */
+  94%{transform:translate(60px,0px)}
+  96%{transform:translate(60px,0px)}
+  98%{transform:translate(140px,0px)}
+  100%{transform:translate(140px,0px)}
+}
+.ex-chargeur{animation:exChargeur 40s linear infinite}
+/* Palette portée par le chargeur */
+@keyframes exPalPortee{0%,2%{opacity:0}3%,10%{opacity:1}11%,100%{opacity:0}}
+.ex-pal-portee{animation:exPalPortee 4s linear infinite}
+/* Les 10 palettes apparaissent une par une dans le camion (5 en bas, 5 en haut) */
+@keyframes exT1{0%,10%{opacity:0}11%,100%{opacity:1}}
+@keyframes exT2{0%,20%{opacity:0}21%,100%{opacity:1}}
+@keyframes exT3{0%,30%{opacity:0}31%,100%{opacity:1}}
+@keyframes exT4{0%,40%{opacity:0}41%,100%{opacity:1}}
+@keyframes exT5{0%,50%{opacity:0}51%,100%{opacity:1}}
+@keyframes exT6{0%,60%{opacity:0}61%,100%{opacity:1}}
+@keyframes exT7{0%,70%{opacity:0}71%,100%{opacity:1}}
+@keyframes exT8{0%,80%{opacity:0}81%,100%{opacity:1}}
+@keyframes exT9{0%,90%{opacity:0}91%,100%{opacity:1}}
+@keyframes exT10{0%,99%{opacity:0}100%{opacity:1}}
+.ex-t1{animation:exT1 40s linear infinite}
+.ex-t2{animation:exT2 40s linear infinite}
+.ex-t3{animation:exT3 40s linear infinite}
+.ex-t4{animation:exT4 40s linear infinite}
+.ex-t5{animation:exT5 40s linear infinite}
+.ex-t6{animation:exT6 40s linear infinite}
+.ex-t7{animation:exT7 40s linear infinite}
+.ex-t8{animation:exT8 40s linear infinite}
+.ex-t9{animation:exT9 40s linear infinite}
+.ex-t10{animation:exT10 40s linear infinite}
 </style>
 <h2 style="border:none; margin:0 0 6px 0; padding:0;">🚛 Expédition</h2>
-<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le cariste amène la palette à la filmeuse, puis la charge dans le camion garé à quai. Les 10 palettes sont chargées une à une.</p>
-<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Cariste qui amène la palette à la filmeuse puis la charge dans le camion à quai">
+<p style="font-size:.85rem; color:var(--mute); margin:0 0 6px 0;">Le camion recule au quai, le niveleur se déploie. Le chargeur amène chaque palette à la filmeuse, la filme, puis la charge dans le camion. Les 10 palettes finissent côte à côte.</p>
+<svg viewBox="0 0 320 200" width="100%" style="max-width:360px; display:block; margin:0 auto;" role="img" aria-label="Camion qui recule au quai, niveleur qui se déploie, chargeur qui filme 10 palettes et les charge dans le camion">
 <rect width="320" height="200" fill="#d5d9de"/>
 <rect y="172" width="320" height="28" fill="#c5cad1"/>
+<!-- Quai -->
 <rect x="0" y="60" width="50" height="112" fill="#b8bec6"/>
-<text x="25" y="52" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">QUAI</text>
-<rect x="96" y="112" width="34" height="48" fill="#7b8794"/>
+<rect x="0" y="56" width="50" height="4" fill="#9aa1ab"/>
+<text x="25" y="48" text-anchor="middle" font-size="9" font-weight="700" fill="#55606c">QUAI</text>
+<!-- Niveleur (se déploie après le camion) -->
+<g class="ex-niveleur">
+  <rect x="50" y="148" width="30" height="6" fill="#7b8794"/>
+  <rect x="50" y="144" width="30" height="4" fill="#55606c"/>
+</g>
+<!-- Filmeuse réaliste : socle, mât, bras rotatif avec 3 anneaux de film -->
+<rect x="96" y="150" width="34" height="10" fill="#55606c"/>
+<rect x="110" y="108" width="4" height="44" fill="#3a4550"/>
+<!-- anneau de film qui tourne autour de la palette -->
+<g class="ex-film">
+  <ellipse cx="130" cy="136" rx="22" ry="6" fill="none" stroke="#e8ecf0" stroke-width="3"/>
+  <ellipse cx="130" cy="136" rx="22" ry="6" fill="none" stroke="#c0c8d0" stroke-width="1" stroke-dasharray="3 3"/>
+</g>
 <text x="113" y="104" text-anchor="middle" font-size="8" font-weight="700" fill="#55606c">FILMEUSE</text>
-<ellipse cx="113" cy="136" rx="16" ry="26" fill="none" stroke="#e8ecf0" stroke-width="3" stroke-dasharray="4 3" style="transform-box:fill-box;transform-origin:center;animation:exSp 1.2s linear infinite"/>
-<rect x="208" y="62" width="104" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
-<text x="260" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION DE DÉPART</text>
-<circle cx="226" cy="166" r="6" fill="#111"/>
-<circle cx="250" cy="166" r="6" fill="#111"/>
-<circle cx="290" cy="166" r="6" fill="#111"/>
-<rect style="animation:exT0 20s linear infinite" x="216" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT1 20s linear infinite" x="234" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT2 20s linear infinite" x="252" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT3 20s linear infinite" x="270" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT4 20s linear infinite" x="288" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT5 20s linear infinite" x="216" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT6 20s linear infinite" x="234" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT7 20s linear infinite" x="252" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT8 20s linear infinite" x="270" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
-<rect style="animation:exT9 20s linear infinite" x="288" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
-<g style="animation:exCh 40s linear infinite">
+<!-- Palette en cours de filmage sur la filmeuse -->
+<g class="ex-pal-tourne">
+  <rect x="118" y="130" width="18" height="10" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+</g>
+<!-- Camion qui recule au quai puis reste fixe -->
+<g class="ex-camion">
+  <rect x="208" y="62" width="104" height="100" fill="#e6e9ed" stroke="#004aad" stroke-width="2"/>
+  <text x="260" y="54" text-anchor="middle" font-size="8" font-weight="700" fill="#004aad">CAMION DE DÉPART</text>
+  <circle cx="226" cy="166" r="6" fill="#111"/>
+  <circle cx="250" cy="166" r="6" fill="#111"/>
+  <circle cx="290" cy="166" r="6" fill="#111"/>
+  <!-- 10 palettes qui apparaissent côte à côte (5 en bas, 5 en haut) -->
+  <rect class="ex-t1" x="216" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t2" x="234" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t3" x="252" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t4" x="270" y="136" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t5" x="288" y="136" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t6" x="216" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t7" x="234" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t8" x="252" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t9" x="270" y="112" width="16" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <rect class="ex-t10" x="288" y="112" width="16" height="12" fill="#e8c98f" stroke="#8a6a3f" stroke-width=".5"/>
+</g>
+<!-- Chargeur (chariot) qui fait les 10 allers-retours -->
+<g class="ex-chargeur">
   <circle cx="16" cy="158" r="4" fill="#111"/>
   <circle cx="36" cy="158" r="4" fill="#111"/>
-  <rect x="10" y="134" width="30" height="14" fill="#004aad"/>
+  <rect x="10" y="134" width="30" height="14" fill="#004aad" rx="2"/>
   <circle cx="20" cy="126" r="5" fill="#f0c08a"/>
   <rect x="16" y="131" width="8" height="5" fill="#ffcc00"/>
   <rect x="42" y="104" width="4" height="44" fill="#555"/>
   <rect x="44" y="146" width="20" height="3" fill="#333"/>
-  <rect style="animation:exPal 40s linear infinite" x="44" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
+  <!-- palette portée par le chargeur -->
+  <rect class="ex-pal-portee" x="44" y="134" width="20" height="12" fill="#d9b87c" stroke="#8a6a3f" stroke-width=".5"/>
 </g>
-<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Expédition : la palette est filmée puis chargée</text>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Expédition : 10 palettes filmées puis chargées côte à côte</text>
 </svg>
 </div>
-
+    
   <div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
     <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
     <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
