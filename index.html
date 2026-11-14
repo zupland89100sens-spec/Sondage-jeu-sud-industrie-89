@@ -112,7 +112,7 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 </header>
 <p style="margin:12px 0 0 0; color:#fff; font-size:.95rem;">Tes droits en quelques clics, sans rien à installer. Le sondage est anonyme.</p>
 
-  <div class="card" style="text-align:center; padding:12px;">
+<div class="card" style="text-align:center; padding:12px;">
   <p style="margin:0 0 8px 0; font-weight:700;">🔊 Message d'accueil</p>
   <button id="vo-play" onclick="voixOff()">▶️ Écouter le message</button>
   <button id="vo-mute" onclick="voixStop()" style="background:var(--blue); display:none;">🔇 Couper la voix</button>
@@ -156,7 +156,7 @@ function voixOff(){
   speechSynthesis.speak(u);
 }
 
-// Coupe la voix dès qu'une vidéo se lance (accueil, onglet Vidéos, lecteur plein écran)
+// Coupe la voix dès qu'une vidéo se lance
 document.addEventListener("play", (e) => {
   if(e.target.tagName === "VIDEO") voixStop();
 }, true);
@@ -298,8 +298,23 @@ body.grand{font-size:19px}
 
 <!-- ONGLET 1 : MES DROITS -->
 <section id="droits">
-  <div class="card">
+  <div class="card" style="padding:14px;">
+    <input type="text" id="recherche-droits" placeholder="🔎 Rechercher dans mes droits (ex : congés, arrêt maladie)" style="width:100%; padding:14px; border-radius:8px; border:2px solid var(--blue); font:inherit; background:var(--surface); color:var(--ink);">
+  </div>
 
+  <div class="card" style="padding:16px;">
+    <h2 style="border:none; margin:0 0 10px 0; padding:0;">🧭 Quelle est ma situation ?</h2>
+    <div id="sit-etape1">
+      <button class="opt" onclick="sitCategorie('securite')">🦺 Sécurité</button>
+      <button class="opt" onclick="sitCategorie('conges')">✈️ Congés et temps de travail</button>
+      <button class="opt" onclick="sitCategorie('droits')">⚖️ Droits et sanctions</button>
+    </div>
+    <div id="sit-etape2" hidden></div>
+    <div id="sit-reponse" class="expl" hidden></div>
+    <button id="sit-retour" onclick="sitRetour()" hidden style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue);">⬅️ Retour aux catégories</button>
+  </div>
+
+  <div class="card">
 <div class="card" style="text-align:center; padding:14px;">
 <style>
 @keyframes eCam{0%{transform:translateX(160px)}9%,90%{transform:translateX(0)}100%{transform:translateX(160px)}}
@@ -750,7 +765,7 @@ body.grand{font-size:19px}
 <text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Approvisionnement : le cariste alimente le picking</text>
 </svg>
 </div>
-    
+
 <div class="card" style="text-align:center; padding:14px;">
 <style>
 @keyframes pkPath{0%{transform:translate(0px,0px)}18%{transform:translate(0px,0px)}30%{transform:translate(100px,0px)}48%{transform:translate(100px,0px)}60%{transform:translate(200px,0px)}78%{transform:translate(200px,0px)}90%{transform:translate(0px,0px)}100%{transform:translate(0px,0px)}}
@@ -865,103 +880,100 @@ body.grand{font-size:19px}
 </svg>
 </div>
 
+  <div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
+    <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
+    <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
+    <button onclick="document.querySelector('.tab[data-t=quiz]').click()">🎮 Le quiz</button>
+    <button onclick="document.querySelector('.tab[data-t=sondage]').click()">📊 Le sondage</button>
+  </div>
 
-  
-    <div class="card" style="background:var(--bg); margin-bottom:16px; text-align:center;">
-      <p style="margin:0 0 10px 0; font-weight:700;">👋 Première fois ici ? Commence par :</p>
-      <button onclick="document.querySelector('.tab[data-t=victoires]').click()">🏆 Nos victoires</button>
-      <button onclick="document.querySelector('.tab[data-t=quiz]').click()">🎮 Le quiz</button>
-      <button onclick="document.querySelector('.tab[data-t=sondage]').click()">📊 Le sondage</button>
-    </div>
+  <div class="droit-item">
+    <h3>🚨 Convocation par la direction</h3>
+    <p>Tu as le droit d'être accompagné par un élu du personnel. L'employeur doit te laisser un délai de 5 jours ouvrables entre la convocation et l'entretien.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006900850" target="_blank" rel="noopener">📖 Article L1232-2 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>🚨 Convocation par la direction</h3>
-      <p>Tu as le droit d'être accompagné par un élu du personnel. L'employeur doit te laisser un délai de 5 jours ouvrables entre la convocation et l'entretien.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006900850" target="_blank" rel="noopener">📖 Article L1232-2 du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>🤒 Arrêt maladie</h3>
+    <p>Préviens l'employeur dans les 48h. Tu acquiers des congés payés pendant ton arrêt (depuis la loi de 2024). Tu peux être contrôlé par la Sécurité Sociale.</p>
+  </div>
 
-    <div class="droit-item">
-      <h3>🤒 Arrêt maladie</h3>
-      <p>Préviens l'employeur dans les 48h. Tu acquiers des congés payés pendant ton arrêt (depuis la loi de 2024). Tu peux être contrôlé par la Sécurité Sociale.</p>
-    </div>
+  <div class="droit-item">
+    <h3>⏱️ Heures supplémentaires</h3>
+    <p>Elles sont majorées de 25% pour les 8 premières heures, puis 50%. L'employeur peut les imposer dans la limite du contingent annuel (220h à défaut d'accord).</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006902474" target="_blank" rel="noopener">📖 Article L3121-28 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>⏱️ Heures supplémentaires</h3>
-      <p>Elles sont majorées de 25% pour les 8 premières heures, puis 50%. L'employeur peut les imposer dans la limite du contingent annuel (220h à défaut d'accord).</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006902474" target="_blank" rel="noopener">📖 Article L3121-28 du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>🚫 Harcèlement moral ou sexuel</h3>
+    <p>C'est interdit. Si tu en es victime, tu peux alerter le CSE, l'inspection du travail, ou nous contacter directement. La direction a une obligation de protection.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006900709" target="_blank" rel="noopener">📖 Article L1152-1 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>🚫 Harcèlement moral ou sexuel</h3>
-      <p>C'est interdit. Si tu en es victime, tu peux alerter le CSE, l'inspection du travail, ou nous contacter directement. La direction a une obligation de protection.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006900709" target="_blank" rel="noopener">📖 Article L1152-1 du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>🦺 Sécurité et EPI</h3>
+    <p>L'employeur doit te fournir des Équipements de Protection Individuelle (EPI) adaptés et gratuits. Tu as un droit de retrait si tu constates un danger grave et imminent.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000035640828" target="_blank" rel="noopener">📖 Article R4323-1 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>🦺 Sécurité et EPI</h3>
-      <p>L'employeur doit te fournir des Équipements de Protection Individuelle (EPI) adaptés et gratuits. Tu as un droit de retrait si tu constates un danger grave et imminent.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000035640828" target="_blank" rel="noopener">📖 Article R4323-1 du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>🚜 Prise de poste avec un chariot automoteur</h3>
+    <p>Avant toute utilisation d'un chariot (transpalette, gerbeur, CACES), tu dois avoir reçu une formation adéquate et une autorisation de conduite écrite délivrée par l'employeur. Sans cette autorisation, tu ne dois pas conduire l'engin.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006178145" target="_blank" rel="noopener">📖 Articles R4323-1 et suivants du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>🚜 Prise de poste avec un chariot automoteur</h3>
-      <p>Avant toute utilisation d'un chariot (transpalette, gerbeur, CACES), tu dois avoir reçu une formation adéquate et une autorisation de conduite écrite délivrée par l'employeur. Sans cette autorisation, tu ne dois pas conduire l'engin.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006178145" target="_blank" rel="noopener">📖 Articles R4323-1 et suivants du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>🛠️ Vérification et anomalies des chariots</h3>
+    <p>Les équipements de travail doivent être vérifiés périodiquement (VGP) et maintenus en bon état. Si tu constates une anomalie (frein, direction, avertisseur, fourche…), tu dois la signaler et l'engin doit être consigné. Tu ne dois jamais utiliser un chariot défectueux : c'est la responsabilité de l'employeur.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006178145" target="_blank" rel="noopener">📖 Articles R4323-1 et suivants du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>🛠️ Vérification et anomalies des chariots</h3>
-      <p>Les équipements de travail doivent être vérifiés périodiquement (VGP) et maintenus en bon état. Si tu constates une anomalie (frein, direction, avertisseur, fourche…), tu dois la signaler et l'engin doit être consigné. Tu ne dois jamais utiliser un chariot défectueux : c'est la responsabilité de l'employeur.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006178145" target="_blank" rel="noopener">📖 Articles R4323-1 et suivants du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>🚸 Circulation et signalétique en entrepôt</h3>
+    <p>Les zones de circulation piétons et engins doivent être séparées et signalées. La signalétique doit être visible et cohérente avec les cheminements réels. Si un stationnement de chariot crée un danger, tu peux alerter le CSE et exercer ton droit de retrait en cas de danger grave et imminent.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006178145" target="_blank" rel="noopener">📖 Articles R4224-1 et suivants du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>🚸 Circulation et signalétique en entrepôt</h3>
-      <p>Les zones de circulation piétons et engins doivent être séparées et signalées. La signalétique doit être visible et cohérente avec les cheminements réels. Si un stationnement de chariot crée un danger, tu peux alerter le CSE et exercer ton droit de retrait en cas de danger grave et imminent.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006178145" target="_blank" rel="noopener">📖 Articles R4224-1 et suivants du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>📋 Prise de poste : vérifier avant de commencer</h3>
+    <p>Avant chaque prise de poste, vérifie : l'état du chariot (freins, avertisseur, gyrophare, fourche, ceinture), la signalétique de ton allée, la propreté et le dégagement des zones de circulation. Signale toute anomalie par écrit (main courante, cahier de consignes, CSE).</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006178145" target="_blank" rel="noopener">📖 Voir le Code du travail sur Légifrance</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>📋 Prise de poste : vérifier avant de commencer</h3>
-      <p>Avant chaque prise de poste, vérifie : l'état du chariot (freins, avertisseur, gyrophare, fourche, ceinture), la signalétique de ton allée, la propreté et le dégagement des zones de circulation. Signale toute anomalie par écrit (main courante, cahier de consignes, CSE).</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006072050/LEGISCTA000006178145" target="_blank" rel="noopener">📖 Voir le Code du travail sur Légifrance</a>
-    </div>
+  <div class="droit-item">
+    <h3>✈️ Congés payés</h3>
+    <p>2,5 jours ouvrables par mois travaillé (soit 5 semaines par an). Le départ en congés doit être validé par la direction en respectant l'ordre des départs.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006902611" target="_blank" rel="noopener">📖 Article L3141-3 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>✈️ Congés payés</h3>
-      <p>2,5 jours ouvrables par mois travaillé (soit 5 semaines par an). Le départ en congés doit être validé par la direction en respectant l'ordre des départs.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006902611" target="_blank" rel="noopener">📖 Article L3141-3 du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>📬 Remise en main propre d'un courrier</h3>
+    <p>Si l'on te remet une lettre en main propre (avertissement, convocation…), demande un exemplaire daté et signé et garde une copie. Une lettre de licenciement doit être envoyée en recommandé avec accusé de réception.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006900901" target="_blank" rel="noopener">📖 Article L1232-6 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>📬 Remise en main propre d'un courrier</h3>
-      <p>Si l'on te remet une lettre en main propre (avertissement, convocation…), demande un exemplaire daté et signé et garde une copie. Une lettre de licenciement doit être envoyée en recommandé avec accusé de réception.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006900901" target="_blank" rel="noopener">📖 Article L1232-6 du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>⚠️ Danger grave et imminent</h3>
+    <p>Tu peux exercer ton droit de retrait : quitter ton poste sans sanction, après avoir immédiatement prévenu l'employeur ou son représentant.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006903205" target="_blank" rel="noopener">📖 Article L4131-1 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>⚠️ Danger grave et imminent</h3>
-      <p>Tu peux exercer ton droit de retrait : quitter ton poste sans sanction, après avoir immédiatement prévenu l'employeur ou son représentant.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006903205" target="_blank" rel="noopener">📖 Article L4131-1 du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>🧾 Fiche de paie</h3>
+    <p>Ton employeur doit te remettre un bulletin de paie à chaque versement de salaire. Vérifie-le : salaire, heures, cotisations.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033024363" target="_blank" rel="noopener">📖 Article L3243-2 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>🧾 Fiche de paie</h3>
-      <p>Ton employeur doit te remettre un bulletin de paie à chaque versement de salaire. Vérifie-le : salaire, heures, cotisations.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033024363" target="_blank" rel="noopener">📖 Article L3243-2 du Code du travail</a>
-    </div>
+  <div class="droit-item">
+    <h3>⏳ Période d'essai</h3>
+    <p>Pour un ouvrier en CDI, elle est en général limitée à 2 mois. Elle doit figurer dans ton contrat.</p>
+    <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019017133" target="_blank" rel="noopener">📖 Article L1221-19 du Code du travail</a>
+  </div>
 
-    <div class="droit-item">
-      <h3>⏳ Période d'essai</h3>
-      <p>Pour un ouvrier en CDI, elle est en général limitée à 2 mois. Elle doit figurer dans ton contrat.</p>
-      <a class="lf-link" href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000019017133" target="_blank" rel="noopener">📖 Article L1221-19 du Code du travail</a>
-    </div>
-
-    <a href="tel:0626711687" class="btn contact-btn">📞 M'appeler directement (06 26 71 16 87)</a>
-    <a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:10px;">✉️ Écrire au syndicat</a>
+  <a href="tel:0626711687" class="btn contact-btn">📞 M'appeler directement (06 26 71 16 87)</a>
+  <a href="mailto:sud.industrie.ele89@gmail.com?subject=Question%20depuis%20l%27espace%20salari%C3%A9" class="btn" style="background:var(--blue); margin-top:10px;">✉️ Écrire au syndicat</a>
   </div>
 </section>
-
 <!-- ONGLET 2 : NOS VICTOIRES -->
 <section id="victoires" hidden>
   <div class="card">
@@ -1268,7 +1280,6 @@ body.grand{font-size:19px}
     <p class="note">Pour une situation personnelle, utilise le bouton « Écrire au syndicat » ou appelle le 06 26 71 16 87.</p>
   </div>
 </section>
-
 <!-- ONGLET JEU -->
 <section id="jeu" hidden>
   <div class="card" style="text-align:center;">
@@ -1525,7 +1536,7 @@ function ouvrirLightbox(src){
   document.body.appendChild(lb);
 }
 
-// ===== VIDÉOS (liste écrite dans le code) =====
+// ===== VIDÉOS =====
 const VIDEOS = [
   "video1.mp4",
   "video2.mp4",
@@ -1579,14 +1590,16 @@ function ouvrirVideo(src){
   document.body.appendChild(lb);
 }
 
-// ===== RECHERCHE DANS MES DROITS =====
+// ===== RECHERCHE DANS MES DROITS (protégée) =====
 const rechercheDroits = $("recherche-droits");
-rechercheDroits.addEventListener("input", () => {
-  const terme = rechercheDroits.value.trim().toLowerCase();
-  document.querySelectorAll("#droits .droit-item").forEach(item => {
-    item.hidden = terme !== "" && !item.textContent.toLowerCase().includes(terme);
+if (rechercheDroits) {
+  rechercheDroits.addEventListener("input", () => {
+    const terme = rechercheDroits.value.trim().toLowerCase();
+    document.querySelectorAll("#droits .droit-item").forEach(item => {
+      item.hidden = terme !== "" && !item.textContent.toLowerCase().includes(terme);
+    });
   });
-});
+}
 
 // ===== MESSAGE DE BIENVENUE (une seule fois) =====
 if(!localStorage.getItem("sudBienvenue")){
@@ -1603,7 +1616,7 @@ setInterval(() => {
   if(el) el.textContent = $("timer").textContent;
 }, 1000);
 
-// ===== QUESTIONS (formulaire Formspree séparé du sondage) =====
+// ===== QUESTIONS =====
 const QUESTIONS_URL = "https://formspree.io/f/xyewzday";
 $("btn-question").onclick = async () => {
   const btn = $("btn-question");
@@ -1996,7 +2009,7 @@ function sitCategorie(cat){
 }
 function sitVoirFiche(i){
   const titre = SITUATIONS[sitCat].items[i].f;
-  if(rechercheDroits.value !== ""){
+  if(rechercheDroits && rechercheDroits.value !== ""){
     rechercheDroits.value = "";
     rechercheDroits.dispatchEvent(new Event("input"));
   }
