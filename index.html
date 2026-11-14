@@ -112,6 +112,64 @@ section:not([hidden]){animation:fadeUp .5s ease both}
 </header>
 <p style="margin:12px 0 0 0; color:#fff; font-size:.95rem;">Tes droits en quelques clics, sans rien à installer. Le sondage est anonyme.</p>
 
+  <div class="card" style="text-align:center; padding:12px;">
+  <p style="margin:0 0 8px 0; font-weight:700;">🔊 Message d'accueil</p>
+  <button id="vo-play" onclick="voixOff()">▶️ Écouter le message</button>
+  <button id="vo-mute" onclick="voixStop()" style="background:var(--blue); display:none;">🔇 Couper la voix</button>
+  <p id="vo-etat" class="note"></p>
+</div>
+<script>
+const VOIX_TEXTE = "Bonjour chère collègue, bonjour cher collègue. Nous développons en ce moment une application pour améliorer la communication entre vous et le syndicat Sud Industrie ELE. Vous y trouverez vos droits, un parcours pour trouver votre situation, des photos et des vidéos du terrain, et une boîte pour poser vos questions. Nous sommes ouverts à toutes vos suggestions. Ce site est là pour vous aider, mais il ne remplace ni les échanges avec les élus, ni le syndicat, ni le Code du travail. Pour votre situation personnelle, contactez-nous directement. Merci pour votre confiance.";
+
+function voixMaj(etat, actif){
+  document.getElementById("vo-etat").textContent = etat;
+  document.getElementById("vo-mute").style.display = actif ? "block" : "none";
+  document.getElementById("vo-play").style.display = actif ? "none" : "block";
+}
+
+function voixChoisir(){
+  const voix = speechSynthesis.getVoices();
+  return voix.find(v => v.lang.startsWith("fr") && /female|femme|woman|amélie|audrey|marie|julie|sophie|virginie|anne|aurélie|léa|lea/i.test(v.name))
+    || voix.find(v => v.lang.startsWith("fr"));
+}
+
+function voixStop(){
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  voixMaj("", false);
+}
+
+function voixOff(){
+  if(!("speechSynthesis" in window)){
+    document.getElementById("vo-etat").textContent = "Ton téléphone ne permet pas la lecture vocale.";
+    return;
+  }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(VOIX_TEXTE);
+  u.lang = "fr-FR";
+  u.rate = 0.9;
+  u.pitch = 1.15;
+  const v = voixChoisir();
+  if(v) u.voice = v;
+  voixMaj("Lecture en cours…", true);
+  u.onend = () => voixMaj("", false);
+  u.onerror = () => voixMaj("", false);
+  speechSynthesis.speak(u);
+}
+
+// Coupe la voix dès qu'une vidéo se lance (accueil, onglet Vidéos, lecteur plein écran)
+document.addEventListener("play", (e) => {
+  if(e.target.tagName === "VIDEO") voixStop();
+}, true);
+
+// Premier toucher de l'écran : lance le message une seule fois par téléphone
+if(!localStorage.getItem("sudVoixVue")){
+  document.addEventListener("click", function premierClic(){
+    localStorage.setItem("sudVoixVue", "1");
+    voixOff();
+  }, { once: true });
+}
+</script>
+
 <div id="bienvenue" class="card" hidden style="background:var(--yellow); color:#000; text-align:center;">
   <p style="margin:0 0 10px 0; font-weight:700;">👋 Bienvenue ! Tes droits sont à un clic, et le sondage est anonyme.</p>
   <button onclick="fermerBienvenue()">Compris</button>
