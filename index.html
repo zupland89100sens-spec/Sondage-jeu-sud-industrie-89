@@ -1009,10 +1009,12 @@ function voixOff(long){
 }
 // Premier clic sur la page : message d'accueil (une seule fois)
 if(!localStorage.getItem("sudVoixVue")){
-  document.addEventListener("click", function premierClic(){
+  document.addEventListener("click", function premierClic(e){
+    if(localStorage.getItem("sudVoixVue")) return;
+    if(e.target.closest && e.target.closest("#mus-btn")) return;
     localStorage.setItem("sudVoixVue", "1");
     voixOff(false);
-  }, { once: true });
+  });
 }
 
 // ==================== MUSIQUE ====================
