@@ -376,6 +376,7 @@ body.grand{font-size:19px}
   <button class="tab" data-t="videos" aria-pressed="false">🎬 Vidéos</button>
   <button class="tab" data-t="questions" aria-pressed="false">💬 Questions</button>
   <button class="tab" data-t="jeu" aria-pressed="false">🎯 Jeu</button>
+  <button class="tab" data-t="flash" aria-pressed="false">📸 Flash Sécurité</button>
 </div>
 <div class="tabs" style="grid-template-columns:1fr; margin-top:-8px; margin-bottom:16px;">
   <button class="tab" data-t="qrcode" aria-pressed="false" style="border-color:var(--blue); color:var(--blue);">📱 Afficher le QR Code</button>
@@ -855,7 +856,47 @@ body.grand{font-size:19px}
       <button onclick="jeuLancer()">🔄 Rejouer</button>
       <button onclick="document.querySelector('.tab[data-t=droits]').click()" style="background:var(--bg); color:var(--ink); border:2px solid var(--blue); box-shadow:none;">📚 Revoir mes droits</button>
     </div>
+  <!-- SECTION FLASH SÉCURITÉ -->
+<div id="flash" class="tab-content" style="display: none;">
+  <div style="background-color: #fff; border-radius: 12px; padding: 20px; margin: 20px auto; max-width: 620px; box-shadow: 0 2px 8px rgba(0,0,0,.08); font-family: Arial, sans-serif;">
     
+    <h2 style="color: #c8102e; text-align: center; margin-top: 0; font-size: 1.6rem; text-transform: uppercase;">📸 Flash Sécurité</h2>
+    
+    <p style="text-align: center; font-size: 1.15rem; font-weight: bold; color: #16181d; margin-bottom: 5px;">
+      Vous voyez un danger ? Une photo vaut mille mots.
+    </p>
+    <p style="text-align: center; font-size: 0.95rem; color: #555; margin-top: 0; margin-bottom: 20px;">
+      Ne laissez pas passer une situation à risque. Prenez une photo, décrivez-la, et envoyez-la nous en un clic. <strong>Ensemble, protégeons notre terrain.</strong>
+    </p>
+
+    <div style="background-color: #fff3cd; border: 2px solid #ffcc00; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #856404;">
+      <strong style="display: block; margin-bottom: 5px; font-size: 1rem;">⚠️ Rappel avant de prendre la photo :</strong>
+      <ul style="margin: 0; padding-left: 20px;">
+        <li>Prenez <strong>uniquement le danger ou l'anomalie</strong> (ex: la palette, le câble, la flaque).</li>
+        <li><strong>Ne photographiez pas de visage</strong> de collègue. Si c'est impossible, floutez-le.</li>
+        <li>Ne prenez pas de documents confidentiels ou de données clients.</li>
+      </ul>
+    </div>
+    
+    <form action="https://formspree.io/f/mkjrjznv" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
+      
+      <div>
+        <label for="photo-upload" style="font-weight: bold; display: block; margin-bottom: 5px;">1. Choisir une photo (ou en prendre une) :</label>
+        <input type="file" id="photo-upload" name="photo" accept="image/*" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9;">
+        <small style="color: #666; display: block; margin-top: 5px;">Sur téléphone, un menu s'ouvrira pour choisir entre l'appareil photo et votre galerie.</small>
+      </div>
+      
+      <div>
+        <label for="photo-desc" style="font-weight: bold; display: block; margin-bottom: 5px;">2. Décrire le problème (où et quoi ?) :</label>
+        <textarea id="photo-desc" name="description" rows="4" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: Arial, sans-serif;" placeholder="Ex: Palette qui bloque la sortie de secours au quai 3."></textarea>
+      </div>
+
+      <button type="submit" style="display: block; width: 100%; padding: 14px; border: 0; border-radius: 8px; background: #c8102e; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 10px;">📧 Envoyer le signalement</button>
+    </form>
+    
+  </div>
+</div>
+<!-- FIN SECTION FLASH SÉCURITÉ -->  
   </div>
 <!-- BANNIÈRE TEST JEU V4 -->
 <div style="background-color: #ffcc00; border: 3px solid #16181d; border-radius: 8px; padding: 15px; margin: 20px auto; max-width: 800px; font-family: Arial, sans-serif; color: #16181d; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: clignoteBanniere 1.5s infinite alternate;">
@@ -880,47 +921,7 @@ body.grand{font-size:19px}
 </style>
 <!-- FIN BANNIÈRE -->
 </section>
-  <!-- RUBRIQUE FLASH SÉCURITÉ -->
-<div style="background-color: #fff; border-radius: 12px; padding: 20px; margin: 20px auto; max-width: 620px; box-shadow: 0 2px 8px rgba(0,0,0,.08); font-family: Arial, sans-serif;">
-  
-  <h2 style="color: #c8102e; text-align: center; margin-top: 0; font-size: 1.6rem; text-transform: uppercase;">📸 Flash Sécurité</h2>
-  
-  <!-- Phrase d'accroche -->
-  <p style="text-align: center; font-size: 1.15rem; font-weight: bold; color: #16181d; margin-bottom: 5px;">
-    Vous voyez un danger ? Une photo vaut mille mots.
-  </p>
-  <p style="text-align: center; font-size: 0.95rem; color: #555; margin-top: 0; margin-bottom: 20px;">
-    Ne laissez pas passer une situation à risque. Prenez une photo, décrivez-la, et envoyez-la nous en un clic. <strong>Ensemble, protégeons notre terrain.</strong>
-  </p>
 
-  <!-- Rappel sur les photos -->
-  <div style="background-color: #fff3cd; border: 2px solid #ffcc00; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #856404;">
-    <strong style="display: block; margin-bottom: 5px; font-size: 1rem;">⚠️ Rappel avant de prendre la photo :</strong>
-    <ul style="margin: 0; padding-left: 20px;">
-      <li>Prenez <strong>uniquement le danger ou l'anomalie</strong> (ex: la palette, le câble, la flaque).</li>
-      <li><strong>Ne photographiez pas de visage</strong> de collègue. Si c'est impossible, floutez-le.</li>
-      <li>Ne prenez pas de documents confidentiels ou de données clients.</li>
-    </ul>
-  </div>
-  
-  <!-- Le formulaire Formspree -->
-  <form action="https://formspree.io/f/mkjrjznv" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
-    
-    <div>
-      <label for="photo-upload" style="font-weight: bold; display: block; margin-bottom: 5px;">1. Prendre ou choisir une photo :</label>
-      <input type="file" id="photo-upload" name="photo" accept="image/*" capture="environment" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9;">
-    </div>
-    
-    <div>
-      <label for="photo-desc" style="font-weight: bold; display: block; margin-bottom: 5px;">2. Décrire le problème (où et quoi ?) :</label>
-      <textarea id="photo-desc" name="description" rows="4" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: Arial, sans-serif;" placeholder="Ex: Palette qui bloque la sortie de secours au quai 3."></textarea>
-    </div>
-
-    <button type="submit" style="display: block; width: 100%; padding: 14px; border: 0; border-radius: 8px; background: #c8102e; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 10px;">📧 Envoyer le signalement</button>
-  </form>
-  
-</div>
-<!-- FIN FLASH SÉCURITÉ -->
 <!-- ONGLET QR CODE -->
 <section id="qrcode" hidden>
   <div class="card" style="text-align:center;">
