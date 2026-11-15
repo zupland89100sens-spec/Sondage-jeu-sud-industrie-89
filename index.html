@@ -263,6 +263,13 @@ body.grand{font-size:19px}
   <h2 style="border:none; margin:0 0 8px 0; padding:0;">📢 Actualités</h2>
   <p style="margin:0 0 6px 0;"><strong>📅 Prochaine réunion CSE : <span class="reglage" data-r="cse"></span></strong></p>
   <p style="margin:0; font-size:.9rem; color:var(--mute);">Venez poser vos questions, et signalez-nous les problèmes sur le terrain.</p>
+<div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">
+  <p style="margin:0 0 6px 0; font-weight:700;">💬 Pose ta question avant la réunion</p>
+  <p class="note" style="text-align:left; margin-top:0;">Tu peux écrire ce que tu veux demander au CSE. Pas de nom ni de numéro, et pas de noms de collègues ou de chefs.</p>
+  <textarea id="cse-question" rows="3" maxlength="500" placeholder="Ex : Quand seront remplacés les chariots en panne ?" class="champ-form"></textarea>
+  <button onclick="csesEnvoyer(this)" style="background:var(--blue);">📨 Envoyer ma question</button>
+  <p id="cse-msg" class="msg-err" hidden></p>
+</div>
 </div>
 
 <div class="card" style="margin-bottom:16px;">
@@ -1922,6 +1929,36 @@ function jeuPartager(canal){
   if(window.goatcounter) goatcounter.count({ path: "partage-jeu-" + canal, event: true });
 }
 jeuAjouterPartage();
+// ==================== QUESTIONS AVANT LA RÉUNION CSE ====================
+async function csesEnvoyer(btn){
+  const zone = $("cse-question"), msg = $("cse-msg");
+  const texte = zone.value.trim();
+  msg.hidden = true;
+  if(texte.length < 10){
+    msg.textContent = "Écris un peu plus ta question, quelques mots suffisent.";
+    msg.hidden = false;
+    return;
+  }
+  btn.disabled = true; btn.textContent = "Envoi en cours...";
+  try{
+    const r = await fetch(QUESTIONS_URL, {
+      method: "POST",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ question: texte, source: "question avant réunion CSE (" + REGLAGES.cse + ")" })
+    });
+    if(!r.ok) throw new Error();
+    zone.value = "";
+    msg.textContent = "✅ Merci ! Ta question sera posée en réunion.";
+    msg.style.background = "var(--success)";
+    msg.style.color = "#fff";
+    msg.style.borderLeftColor = "var(--success)";
+    msg.hidden = false;
+  }catch(err){
+    msg.textContent = "Oups, l'envoi n'a pas abouti. Vérifie ton réseau et réessaie.";
+    msg.hidden = false;
+  }
+  btn.disabled = false; btn.textContent = "📨 Envoyer ma question";
+}
 </script>
 
 <!-- BOUTONS FIXES -->
