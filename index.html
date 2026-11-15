@@ -997,7 +997,7 @@ function voixStop(){
 }
 function voixOff(long){
   if(!("speechSynthesis" in window)){ $("vo-etat").textContent = "Ton téléphone ne permet pas la lecture vocale."; return; }
-  musStop(); // point 3 : la voix coupe la musique
+    if(!$("musique").paused) musStop(); // la voix coupe la musique seulement si elle joue
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(long ? VOIX_LONG : VOIX_COURT);
   u.lang = "fr-FR"; u.rate = 0.9; u.pitch = 1.15;
