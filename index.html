@@ -2386,7 +2386,16 @@ function jeuPartager(canal){
   if(window.goatcounter) goatcounter.count({ path: "partage-jeu-" + canal, event: true });
 }
 jeuAjouterPartage();
+function voixMaj(etat, actif){
+  document.getElementById("vo-etat").textContent = etat;
+  document.getElementById("vo-mute").style.display = actif ? "block" : "none";
+  document.getElementById("vo-play").style.display = actif ? "none" : "block";
+  document.getElementById("vo-long").style.display = actif ? "none" : "block";
+  const flot = document.getElementById("vo-flottant");
+  if(flot) flot.hidden = !actif;
+}
 </script>
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(24px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
+<button id="vo-flottant" hidden onclick="voixStop()" aria-label="Couper la voix" style="position:fixed; left:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1rem; z-index:600; box-shadow:0 4px 10px rgba(0,0,0,.3); background:var(--blue);">🔇 Couper la voix</button>
 </body>
 </html>
