@@ -1028,8 +1028,8 @@ function musToggle(){
       $("mus-icone").textContent = "⏸️";
       $("mus-texte").textContent = "STOP";
       $("mus-etat").textContent = "🎶 Musique en cours. Touche le carré pour arrêter.";
-    }).catch(() => {
-      $("mus-etat").textContent = "La lecture a été bloquée. Touche encore le carré.";
+        }).catch(err => {
+      $("mus-etat").textContent = "Lecture impossible (" + err.name + "). Vérifie que le fichier Sud_Industrie__On_est_La_.mp3 est à côté de index.html.";
     });
   } else {
     musStop();
