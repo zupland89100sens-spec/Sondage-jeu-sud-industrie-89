@@ -215,11 +215,14 @@ body.grand{font-size:19px}
     <p style="margin:0; font-size:.95rem;">La cotisation syndicale ouvre droit à une <strong>réduction d'impôt</strong> du montant payé dans l'année. Une part importante de votre cotisation vous revient donc sous forme de baisse d'impôt. Vérifiez les modalités sur impots.gouv.fr ou auprès du syndicat.</p>
   </div>
 
+  <button onclick="ouvrirAdhesion()" style="background:var(--success);">📝 Remplir mon adhésion en ligne</button>
   <a href="Bulletin_adhesion_SI89_couleur.html" target="_blank" rel="noopener" class="btn" style="background:var(--yellow); color:#000;">📄 Ouvrir le bulletin d'adhésion</a>
   <a href="mailto:sud.industrie.ele89@gmail.com?subject=Adh%C3%A9sion%20Sud%20Industrie%20ELE&body=Bonjour,%20je%20souhaite%20adh%C3%A9rer%20au%20syndicat.%20Merci%20de%20me%20contacter." class="btn contact-btn" style="margin-top:8px;">✉️ Contacter votre syndicat par mail</a>
   <a href="tel:0626711687" class="btn" style="background:var(--blue); margin-top:8px;">📞 Appeler le 06 26 71 16 87</a>
 </div>
 
+<section id="adhesion" hidden>
+<button class="btn sec" onclick="fermerAdhesion()" style="background:var(--bg); color:var(--ink); border:2px solid var(--blue); margin-top:0;">⬅️ Retour à l'accueil</button>
 <!-- REMPLIR L'ADHÉSION EN LIGNE -->
 <div class="card" style="padding:16px;">
   <h2 style="border:none; margin:0 0 6px 0; padding:0; color:var(--blue);">📝 Remplir mon adhésion en ligne</h2>
@@ -259,6 +262,7 @@ body.grand{font-size:19px}
   <button onclick="adSoumettre()" style="background:var(--success);">✉️ Préparer mon mail</button>
 </div>
 
+</section>
 <div class="card" style="border-left:6px solid var(--acc); margin-bottom:16px;">
   <h2 style="border:none; margin:0 0 8px 0; padding:0;">📢 Actualités</h2>
   <p style="margin:0 0 6px 0;"><strong>📅 Prochaine réunion CSE : <span class="reglage" data-r="cse"></span></strong></p>
@@ -2111,6 +2115,26 @@ async function csesEnvoyer(btn){
     msg.hidden = false;
   }
   btn.disabled = false; btn.textContent = "📨 Envoyer ma question";
+}
+// ==================== PAGE ADHÉSION SÉPARÉE ====================
+function ouvrirAdhesion(){
+  const main = document.querySelector("main");
+  Array.from(main.children).forEach(c => {
+    if(c.tagName === "HEADER" || c.id === "adhesion") return;
+    c.dataset.prevHidden = c.hidden ? "1" : "";
+    c.hidden = true;
+  });
+  $("adhesion").hidden = false;
+  window.scrollTo(0, 0);
+}
+function fermerAdhesion(){
+  const main = document.querySelector("main");
+  Array.from(main.children).forEach(c => {
+    if(c.tagName === "HEADER" || c.id === "adhesion") return;
+    c.hidden = c.dataset.prevHidden === "1";
+  });
+  $("adhesion").hidden = true;
+  window.scrollTo(0, 0);
 }
 </script>
 <!-- BOUTONS FIXES -->
