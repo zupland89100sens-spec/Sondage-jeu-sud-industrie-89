@@ -154,21 +154,6 @@ body.grand{font-size:19px}
 .hs-flash{animation:jeuFlash .6s ease 2}
 @keyframes jeuFlash{0%{filter:none}50%{filter:drop-shadow(0 0 10px #2e7d32)}100%{filter:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* ==== STYLE CALME : animations réduites ==== */
-body,header,.bob,.logo-anime,.card h2,.q-img,.final-emoji,.btn-attire,.card-jeu-attire,.mus-fleche,.mus-carre,.card[style*="border-left:6px solid var(--acc)"]{animation:none!important}
-.card-jeu-attire{background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:0 2px 8px rgba(0,0,0,.04)!important}
-body{background:#f4f6fa!important}
-@media (prefers-color-scheme:dark){body{background:#121316!important}}
-/* ==== MENU D'ACCUEIL + BARRE DU BAS ==== */
-.menu-accueil{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 16px 0}
-.menu-btn{min-height:110px;padding:12px;border-radius:14px;border:2px solid var(--blue);background:var(--surface);color:var(--ink);font-size:2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;margin:0;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.menu-btn span{font-size:.95rem;font-weight:700;color:var(--blue)}
-.bnav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-top:2px solid var(--line);z-index:700;padding-bottom:env(safe-area-inset-bottom,0px)}
-.bnav button{width:100%;min-height:58px;margin:0;padding:6px 2px;border:0;border-radius:0;background:transparent;color:var(--mute);box-shadow:none;font-size:.7rem;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.bnav button i{font-style:normal;font-size:1.3rem}
-.bnav button.actif{color:var(--blue)}
-.bnav button:hover,.bnav button:active{transform:none;filter:none;box-shadow:none}
-body{padding-bottom:72px}
 </style>
 </head>
 <body>
@@ -178,14 +163,208 @@ body{padding-bottom:72px}
   <h1>SUD <span>INDUSTRIE</span> ELE</h1>
   <p class="sub"><span class="bob">✊</span> Votre Espace Salarié <span class="bob">🗳️</span></p>
 </header>
-<!-- MENU D'ACCUEIL -->
-<div class="menu-accueil">
-  <button class="menu-btn" onclick="allerGroupe('droits')">🛡️<span>Mes droits</span></button>
-  <button class="menu-btn" onclick="allerGroupe('entendre')">📣<span>Me faire entendre</span></button>
-  <button class="menu-btn" onclick="allerGroupe('jouer')">🎯<span>Jouer et apprendre</span></button>
-  <button class="menu-btn" onclick="allerGroupe('syndicat')">✊<span>Le syndicat</span></button>
+
+<!-- MUSIQUE : juste après l'en-tête, pas dedans -->
+<div class="card" style="text-align:center; padding:16px;">
+  <p style="margin:0 0 10px 0; font-weight:700;">🎵 Écoute notre musique !</p>
+  <div class="mus-zone">
+    <span class="mus-fleche">👉</span>
+    <button id="mus-btn" class="mus-carre" onclick="musToggle()" aria-label="Lancer ou arrêter la musique">
+      <span id="mus-icone" class="mus-icone">🎵</span>
+      <span id="mus-texte">CLICK !</span>
+    </button>
+    <span class="mus-fleche droite">👈</span>
+  </div>
+  <p id="mus-etat" class="note">Touche le carré pour lancer la musique.</p>
+</div>
+<audio id="musique" src="Sud_Industrie__On_est_La_.mp3" loop preload="none"></audio>
+
+<div id="bienvenue" class="card" hidden style="background:var(--yellow); color:#000; text-align:center;">
+  <p style="margin:0 0 10px 0; font-weight:700;">👋 Bienvenue ! Tes droits sont à un clic, et le sondage est anonyme.</p>
+  <button onclick="fermerBienvenue()">Compris</button>
 </div>
 
+<p style="margin:12px 0 0 0; color:var(--ink); font-size:.95rem; text-align:center;">Tes droits en quelques clics, sans rien à installer. Le sondage est anonyme.</p>
+
+<div class="card" style="text-align:center; padding:12px;">
+  <p style="margin:0 0 8px 0; font-weight:700;">🔊 Message d'accueil</p>
+  <button id="vo-play" onclick="voixOff(false)">▶️ Écouter le message</button>
+  <button id="vo-mute" onclick="voixStop()" style="background:var(--blue); display:none;">🔇 Couper la voix</button>
+  <button id="vo-long" onclick="voixOff(true)" style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue); margin-top:6px;">📜 Version longue</button>
+  <p id="vo-etat" class="note"></p>
+</div>
+
+<p style="text-align:center; font-weight:700; margin:0 0 14px 0;">🗳️ Élections professionnelles : <span id="compteur-accueil"></span></p>
+
+<!-- ADHÉSION -->
+<div class="card" style="border-left:6px solid var(--blue); padding:16px;">
+  <h2 style="border:none; margin:0 0 10px 0; padding:0; color:var(--blue);">💪 Adhérer à Sud Industrie ELE</h2>
+  <p style="margin:0 0 10px 0; font-size:.95rem;">Le syndicat, c'est vous. Plus on est nombreux, plus on pèse pour défendre vos salaires, vos conditions de travail et votre sécurité.</p>
+
+  <div style="background:var(--bg); border-radius:8px; padding:12px; margin-bottom:12px;">
+    <p style="margin:0 0 6px 0; font-weight:700;">💶 Le montant de la cotisation</p>
+    <p style="margin:0; font-size:.95rem;">
+      • <strong>1er collège</strong> : 10 € par mois, soit <strong>20 € à chaque prélèvement</strong><br>
+      • <strong>2e et 3e collèges</strong> : 12 € par mois, soit <strong>24 € à chaque prélèvement</strong>
+    </p>
+    <p style="margin:8px 0 0 0; font-size:.95rem;">📅 Le prélèvement se fait <strong>tous les 2 mois</strong>.</p>
+  </div>
+
+  <div style="background:var(--yellow); color:#000; border-radius:8px; padding:12px; margin-bottom:12px;">
+    <p style="margin:0 0 6px 0; font-weight:700;">🧾 Une cotisation qui revient en partie dans votre poche</p>
+    <p style="margin:0; font-size:.95rem;">La cotisation syndicale ouvre droit à une <strong>réduction d'impôt</strong> du montant payé dans l'année. Une part importante de votre cotisation vous revient donc sous forme de baisse d'impôt. Vérifiez les modalités sur impots.gouv.fr ou auprès du syndicat.</p>
+  </div>
+
+  <a href="Bulletin_adhesion_SI89_couleur.html" target="_blank" rel="noopener" class="btn" style="background:var(--yellow); color:#000;">📄 Ouvrir le bulletin d'adhésion</a>
+  <a href="mailto:sud.industrie.ele89@gmail.com?subject=Adh%C3%A9sion%20Sud%20Industrie%20ELE&body=Bonjour,%20je%20souhaite%20adh%C3%A9rer%20au%20syndicat.%20Merci%20de%20me%20contacter." class="btn contact-btn" style="margin-top:8px;">✉️ Contacter votre syndicat par mail</a>
+  <a href="tel:0626711687" class="btn" style="background:var(--blue); margin-top:8px;">📞 Appeler le 06 26 71 16 87</a>
+</div>
+
+<!-- REMPLIR L'ADHÉSION EN LIGNE -->
+<div class="card" style="padding:16px;">
+  <h2 style="border:none; margin:0 0 6px 0; padding:0; color:var(--blue);">📝 Remplir mon adhésion en ligne</h2>
+  <p class="note" style="text-align:left;">Remplis les champs, puis touche « Préparer mon mail ». Ton mail s'ouvre déjà complété : il ne reste qu'à l'envoyer.</p>
+
+  <input id="ad-nom" placeholder="Nom *" class="champ-form">
+  <input id="ad-prenom" placeholder="Prénom *" class="champ-form">
+  <input id="ad-adresse" placeholder="Adresse" class="champ-form">
+  <input id="ad-naissance" placeholder="Date de naissance (jj/mm/aaaa)" class="champ-form">
+  <input id="ad-tel" placeholder="Téléphone" class="champ-form">
+  <input id="ad-mail" placeholder="Mail" class="champ-form">
+  <input id="ad-entreprise" placeholder="Entreprise" class="champ-form">
+  <input id="ad-activite" placeholder="Activité professionnelle" class="champ-form">
+
+  <p style="margin:12px 0 4px 0; font-weight:700;">Collège *</p>
+  <label style="display:block; margin:4px 0;"><input type="radio" name="ad-college" value="1er"> 1er collège (10 € par mois)</label>
+  <label style="display:block; margin:4px 0;"><input type="radio" name="ad-college" value="2e et 3e"> 2e et 3e collèges (12 € par mois)</label>
+
+  <p style="margin:12px 0 4px 0; font-weight:700;">Qualification</p>
+  <label style="margin-right:12px;"><input type="radio" name="ad-qualif" value="Ouvrier"> Ouvrier</label>
+  <label style="margin-right:12px;"><input type="radio" name="ad-qualif" value="Employé"> Employé</label>
+  <label><input type="radio" name="ad-qualif" value="Cadre"> Cadre</label>
+
+  <p style="margin:12px 0 4px 0; font-weight:700;">Type de contrat</p>
+  <label style="margin-right:12px;"><input type="radio" name="ad-contrat" value="CDD"> CDD</label>
+  <label style="margin-right:12px;"><input type="radio" name="ad-contrat" value="CDI"> CDI</label>
+  <label><input type="radio" name="ad-contrat" value="Intérim"> Intérim</label>
+
+  <p style="margin:12px 0 4px 0; font-weight:700;">Mode de paiement</p>
+  <label style="margin-right:12px;"><input type="radio" name="ad-paiement" value="Chèque"> Chèque</label>
+  <label><input type="radio" name="ad-paiement" value="Virement"> Virement</label>
+
+  <input id="ad-fait" placeholder="Fait à" class="champ-form" style="margin-top:12px;">
+  <input id="ad-date" placeholder="Date (jj/mm/aaaa)" class="champ-form">
+
+  <p id="ad-err" class="msg-err" hidden></p>
+  <button onclick="adSoumettre()" style="background:var(--success);">✉️ Préparer mon mail</button>
+</div>
+
+<div class="card" style="border-left:6px solid var(--acc); margin-bottom:16px;">
+  <h2 style="border:none; margin:0 0 8px 0; padding:0;">📢 Actualités</h2>
+  <p style="margin:0 0 6px 0;"><strong>📅 Prochaine réunion CSE : <span class="reglage" data-r="cse"></span></strong></p>
+  <p style="margin:0; font-size:.9rem; color:var(--mute);">Venez poser vos questions, et signalez-nous les problèmes sur le terrain.</p>
+<div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">
+  <p style="margin:0 0 6px 0; font-weight:700;">💬 Pose ta question avant la réunion</p>
+  <p class="note" style="text-align:left; margin-top:0;">Tu peux écrire ce que tu veux demander au CSE. Pas de nom ni de numéro, et pas de noms de collègues ou de chefs.</p>
+  <textarea id="cse-question" rows="3" maxlength="500" placeholder="Ex : Quand seront remplacés les chariots en panne ?" class="champ-form"></textarea>
+  <button onclick="csesEnvoyer(this)" style="background:var(--blue);">📨 Envoyer ma question</button>
+  <p id="cse-msg" class="msg-err" hidden></p>
+</div>
+</div>
+
+<div class="card" style="margin-bottom:16px;">
+  <h2 style="border:none; margin:0 0 8px 0; padding:0;">🧭 Par où commencer ?</h2>
+  <p style="margin:0 0 6px 0;">🚨 <strong>Convocation, sanction, arrêt maladie, danger au travail :</strong> onglet Mes Droits, puis « Quelle est ma situation ? » en haut de la page.</p>
+  <p style="margin:0 0 6px 0;">🏆 <strong>Ce que le syndicat a obtenu :</strong> onglet Victoires.</p>
+  <p style="margin:0 0 6px 0;">📊 <strong>Tu veux faire entendre ta voix :</strong> onglet Sondage, il est anonyme.</p>
+  <p style="margin:0;">🎮 <strong>Tu veux tester tes connaissances :</strong> onglet Quiz.</p>
+</div>
+
+<div class="card" style="padding:12px; margin-bottom:16px;">
+  <p style="margin:0 0 8px 0; font-weight:700; text-align:center; color:#c8102e; font-size:1.2rem; text-transform:uppercase;">🚜 Prise de poste : CACES</p>
+  <video controls preload="none" playsinline style="width:100%; border-radius:8px; background:#000;">
+    <source src="videos/video5.mp4" type="video/mp4">
+    Ton téléphone ne peut pas afficher cette vidéo.
+  </video>
+</div>
+
+<div class="card" style="margin-bottom:16px;">
+  <h2 style="border:none; margin:0 0 10px 0; padding:0;">📅 Calendrier des échéances</h2>
+  <p style="margin:0 0 6px 0;">📌 <strong><span class="reglage" data-r="cse"></span></strong> : réunion du CSE.</p>
+  <p style="margin:0 0 6px 0;">🗳️ <strong><span class="reglage" data-r="election"></span></strong> : élections professionnelles.</p>
+  <p style="margin:0; font-size:.85rem; color:var(--mute);">Les échéances passées sont retirées régulièrement.</p>
+</div>
+
+<div class="card" style="padding:14px;">
+  <h2 style="border:none; margin:0 0 10px 0; padding:0;">📘 Infos utiles</h2>
+  <button style="width:auto; padding:10px 16px; min-height:0; background:var(--bg); color:var(--ink); border:2px solid var(--blue); box-shadow:none;" onclick="document.body.classList.toggle('grand')">🔠 Agrandir / réduire le texte</button>
+
+  <details class="inf-det" open>
+    <summary>🧭 Mode d'emploi en 3 étapes</summary>
+    <ol>
+      <li><strong>Lire ses droits :</strong> onglet Mes Droits, ou la carte « Quelle est ma situation ? ».</li>
+      <li><strong>Poser une question :</strong> onglet Questions, sans nom ni numéro.</li>
+      <li><strong>Répondre au sondage :</strong> onglet Sondage, il est anonyme.</li>
+    </ol>
+  </details>
+
+  <details class="inf-det">
+    <summary>📖 Lexique du terrain</summary>
+    <ul>
+      <li><strong>CSE :</strong> Comité social et économique, qui représente les salariés dans l'entreprise.</li>
+      <li><strong>CACES :</strong> certificat d'aptitude à la conduite en sécurité, obligatoire pour conduire un engin.</li>
+      <li><strong>VGP :</strong> vérification générale périodique des équipements de travail.</li>
+      <li><strong>Droit de retrait :</strong> possibilité de quitter son poste en cas de danger grave et imminent.</li>
+      <li><strong>Transstockeur :</strong> engin qui range et sort les palettes dans les alvéoles d'une allée de stock.</li>
+      <li><strong>Picking :</strong> zone où l'on prélève les produits pour préparer une commande.</li>
+      <li><strong>Convoyeur :</strong> rouleaux ou tapis qui déplacent les palettes ou les colis.</li>
+      <li><strong>Niveleur :</strong> plateforme qui relie le quai à la remorque du camion.</li>
+    </ul>
+  </details>
+
+  <details class="inf-det">
+    <summary>👥 Qui fait quoi</summary>
+    <ul>
+      <li><strong>Élus titulaires (Tony, Ilda) :</strong> siègent au CSE et portent vos questions en réunion.</li>
+      <li><strong>Élus suppléants (Mélanie, Christopher) :</strong> remplacent un titulaire absent.</li>
+      <li><strong>Délégué syndical (Aziz) :</strong> représente le syndicat dans l'entreprise.</li>
+      <li><strong>Pour une situation personnelle :</strong> utilisez le bouton « Écrire au syndicat » ou appelez le <span class="reglage" data-r="tel"></span>.</li>
+    </ul>
+  </details>
+
+  <details class="inf-det">
+    <summary>📅 Formations et permanences</summary>
+    <p>Aucune date renseignée pour le moment.</p>
+    <p><em>À compléter : date, heure, lieu, et personne à contacter.</em></p>
+  </details>
+
+  <details class="inf-det">
+    <summary>✅ Rappel avant la prise de poste</summary>
+    <p>Cochez au fur et à mesure. Rien n'est enregistré.</p>
+    <div class="inf-chk">
+      <label><input type="checkbox"> Casque et gilet portés</label>
+      <label><input type="checkbox"> Chaussures de sécurité en bon état</label>
+      <label><input type="checkbox"> Autorisation de conduite (CACES) à jour</label>
+      <label><input type="checkbox"> Freins, direction et avertisseur testés</label>
+      <label><input type="checkbox"> Fourches et chaîne sans anomalie</label>
+      <label><input type="checkbox"> Ceinture attachée</label>
+      <label><input type="checkbox"> Allée dégagée, signalétique visible</label>
+      <label><input type="checkbox"> Anomalie signalée par écrit si besoin</label>
+    </div>
+  </details>
+
+  <details class="inf-det">
+    <summary>🚑 En cas d'accident</summary>
+    <ol>
+      <li><strong>Protéger :</strong> mettre en sécurité la zone et arrêter l'engin.</li>
+      <li><strong>Alerter :</strong> 112 (urgence), 15 (SAMU) ou 18 (pompiers).</li>
+      <li><strong>Secourir :</strong> ne pas déplacer la victime sauf danger, et rester auprès d'elle.</li>
+      <li><strong>Prévenir</strong> le responsable, et noter les faits (heure, lieu, témoins).</li>
+    </ol>
+    <p><em>Trousse de secours : emplacement à compléter.</em></p>
+    <p><em>Sauveteur secouriste du travail (SST) : nom à compléter.</em></p>
+  </details>
+</div>
 
 <div class="tabs" role="group">
   <button class="tab" data-t="droits" aria-pressed="true">🛡️ Mes Droits</button>
@@ -678,6 +857,28 @@ body{padding-bottom:72px}
       <button onclick="document.querySelector('.tab[data-t=droits]').click()" style="background:var(--bg); color:var(--ink); border:2px solid var(--blue); box-shadow:none;">📚 Revoir mes droits</button>
     </div>  
   </div>
+<!-- BANNIÈRE TEST JEU V4 -->
+<div style="background-color: #ffcc00; border: 3px solid #16181d; border-radius: 8px; padding: 15px; margin: 20px auto; max-width: 800px; font-family: Arial, sans-serif; color: #16181d; box-shadow: 0 4px 10px rgba(0,0,0,0.2); animation: clignoteBanniere 1.5s infinite alternate;">
+  <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center;">
+    <span style="font-size: 2rem;">🛠️</span>
+    <div style="flex: 1; min-width: 250px; text-align: center;">
+      <strong style="display: block; font-size: 1.1rem; margin-bottom: 5px; text-transform: uppercase; color: #c8102e;">Testez le futur jeu sur la sécurité !</strong>
+      <p style="margin: 0; font-size: 0.95rem; line-height: 1.3;">Participez à l'amélioration de l'outil. Dites-nous ce que vous en pensez, proposez des modifications ou signalez un bug.</p>
+    </div>
+    <a href="jeu-terrain-v4.html" style="background-color: #16181d; color: #ffcc00; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 1rem; white-space: nowrap;">Tester le jeu</a>
+  </div>
+  <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #16181d; font-size: 0.9rem; text-align: center; font-weight: bold;">
+    📧 Retours et modifications : <a href="mailto:securite@votre-entreprise.com" style="color: #16181d; text-decoration: underline;">sud.industrie.ele89@gmail.com</a>
+  </div>
+</div>
+
+<style>
+  @keyframes clignoteBanniere {
+    0% { border-color: #16181d; box-shadow: 0 0 5px rgba(0,0,0,0.2); }
+    100% { border-color: #c8102e; box-shadow: 0 0 15px rgba(200, 16, 46, 0.6); }
+  }
+</style>
+<!-- FIN BANNIÈRE -->
 </section>
 <!-- ONGLET 10 : FLASH SÉCURITÉ -->
 <section id="flash" hidden>
@@ -734,208 +935,6 @@ body{padding-bottom:72px}
     <p class="note">Imprimez-le sur vos tracts pour que tout le monde accède aux droits et au sondage.</p>
   </div>
 </section>
-
-<!-- MUSIQUE : juste après l'en-tête, pas dedans -->
-<div class="card" style="text-align:center; padding:16px;">
-  <p style="margin:0 0 10px 0; font-weight:700;">🎵 Écoute notre musique !</p>
-  <div class="mus-zone">
-    <span class="mus-fleche">👉</span>
-    <button id="mus-btn" class="mus-carre" onclick="musToggle()" aria-label="Lancer ou arrêter la musique">
-      <span id="mus-icone" class="mus-icone">🎵</span>
-      <span id="mus-texte">CLICK !</span>
-    </button>
-    <span class="mus-fleche droite">👈</span>
-  </div>
-  <p id="mus-etat" class="note">Touche le carré pour lancer la musique.</p>
-</div>
-<audio id="musique" src="Sud_Industrie__On_est_La_.mp3" loop preload="none"></audio>
-
-<div id="bienvenue" class="card" hidden style="background:var(--yellow); color:#000; text-align:center;">
-  <p style="margin:0 0 10px 0; font-weight:700;">👋 Bienvenue ! Tes droits sont à un clic, et le sondage est anonyme.</p>
-  <button onclick="fermerBienvenue()">Compris</button>
-</div>
-
-<p style="margin:12px 0 0 0; color:var(--ink); font-size:.95rem; text-align:center;">Tes droits en quelques clics, sans rien à installer. Le sondage est anonyme.</p>
-
-<div class="card" style="text-align:center; padding:12px;">
-  <p style="margin:0 0 8px 0; font-weight:700;">🔊 Message d'accueil</p>
-  <button id="vo-play" onclick="voixOff(false)">▶️ Écouter le message</button>
-  <button id="vo-mute" onclick="voixStop()" style="background:var(--blue); display:none;">🔇 Couper la voix</button>
-  <button id="vo-long" onclick="voixOff(true)" style="background:var(--bg); color:var(--ink); box-shadow:none; border:2px solid var(--blue); margin-top:6px;">📜 Version longue</button>
-  <p id="vo-etat" class="note"></p>
-</div>
-
-<p style="text-align:center; font-weight:700; margin:0 0 14px 0;">🗳️ Élections professionnelles : <span id="compteur-accueil"></span></p>
-
-<!-- ADHÉSION -->
-<div class="card" style="border-left:6px solid var(--blue); padding:16px;">
-  <h2 style="border:none; margin:0 0 10px 0; padding:0; color:var(--blue);">💪 Adhérer à Sud Industrie ELE</h2>
-  <p style="margin:0 0 10px 0; font-size:.95rem;">Le syndicat, c'est vous. Plus on est nombreux, plus on pèse pour défendre vos salaires, vos conditions de travail et votre sécurité.</p>
-
-  <div style="background:var(--bg); border-radius:8px; padding:12px; margin-bottom:12px;">
-    <p style="margin:0 0 6px 0; font-weight:700;">💶 Le montant de la cotisation</p>
-    <p style="margin:0; font-size:.95rem;">
-      • <strong>1er collège</strong> : 10 € par mois, soit <strong>20 € à chaque prélèvement</strong><br>
-      • <strong>2e et 3e collèges</strong> : 12 € par mois, soit <strong>24 € à chaque prélèvement</strong>
-    </p>
-    <p style="margin:8px 0 0 0; font-size:.95rem;">📅 Le prélèvement se fait <strong>tous les 2 mois</strong>.</p>
-  </div>
-
-  <div style="background:var(--yellow); color:#000; border-radius:8px; padding:12px; margin-bottom:12px;">
-    <p style="margin:0 0 6px 0; font-weight:700;">🧾 Une cotisation qui revient en partie dans votre poche</p>
-    <p style="margin:0; font-size:.95rem;">La cotisation syndicale ouvre droit à une <strong>réduction d'impôt</strong> du montant payé dans l'année. Une part importante de votre cotisation vous revient donc sous forme de baisse d'impôt. Vérifiez les modalités sur impots.gouv.fr ou auprès du syndicat.</p>
-  </div>
-
-  <a href="Bulletin_adhesion_SI89_couleur.html" target="_blank" rel="noopener" class="btn" style="background:var(--yellow); color:#000;">📄 Ouvrir le bulletin d'adhésion</a>
-  <a href="mailto:sud.industrie.ele89@gmail.com?subject=Adh%C3%A9sion%20Sud%20Industrie%20ELE&body=Bonjour,%20je%20souhaite%20adh%C3%A9rer%20au%20syndicat.%20Merci%20de%20me%20contacter." class="btn contact-btn" style="margin-top:8px;">✉️ Contacter votre syndicat par mail</a>
-  <a href="tel:0626711687" class="btn" style="background:var(--blue); margin-top:8px;">📞 Appeler le 06 26 71 16 87</a>
-</div>
-
-<!-- REMPLIR L'ADHÉSION EN LIGNE -->
-<div class="card" style="padding:16px;">
-  <h2 style="border:none; margin:0 0 6px 0; padding:0; color:var(--blue);">📝 Remplir mon adhésion en ligne</h2>
-  <p class="note" style="text-align:left;">Remplis les champs, puis touche « Préparer mon mail ». Ton mail s'ouvre déjà complété : il ne reste qu'à l'envoyer.</p>
-
-  <input id="ad-nom" placeholder="Nom *" class="champ-form">
-  <input id="ad-prenom" placeholder="Prénom *" class="champ-form">
-  <input id="ad-adresse" placeholder="Adresse" class="champ-form">
-  <input id="ad-naissance" placeholder="Date de naissance (jj/mm/aaaa)" class="champ-form">
-  <input id="ad-tel" placeholder="Téléphone" class="champ-form">
-  <input id="ad-mail" placeholder="Mail" class="champ-form">
-  <input id="ad-entreprise" placeholder="Entreprise" class="champ-form">
-  <input id="ad-activite" placeholder="Activité professionnelle" class="champ-form">
-
-  <p style="margin:12px 0 4px 0; font-weight:700;">Collège *</p>
-  <label style="display:block; margin:4px 0;"><input type="radio" name="ad-college" value="1er"> 1er collège (10 € par mois)</label>
-  <label style="display:block; margin:4px 0;"><input type="radio" name="ad-college" value="2e et 3e"> 2e et 3e collèges (12 € par mois)</label>
-
-  <p style="margin:12px 0 4px 0; font-weight:700;">Qualification</p>
-  <label style="margin-right:12px;"><input type="radio" name="ad-qualif" value="Ouvrier"> Ouvrier</label>
-  <label style="margin-right:12px;"><input type="radio" name="ad-qualif" value="Employé"> Employé</label>
-  <label><input type="radio" name="ad-qualif" value="Cadre"> Cadre</label>
-
-  <p style="margin:12px 0 4px 0; font-weight:700;">Type de contrat</p>
-  <label style="margin-right:12px;"><input type="radio" name="ad-contrat" value="CDD"> CDD</label>
-  <label style="margin-right:12px;"><input type="radio" name="ad-contrat" value="CDI"> CDI</label>
-  <label><input type="radio" name="ad-contrat" value="Intérim"> Intérim</label>
-
-  <p style="margin:12px 0 4px 0; font-weight:700;">Mode de paiement</p>
-  <label style="margin-right:12px;"><input type="radio" name="ad-paiement" value="Chèque"> Chèque</label>
-  <label><input type="radio" name="ad-paiement" value="Virement"> Virement</label>
-
-  <input id="ad-fait" placeholder="Fait à" class="champ-form" style="margin-top:12px;">
-  <input id="ad-date" placeholder="Date (jj/mm/aaaa)" class="champ-form">
-
-  <p id="ad-err" class="msg-err" hidden></p>
-  <button onclick="adSoumettre()" style="background:var(--success);">✉️ Préparer mon mail</button>
-</div>
-
-<div class="card" style="border-left:6px solid var(--acc); margin-bottom:16px;">
-  <h2 style="border:none; margin:0 0 8px 0; padding:0;">📢 Actualités</h2>
-  <p style="margin:0 0 6px 0;"><strong>📅 Prochaine réunion CSE : <span class="reglage" data-r="cse"></span></strong></p>
-  <p style="margin:0; font-size:.9rem; color:var(--mute);">Venez poser vos questions, et signalez-nous les problèmes sur le terrain.</p>
-<div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);">
-  <p style="margin:0 0 6px 0; font-weight:700;">💬 Pose ta question avant la réunion</p>
-  <p class="note" style="text-align:left; margin-top:0;">Tu peux écrire ce que tu veux demander au CSE. Pas de nom ni de numéro, et pas de noms de collègues ou de chefs.</p>
-  <textarea id="cse-question" rows="3" maxlength="500" placeholder="Ex : Quand seront remplacés les chariots en panne ?" class="champ-form"></textarea>
-  <button onclick="csesEnvoyer(this)" style="background:var(--blue);">📨 Envoyer ma question</button>
-  <p id="cse-msg" class="msg-err" hidden></p>
-</div>
-</div>
-
-<div class="card" style="margin-bottom:16px;">
-  <h2 style="border:none; margin:0 0 8px 0; padding:0;">🧭 Par où commencer ?</h2>
-  <p style="margin:0 0 6px 0;">🚨 <strong>Convocation, sanction, arrêt maladie, danger au travail :</strong> onglet Mes Droits, puis « Quelle est ma situation ? » en haut de la page.</p>
-  <p style="margin:0 0 6px 0;">🏆 <strong>Ce que le syndicat a obtenu :</strong> onglet Victoires.</p>
-  <p style="margin:0 0 6px 0;">📊 <strong>Tu veux faire entendre ta voix :</strong> onglet Sondage, il est anonyme.</p>
-  <p style="margin:0;">🎮 <strong>Tu veux tester tes connaissances :</strong> onglet Quiz.</p>
-</div>
-
-<div class="card" style="padding:12px; margin-bottom:16px;">
-  <p style="margin:0 0 8px 0; font-weight:700; text-align:center; color:#c8102e; font-size:1.2rem; text-transform:uppercase;">🚜 Prise de poste : CACES</p>
-  <video controls preload="none" playsinline style="width:100%; border-radius:8px; background:#000;">
-    <source src="videos/video5.mp4" type="video/mp4">
-    Ton téléphone ne peut pas afficher cette vidéo.
-  </video>
-</div>
-
-<div class="card" style="margin-bottom:16px;">
-  <h2 style="border:none; margin:0 0 10px 0; padding:0;">📅 Calendrier des échéances</h2>
-  <p style="margin:0 0 6px 0;">📌 <strong><span class="reglage" data-r="cse"></span></strong> : réunion du CSE.</p>
-  <p style="margin:0 0 6px 0;">🗳️ <strong><span class="reglage" data-r="election"></span></strong> : élections professionnelles.</p>
-  <p style="margin:0; font-size:.85rem; color:var(--mute);">Les échéances passées sont retirées régulièrement.</p>
-</div>
-
-<div class="card" style="padding:14px;">
-  <h2 style="border:none; margin:0 0 10px 0; padding:0;">📘 Infos utiles</h2>
-  <button style="width:auto; padding:10px 16px; min-height:0; background:var(--bg); color:var(--ink); border:2px solid var(--blue); box-shadow:none;" onclick="document.body.classList.toggle('grand')">🔠 Agrandir / réduire le texte</button>
-
-  <details class="inf-det" open>
-    <summary>🧭 Mode d'emploi en 3 étapes</summary>
-    <ol>
-      <li><strong>Lire ses droits :</strong> onglet Mes Droits, ou la carte « Quelle est ma situation ? ».</li>
-      <li><strong>Poser une question :</strong> onglet Questions, sans nom ni numéro.</li>
-      <li><strong>Répondre au sondage :</strong> onglet Sondage, il est anonyme.</li>
-    </ol>
-  </details>
-
-  <details class="inf-det">
-    <summary>📖 Lexique du terrain</summary>
-    <ul>
-      <li><strong>CSE :</strong> Comité social et économique, qui représente les salariés dans l'entreprise.</li>
-      <li><strong>CACES :</strong> certificat d'aptitude à la conduite en sécurité, obligatoire pour conduire un engin.</li>
-      <li><strong>VGP :</strong> vérification générale périodique des équipements de travail.</li>
-      <li><strong>Droit de retrait :</strong> possibilité de quitter son poste en cas de danger grave et imminent.</li>
-      <li><strong>Transstockeur :</strong> engin qui range et sort les palettes dans les alvéoles d'une allée de stock.</li>
-      <li><strong>Picking :</strong> zone où l'on prélève les produits pour préparer une commande.</li>
-      <li><strong>Convoyeur :</strong> rouleaux ou tapis qui déplacent les palettes ou les colis.</li>
-      <li><strong>Niveleur :</strong> plateforme qui relie le quai à la remorque du camion.</li>
-    </ul>
-  </details>
-
-  <details class="inf-det">
-    <summary>👥 Qui fait quoi</summary>
-    <ul>
-      <li><strong>Élus titulaires (Tony, Ilda) :</strong> siègent au CSE et portent vos questions en réunion.</li>
-      <li><strong>Élus suppléants (Mélanie, Christopher) :</strong> remplacent un titulaire absent.</li>
-      <li><strong>Délégué syndical (Aziz) :</strong> représente le syndicat dans l'entreprise.</li>
-      <li><strong>Pour une situation personnelle :</strong> utilisez le bouton « Écrire au syndicat » ou appelez le <span class="reglage" data-r="tel"></span>.</li>
-    </ul>
-  </details>
-
-  <details class="inf-det">
-    <summary>📅 Formations et permanences</summary>
-    <p>Aucune date renseignée pour le moment.</p>
-    <p><em>À compléter : date, heure, lieu, et personne à contacter.</em></p>
-  </details>
-
-  <details class="inf-det">
-    <summary>✅ Rappel avant la prise de poste</summary>
-    <p>Cochez au fur et à mesure. Rien n'est enregistré.</p>
-    <div class="inf-chk">
-      <label><input type="checkbox"> Casque et gilet portés</label>
-      <label><input type="checkbox"> Chaussures de sécurité en bon état</label>
-      <label><input type="checkbox"> Autorisation de conduite (CACES) à jour</label>
-      <label><input type="checkbox"> Freins, direction et avertisseur testés</label>
-      <label><input type="checkbox"> Fourches et chaîne sans anomalie</label>
-      <label><input type="checkbox"> Ceinture attachée</label>
-      <label><input type="checkbox"> Allée dégagée, signalétique visible</label>
-      <label><input type="checkbox"> Anomalie signalée par écrit si besoin</label>
-    </div>
-  </details>
-
-  <details class="inf-det">
-    <summary>🚑 En cas d'accident</summary>
-    <ol>
-      <li><strong>Protéger :</strong> mettre en sécurité la zone et arrêter l'engin.</li>
-      <li><strong>Alerter :</strong> 112 (urgence), 15 (SAMU) ou 18 (pompiers).</li>
-      <li><strong>Secourir :</strong> ne pas déplacer la victime sauf danger, et rester auprès d'elle.</li>
-      <li><strong>Prévenir</strong> le responsable, et noter les faits (heure, lieu, témoins).</li>
-    </ol>
-    <p><em>Trousse de secours : emplacement à compléter.</em></p>
-    <p><em>Sauveteur secouriste du travail (SST) : nom à compléter.</em></p>
-  </details>
-</div>
 
 <p class="note" style="margin-top:30px">Sud Industrie ELE. Vos droits, notre combat.</p>
 <p class="note">Dernière mise à jour des informations : novembre 2026. Ces informations sont données à titre indicatif et ne remplacent pas le Code du travail ni un conseil juridique.</p>
@@ -2113,31 +2112,9 @@ async function csesEnvoyer(btn){
   }
   btn.disabled = false; btn.textContent = "📨 Envoyer ma question";
 }
-// ==================== NAVIGATION PAR GROUPES ====================
-const GROUPES = {
-  droits: ["droits"],
-  entendre: ["sondage", "questions", "flash"],
-  jouer: ["quiz", "jeu"],
-  syndicat: ["victoires", "elections", "photos", "videos", "qrcode"]
-};
-function allerGroupe(g){
-  const premier = document.querySelector('.tab[data-t="' + GROUPES[g][0] + '"]');
-  if(premier) premier.click();
-  document.querySelectorAll(".bnav button").forEach(b => b.classList.toggle("actif", b.dataset.g === g));
-  const barre = document.querySelector(".tabs");
-  if(barre) barre.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-document.querySelector('.bnav button[data-g="droits"]').classList.add("actif");
 </script>
-<!-- BARRE DU BAS -->
-<nav class="bnav" id="bnav">
-  <button onclick="allerGroupe('droits')" data-g="droits"><i>🛡️</i>Droits</button>
-  <button onclick="allerGroupe('entendre')" data-g="entendre"><i>📣</i>Parole</button>
-  <button onclick="allerGroupe('jouer')" data-g="jouer"><i>🎯</i>Jeux</button>
-  <button onclick="allerGroupe('syndicat')" data-g="syndicat"><i>✊</i>Syndicat</button>
-</nav>
 <!-- BOUTONS FIXES -->
 <button id="vo-flottant" hidden onclick="voixStop()" aria-label="Couper la voix" style="position:fixed; left:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1rem; z-index:600; box-shadow:0 4px 10px rgba(0,0,0,.3); background:var(--blue);">🔇 Couper la voix</button>
-<button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(84px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
+<button onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Revenir en haut de la page" style="position:fixed; right:16px; bottom:calc(24px + env(safe-area-inset-bottom,0px)); width:auto; margin:0; padding:10px 16px; min-height:0; border-radius:999px; font-size:1.1rem; z-index:500; box-shadow:0 4px 10px rgba(0,0,0,.3);">↑ Haut</button>
 </body>
 </html>
