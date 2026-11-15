@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission sécurité – Terrain</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:12px;font-family:Arial,Helvetica,sans-serif;background:#f4f6fa;color:#16181d}
+.card{background:#fff;border-radius:12px;padding:14px;margin:0 auto 12px auto;max-width:620px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h1{color:#004aad;font-size:1.3rem;margin:6px 0 8px 0;text-align:center}
+.btn{display:block;width:100%;padding:13px;margin:8px 0 0 0;border:0;border-radius:8px;background:#004aad;color:#fff;font-size:1rem;font-weight:700;cursor:pointer}
+.btn.sec{background:#fff;color:#004aad;border:2px solid #004aad}
+.services{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.services .btn{margin:0;font-size:.95rem}
+svg{width:100%;height:auto;display:block;border-radius:8px;touch-action:manipulation}
+.bulle{background:#fff8d6;border:2px solid #ffcc00;border-radius:10px;padding:10px;margin-top:10px;font-size:.95rem;min-height:56px}
+.compteur{text-align:center;font-weight:700;margin:8px 0 0 0;color:#004aad}
+.dpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:220px;margin:10px auto 0 auto}
+.dpad button{padding:14px 0;border:0;border-radius:8px;background:#004aad;color:#fff;font-size:1.3rem;cursor:pointer}
+.dpad .vide{visibility:hidden}
+.opt{text-align:left;background:#eef0f2;color:#16181d;border:2px solid #d3d7dc;font-weight:600;margin-top:8px}
+.ok{background:#2e7d32!important;color:#fff!important;border-color:#2e7d32!important}
+.ko{background:#c8102e!important;color:#fff!important;border-color:#c8102e!important}
+.explic{margin-top:10px;padding:10px;border-left:4px solid #004aad;background:#eef0f2;border-radius:6px;font-size:.95rem}
+</style>
+</head>
+<body>
+
+<div id="ecran-services" class="card">
+  <h1>🎯 Mission sécurité : sur le terrain</h1>
+  <p style="text-align:center;font-size:.92rem">Choisis ton service. Tu te déplaces dans la scène, tu repères ce qui peut être mieux, puis tu réponds à une petite question. Pas de chrono, pas de pression : on apprend en s'amusant.</p>
+  <div id="liste-services" class="services"></div>
+</div>
+
+<div id="ecran-scene" class="card" hidden>
+  <h1 id="titre-scene"></h1>
+  <svg id="scene" viewBox="0 0 360 240" onclick="allerDepuisClic(event)"></svg>
+  <p class="compteur" id="compteur"></p>
+  <div class="bulle" id="bulle"></div>
+  <div class="dpad">
+    <span class="vide"></span><button onclick="bouger(0,-10)" aria-label="Haut">▲</button><span class="vide"></span>
+    <button onclick="bouger(-10,0)" aria-label="Gauche">◀</button><span class="vide"></span><button onclick="bouger(10,0)" aria-label="Droite">▶</button>
+    <span class="vide"></span><button onclick="bouger(0,10)" aria-label="Bas">▼</button><span class="vide"></span>
+  </div>
+  <button class="btn sec" onclick="indice()">💡 Besoin d'un indice ?</button>
+  <button class="btn" onclick="finirRecherche()">✋ J'ai fini de chercher</button>
+  <button class="btn sec" onclick="afficherServices()">⬅️ Changer de service</button>
+</div>
+
+<div id="ecran-decision" class="card" hidden>
+  <h1>🤔 Question de décision</h1>
+  <div id="decision-q"></div>
+  <div id="decision-choix"></div>
+  <div id="decision-explic"></div>
+  <button id="btn-autre" class="btn" onclick="autreScene()" hidden>🔄 Une autre scène de ce service</button>
+  <button id="btn-suite" class="btn sec" onclick="afficherServices()" hidden>Choisir un autre service</button>
+</div>
+
+<script>
+// ==================== SERVICES ====================
+const SERVICES = [
+  { id: "reception", nom: "Réception", emoji: "📦" },
+  { id: "preparateur", nom: "Préparateur", emoji: "🛒" },
+  { id: "chargeur", nom: "Chargeur", emoji: "🚚" },
+  { id: "cariste", nom: "Cariste", emoji: "🚜" },
+  { id: "maintenance", nom: "Maintenance", emoji: "🔧" },
+  { id: "chef", nom: "Chef d'équipe", emoji: "🧑‍💼" },
+  { id: "cadre", nom: "Cadre", emoji: "📋" }
+];
+
+// ==================== DÉCORS ====================
+const DECOR = {
+  quai: () => `<rect width="360" height="240" fill="#e4e8ee"/>
+<rect width="360" height="90" fill="#c3cad3"/>
+<rect x="230" y="18" width="110" height="62" fill="#8d99a6" stroke="#4a5563" stroke-width="2"/>
+<text x="285" y="54" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">QUAI 3</text>
+<rect y="200" width="360" height="40" fill="#cfd5dd"/>
+<line x1="0" y1="200" x2="360" y2="200" stroke="#f5c400" stroke-width="3"/>`,
+  allee: () => `<rect width="360" height="240" fill="#e4e8ee"/>
+<rect width="360" height="22" fill="#b5bec9"/>
+<rect y="200" width="360" height="40" fill="#cfd5dd"/>
+<line x1="0" y1="150" x2="360" y2="150" stroke="#f5c400" stroke-width="3" stroke-dasharray="14 8"/>
+<line x1="0" y1="190" x2="360" y2="190" stroke="#2a78d6" stroke-width="3" stroke-dasharray="10 6"/>`,
+  rayon: () => `<rect width="360" height="240" fill="#e4e8ee"/>
+<rect x="20" y="40" width="320" height="6" fill="#4a5563"/>
+<rect x="20" y="100" width="320" height="6" fill="#4a5563"/>
+<rect x="20" y="160" width="320" height="6" fill="#4a5563"/>
+<rect x="26" y="20" width="6" height="190" fill="#4a5563"/>
+<rect x="328" y="20" width="6" height="190" fill="#4a5563"/>
+<rect y="200" width="360" height="40" fill="#cfd5dd"/>`,
+  bureau: () => `<rect width="360" height="240" fill="#eef1f5"/>
+<rect width="360" height="90" fill="#dfe5ec"/>
+<rect x="20" y="150" width="150" height="10" fill="#8a6a3f"/>
+<rect x="240" y="150" width="100" height="10" fill="#8a6a3f"/>
+<rect y="200" width="360" height="40" fill="#d6dce4"/>`
+};
+
+// ==================== OBJETS (dessinés à leur position) ====================
+const OBJ = {
+  flaque: (x, y, c) => `<ellipse cx="${x}" cy="${y}" rx="42" ry="12" fill="${c || '#7fb3e0'}" opacity=".85"/><ellipse cx="${x - 10}" cy="${y - 3}" rx="12" ry="3" fill="#fff" opacity=".6"/>`,
+  cone: (x, y) => `<polygon points="${x - 9},${y} ${x + 9},${y} ${x},${y - 26}" fill="#ff7a1a" stroke="#333" stroke-width=".5"/><rect x="${x - 6}" y="${y - 14}" width="12" height="4" fill="#fff"/><rect x="${x - 12}" y="${y}" width="24" height="4" fill="#333"/>`,
+  chariot: (x, y) => `<g transform="translate(${x},${y})"><rect x="-26" y="-22" width="40" height="30" rx="4" fill="#1f5fa8" stroke="#333"/><rect x="-22" y="-44" width="30" height="4" fill="#333"/><rect x="-24" y="-46" width="3" height="28" fill="#555"/><rect x="2" y="-18" width="26" height="20" rx="3" fill="#f5a300" stroke="#333"/><rect x="14" y="0" width="22" height="3" fill="#333"/><rect x="28" y="-2" width="4" height="10" fill="#333"/><circle cx="-18" cy="10" r="6" fill="#222"/><circle cx="12" cy="10" r="6" fill="#222"/></g>`,
+  transpalette: (x, y) => `<g transform="translate(${x},${y})"><rect x="-30" y="-6" width="40" height="8" fill="#555"/><line x1="10" y1="-4" x2="28" y2="-40" stroke="#333" stroke-width="3"/><rect x="-22" y="-20" width="30" height="14" fill="#d9b87c"/></g>`,
+  palette: (x, y) => `<g transform="translate(${x},${y})"><rect x="-30" y="-6" width="60" height="6" fill="#8a6a3f"/><rect x="-28" y="-24" width="24" height="18" fill="#d9b87c" stroke="#8a6a3f"/><rect x="-2" y="-24" width="24" height="18" fill="#e8c98f" stroke="#8a6a3f"/><rect x="-28" y="-40" width="54" height="16" fill="#e8c98f" stroke="#8a6a3f"/></g>`,
+  caisses: (x, y) => `<g transform="translate(${x},${y})"><rect x="-22" y="-20" width="44" height="20" fill="#d9b87c" stroke="#8a6a3f"/><rect x="-18" y="-36" width="36" height="16" fill="#e8c98f" stroke="#8a6a3f"/></g>`,
+  escabeau: (x, y) => `<g transform="translate(${x},${y})"><polygon points="-22,0 0,-50 22,0" fill="none" stroke="#f5c400" stroke-width="4"/><line x1="-11" y1="-25" x2="11" y2="-25" stroke="#333" stroke-width="3"/><line x1="-15" y1="-12" x2="15" y2="-12" stroke="#333" stroke-width="3"/></g>`,
+  cutter: (x, y) => `<g transform="translate(${x},${y})"><rect x="-14" y="-4" width="26" height="8" rx="2" fill="#d33"/><polygon points="12,-4 22,0 12,4" fill="#bbb"/></g>`,
+  trousse: (x, y) => `<g transform="translate(${x},${y})"><rect x="-20" y="-16" width="40" height="16" rx="3" fill="#c8102e" stroke="#333"/><rect x="-6" y="-20" width="12" height="5" fill="#333"/></g>`,
+  cable: (x, y) => `<path d="M${x - 40} ${y} Q${x} ${y + 8} ${x + 40} ${y}" fill="none" stroke="#222" stroke-width="4"/>`,
+  extincteur: (x, y) => `<g transform="translate(${x},${y})"><rect x="-8" y="-40" width="16" height="40" rx="6" fill="#c8102e" stroke="#333"/><rect x="-4" y="-46" width="8" height="6" fill="#333"/></g>`,
+  porte: (x, y) => `<g transform="translate(${x},${y})"><rect x="-22" y="-60" width="44" height="60" fill="#9aa6b2" stroke="#4a5563" stroke-width="2"/><rect x="-14" y="-40" width="28" height="6" fill="#c8102e"/></g>`,
+  cale: (x, y) => `<polygon points="${x - 16},${y} ${x + 16},${y} ${x + 16},${y - 8}" fill="#b07a3c" stroke="#6b4a22"/>`,
+  sortie: (x, y) => `<rect x="${x - 30}" y="${y - 18}" width="60" height="24" fill="#2e7d32"/><text x="${x}" y="${y - 2}" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">SORTIE</text>`,
+  camion: (x, y) => `<g transform="translate(${x},${y})"><rect x="-70" y="-70" width="140" height="90" rx="4" fill="#f4f6f8" stroke="#555" stroke-width="2"/><rect x="-70" y="-10" width="140" height="8" fill="#004aad"/><circle cx="-40" cy="22" r="10" fill="#222"/><circle cx="40" cy="22" r="10" fill="#222"/></g>`,
+  rampe: (x, y) => `<polygon points="${x - 50},${y} ${x + 10},${y - 30} ${x + 10},${y}" fill="#b8bec6" stroke="#666"/>`,
+  sangle: (x, y) => `<line x1="${x - 30}" y1="${y - 10}" x2="${x + 30}" y2="${y + 10}" stroke="#f5c400" stroke-width="4" stroke-dasharray="6 3"/>`,
+  dechets: (x, y) => `<g transform="translate(${x},${y})"><ellipse cx="0" cy="-8" rx="14" ry="10" fill="#333"/><ellipse cx="18" cy="-4" rx="8" ry="6" fill="#555"/></g>`,
+  bord: (x, y) => `<rect x="${x - 50}" y="${y}" width="100" height="8" fill="#f5c400" stroke="#333" stroke-width=".5"/>`,
+  passage: (x, y) => `<rect x="${x - 30}" y="${y - 40}" width="60" height="80" fill="#fff" opacity=".9"/><text x="${x}" y="${y - 46}" text-anchor="middle" font-size="9" font-weight="700" fill="#2a78d6">PASSAGE PIÉTON</text>`,
+  escalier: (x, y) => `<g transform="translate(${x},${y})"><polygon points="-40,0 40,0 40,-50 30,-50 30,-30 20,-30 20,-10 10,-10 10,-40 0,-40 0,-20 -10,-20 -10,0" fill="#9aa6b2" stroke="#4a5563"/></g>`,
+  armoire: (x, y) => `<g transform="translate(${x},${y})"><rect x="-30" y="-70" width="60" height="70" fill="#c9d0d8" stroke="#4a5563" stroke-width="2"/><rect x="-26" y="-66" width="20" height="62" fill="#f4f6f8" transform="rotate(-18 -26 -66)"/><polygon points="6,-50 0,-30 8,-30 4,-14 14,-36 6,-36" fill="#c8102e"/></g>`,
+  multiprise: (x, y) => `<g transform="translate(${x},${y})"><rect x="-30" y="-16" width="60" height="16" rx="3" fill="#222"/><rect x="-24" y="-30" width="48" height="14" rx="3" fill="#333"/><rect x="-18" y="-42" width="36" height="12" rx="3" fill="#444"/><circle cx="-14" cy="-8" r="2" fill="#777"/><circle cx="0" cy="-8" r="2" fill="#777"/><circle cx="14" cy="-8" r="2" fill="#777"/></g>`,
+  echelle: (x, y) => `<g transform="translate(${x},${y})"><line x1="-16" y1="0" x2="-16" y2="-70" stroke="#8a6a3f" stroke-width="4"/><line x1="16" y1="0" x2="16" y2="-70" stroke="#8a6a3f" stroke-width="4"/><line x1="-16" y1="-14" x2="16" y2="-14" stroke="#8a6a3f" stroke-width="3"/><line x1="-16" y1="-30" x2="16" y2="-30" stroke="#8a6a3f" stroke-width="3"/><line x1="-16" y1="-46" x2="16" y2="-46" stroke="#8a6a3f" stroke-width="3"/></g>`,
+  bouteille: (x, y) => `<g transform="translate(${x},${y})"><rect x="-10" y="-40" width="20" height="40" rx="5" fill="#e8892b" stroke="#333"/><rect x="-5" y="-46" width="10" height="7" fill="#777"/></g>`,
+  bidon: (x, y) => `<g transform="translate(${x},${y})"><rect x="-14" y="-34" width="28" height="34" rx="4" fill="#4a8fd6" stroke="#333"/><rect x="-8" y="-22" width="16" height="10" fill="#fff"/></g>`,
+  rayon_def: (x, y) => `<polyline points="${x},${y} ${x + 4},${y - 60} ${x - 6},${y - 110}" fill="none" stroke="#c8102e" stroke-width="5"/><rect x="${x - 6}" y="${y - 20}" width="60" height="4" fill="#4a5563"/>`,
+  personne: null
+};
+
+// ==================== PERSONNAGES ====================
+function perso(x, y, o){
+  o = o || {};
+  return '<g transform="translate(' + x + ',' + y + ')">' +
+    (o.joueur ? '<circle cx="0" cy="-8" r="22" fill="none" stroke="#004aad" stroke-width="2" stroke-dasharray="4 3"/>' : '') +
+    '<circle cx="0" cy="-26" r="8" fill="#f0c08a"/>' +
+    (o.casque ? '<path d="M-9 -29 Q0 -40 9 -29 Z" fill="#ffcc00" stroke="#333" stroke-width=".5"/>' : '') +
+    (o.chef ? '<rect x="-7" y="-37" width="14" height="4" fill="#333"/>' : '') +
+    '<rect x="-9" y="-18" width="18" height="26" rx="4" fill="' + (o.couleur || '#2a78d6') + '" stroke="#333" stroke-width=".5"/>' +
+    (o.gilet ? '<rect x="-9" y="-16" width="18" height="10" fill="#d4ff00" stroke="#333" stroke-width=".5"/>' : '') +
+    (o.telephone ? '<rect x="8" y="-14" width="6" height="10" rx="1" fill="#222"/>' : '') +
+    (o.ecouteurs ? '<path d="M-10 -28 Q0 -40 10 -28" fill="none" stroke="#222" stroke-width="2"/>' : '') +
+    '<rect x="-7" y="8" width="6" height="14" fill="#333"/><rect x="1" y="8" width="6" height="14" fill="#333"/>' +
+    '</g>';
+}
+function dessinerObjet(d){
+  if(d.type === "perso") return perso(d.x, d.y, d.o);
+  return OBJ[d.type](d.x, d.y, d.c);
+}
+
+// ==================== SCÈNES ====================
+// Champs : titre, bg (décor), depart, extra (éléments fixes), dangers (à repérer), pnj (personnages), decision
+const SCENES = {
+
+  // ---------- RÉCEPTION ----------
+  reception: [
+    {
+      titre: "Réception : le camion arrive", bg: "quai", depart: { x: 40, y: 200 },
+      extra: [{ type: "passage", x: 170, y: 150 }],
+      dangers: [
+        { type: "perso", x: 110, y: 150, o: { couleur: "#f7a600" }, nom: "Chauffeur sans gilet haute visibilité", regle: "Dans la zone de déchargement, tout le monde porte un gilet haute visibilité.", risque: "Être invisible pour un conducteur d'engin." },
+        { type: "palette", x: 240, y: 112, nom: "Palettes posées sur le passage piéton", regle: "Un passage piéton reste dégagé en permanence.", risque: "Obliger à marcher dans la zone des engins." },
+        { type: "bord", x: 280, y: 96, nom: "Bord de quai sans protection", regle: "Un bord de quai ouvert est protégé ou balisé.", risque: "Chute de hauteur." },
+        { type: "perso", x: 260, y: 180, o: { couleur: "#d46a9f" }, nom: "Traversée hors des rayures", regle: "On ne traverse la zone des engins que sur les rayures blanches du passage piéton.", risque: "Collision avec un chariot ou un camion en manœuvre." }
+      ],
+      pnj: [
+        { x: 150, y: 140, nom: "Le réceptionnaire", couleur: "#2a78d6", lignes: "Le camion est là, le bon de livraison est prêt. Il ne reste plus qu'à décharger en sécurité !" },
+        { x: 320, y: 150, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "On est pressés, je sais. Mais personne ne rentre plus vite que quand il rentre entier le soir." }
+      ],
+      decision: { q: "Un chauffeur n'a pas de gilet et veut décharger tout de suite. Que fais-tu ?", a: ["Je le laisse décharger, il connaît le quai", "Je lui demande de mettre un gilet, et je ne lance pas le déchargement sans lui", "Je lui dis que ce n'est pas grave"], c: 1, e: "Le gilet protège avant tout. Pas de déchargement tant que le chauffeur n'est pas équipé." }
+    },
+    {
+      titre: "Réception : le transpalette oublié", bg: "quai", depart: { x: 40, y: 190 },
+      extra: [],
+      dangers: [
+        { type: "transpalette", x: 135, y: 160, nom: "Transpalette laissé en travers du couloir", regle: "Un engin à l'arrêt est rangé à son emplacement, jamais au milieu d'un passage.", risque: "Heurt ou chute en contournant l'engin." },
+        { type: "perso", x: 220, y: 180, o: { telephone: true, couleur: "#2a78d6" }, nom: "Marche en regardant son téléphone", regle: "Le téléphone se range avant de bouger, surtout près des engins.", risque: "Ne pas voir un engin qui arrive." },
+        { type: "caisses", x: 300, y: 110, nom: "Cartons empilés trop haut", regle: "Une pile se range plus bas, les cartons lourds au niveau des hanches.", risque: "Chute de cartons sur une personne." }
+      ],
+      pnj: [
+        { x: 80, y: 150, nom: "La réceptionnaire", couleur: "#d46a9f", lignes: "Je cherche mon transpalette depuis dix minutes, il était juste là ! Il est peut-être parti en vacances." },
+        { x: 320, y: 200, nom: "Le cadre logistique", couleur: "#3b4a5a", chef: true, lignes: "Un bon rangement, c'est comme une bonne playlist : tout est à sa place, et personne ne se perd." }
+      ],
+      decision: { q: "Un collègue sur son téléphone passe près d'un transpalette laissé en travers. Que fais-tu ?", a: ["Je rigole avec lui, il trouvera la route", "Je le préviens gentiment et on range le transpalette ensemble", "Je passe à côté sans rien dire"], c: 1, e: "On range l'engin à sa place et on prévient gentiment. Un rappel entre collègues évite bien des accidents." }
+    },
+    {
+      titre: "Réception : l'étagère du haut", bg: "rayon", depart: { x: 300, y: 205 },
+      extra: [],
+      dangers: [
+        { type: "escabeau", x: 285, y: 180, nom: "Escabeau bancal", regle: "Un escabeau se pose sur un sol plat, se déplie complètement, et ne se monte jamais à deux.", risque: "Chute de hauteur." },
+        { type: "caisses", x: 150, y: 150, nom: "Caisse trop lourde à bout de bras", regle: "Une charge lourde se pose au sol puis se soulève avec les jambes, dos droit.", risque: "Lombalgie, faux mouvement." },
+        { type: "caisses", x: 220, y: 205, nom: "Cartons vides au sol", regle: "Les cartons vides se rangent au fur et à mesure.", risque: "Trébuchement." }
+      ],
+      pnj: [
+        { x: 130, y: 115, nom: "Le collègue réceptionnaire", couleur: "#2a78d6", lignes: "Ce carton là-haut a l'air plus haut que moi. Je tente... ou on demande de l'aide ?" },
+        { x: 60, y: 140, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Un escabeau, ça ne tient pas une fête de famille. Demander de l'aide, c'est un réflexe de pro." }
+      ],
+      decision: { q: "Le carton est tout en haut et le seul escabeau est bancal. Que fais-tu ?", a: ["Je monte dessus, ça ira", "Je demande un escabeau stable ou un engin", "Je grimpe sur une caisse"], c: 1, e: "Un escabeau bancal ne se monte pas. On demande un moyen stable, jamais une caisse ou une palette." }
+    },
+    {
+      titre: "Réception : la porte coupe-feu", bg: "quai", depart: { x: 200, y: 200 },
+      extra: [{ type: "porte", x: 60, y: 190 }, { type: "sortie", x: 300, y: 120 }],
+      dangers: [
+        { type: "cale", x: 60, y: 192, nom: "Porte coupe-feu calée ouverte", regle: "Une porte coupe-feu se ferme toute seule. On ne la cale jamais.", risque: "Le feu et la fumée se propagent dans tout le bâtiment." },
+        { type: "caisses", x: 290, y: 175, nom: "Sortie de secours encombrée", regle: "Les sorties de secours restent dégagées en permanence.", risque: "Évacuation bloquée en cas d'urgence." },
+        { type: "chariot", x: 170, y: 160, nom: "Chariot garé sur l'allée", regle: "Un engin se stationne sur son emplacement, jamais sur une allée.", risque: "Passage bloqué, collision." }
+      ],
+      pnj: [
+        { x: 130, y: 130, nom: "La réceptionnaire", couleur: "#d46a9f", lignes: "Cette porte fait courant d'air, c'est pratique ! Enfin... pour le courant d'air seulement." },
+        { x: 330, y: 100, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Ouvrir une porte pour l'air, c'est bien. Une porte qui protège tout le monde, c'est mieux." }
+      ],
+      decision: { q: "Une porte coupe-feu est calée pour faire circuler l'air. Que fais-tu ?", a: ["Je la laisse, c'est pratique", "Je retire la cale et je demande une solution au chef", "Je cale la porte encore plus fort"], c: 1, e: "Une porte coupe-feu doit pouvoir se fermer. Si on a besoin d'air, on demande une solution adaptée." }
+    }
+  ],
+
+  // ---------- PRÉPARATEUR ----------
+  preparateur: [
+    {
+      titre: "Préparateur : l'étagère trop pleine", bg: "rayon", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "caisses", x: 170, y: 150, nom: "Caisses qui débordent de l'étagère", regle: "Une étagère se remplit sans dépasser le bord.", risque: "Chute de caisse sur une personne qui passe." },
+        { type: "perso", x: 240, y: 180, o: { couleur: "#2a78d6" }, nom: "Manutention sans gants", regle: "Les gants adaptés sont portés pour toute prise de colis.", risque: "Coupures, écrasements des doigts." },
+        { type: "caisses", x: 280, y: 120, nom: "Colis lourd rangé en hauteur", regle: "Les colis lourds se rangent à hauteur d'épaule ou plus bas.", risque: "Effort dangereux et chute du colis." }
+      ],
+      pnj: [
+        { x: 120, y: 140, nom: "Le préparateur", couleur: "#2a78d6", lignes: "Ma commande est pleine de cartons, et l'étagère aussi. On manque de place, pas de bonne volonté !" },
+        { x: 320, y: 200, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Une commande bien préparée arrive sans casse. Et sans bobo pour personne." }
+      ],
+      decision: { q: "Tu dois attraper un colis lourd tout en haut d'une étagère. Que fais-tu ?", a: ["Je me hisse sur la caisse la plus proche", "Je demande de l'aide ou j'utilise l'échelle prévue", "Je le lance vers le bas"], c: 1, e: "On utilise l'échelle prévue ou on demande de l'aide. Une caisse lancée, ça ne pardonne pas." }
+    },
+    {
+      titre: "Préparateur : la flaque du rayon", bg: "rayon", depart: { x: 40, y: 180 },
+      extra: [],
+      dangers: [
+        { type: "flaque", x: 160, y: 170, nom: "Flaque non signalée", regle: "Un sol mouillé est signalé avec un cône ou un panneau, puis séché.", risque: "Chute de plain-pied." },
+        { type: "chariot", x: 260, y: 150, nom: "Chariot à l'arrêt en travers", regle: "Un engin à l'arrêt se range sur son emplacement, jamais en travers.", risque: "Heurt, obstacle en cas d'urgence." },
+        { type: "trousse", x: 90, y: 120, nom: "Outil au bord de l'étagère", regle: "Un outil se range dans sa trousse.", risque: "Chute d'outil sur une personne qui passe." }
+      ],
+      pnj: [
+        { x: 200, y: 110, nom: "La préparatrice", couleur: "#d46a9f", lignes: "Je sais, ça glisse ici. Un cône en dix secondes, ça évite bien des frayeurs." },
+        { x: 330, y: 150, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Le sol mouillé ne prévient personne, il attend qu'on tombe. Un panneau, c'est plus sympa." }
+      ],
+      decision: { q: "Une flaque au milieu de l'allée, sans panneau. Que fais-tu ?", a: ["Je passe rapidement à côté", "Je pose un cône et je préviens l'équipe", "J'essuie avec mon gilet et je continue"], c: 1, e: "On signale d'abord pour protéger le passage, puis on nettoie et on prévient l'équipe." }
+    },
+    {
+      titre: "Préparateur : les écouteurs dans l'allée", bg: "allee", depart: { x: 40, y: 205 },
+      extra: [],
+      dangers: [
+        { type: "perso", x: 160, y: 130, o: { ecouteurs: true, couleur: "#2a78d6" }, nom: "Écouteurs dans l'allée des engins", regle: "Dans l'allée des engins, on garde les deux oreilles libres pour entendre les avertisseurs.", risque: "Ne pas entendre un engin qui approche." },
+        { type: "perso", x: 250, y: 175, o: { couleur: "#d46a9f" }, nom: "Traversée hors du cheminement", regle: "On circule sur le cheminement piéton, pas à travers l'allée des engins.", risque: "Collision avec un engin." },
+        { type: "chariot", x: 300, y: 120, nom: "Chariot stationné près de l'allée", regle: "Un engin arrêté ne gêne ni la vue ni le passage.", risque: "Visibilité réduite pour le conducteur." }
+      ],
+      pnj: [
+        { x: 80, y: 100, nom: "Le cariste", couleur: "#f7a600", lignes: "Je vois tout, sauf quand tu chantes dans tes écouteurs. Garde une oreille pour nous !" },
+        { x: 330, y: 110, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "La musique, c'est parfait pour la pause. Dans l'allée, on préfère entendre les klaxons." }
+      ],
+      decision: { q: "Un collègue avance dans l'allée des engins, écouteurs sur les oreilles. Que fais-tu ?", a: ["Je le suis, il entendra bien", "Je le préviens gentiment et je lui demande de retirer ses écouteurs", "Je fais un signe de loin"], c: 1, e: "Un petit rappel, dit gentiment, suffit souvent. Dans l'allée des engins, on garde les oreilles libres." }
+    },
+    {
+      titre: "Préparateur : la fin de poste", bg: "bureau", depart: { x: 40, y: 190 },
+      extra: [{ type: "sortie", x: 310, y: 130 }],
+      dangers: [
+        { type: "cutter", x: 120, y: 142, nom: "Cutter laissé sur la table", regle: "Un outil tranchant se range dans son support, lame rentrée.", risque: "Coupure pour soi ou pour le collègue suivant." },
+        { type: "chariot", x: 255, y: 185, nom: "Chariot bloquant la sortie", regle: "Une sortie reste toujours libre. Un engin ne s'y range jamais.", risque: "Évacuation bloquée en cas d'urgence." },
+        { type: "dechets", x: 180, y: 190, nom: "Déchets au sol", regle: "Les déchets se jettent en fin de poste. Un sol propre évite les glissades.", risque: "Trébuchement." }
+      ],
+      pnj: [
+        { x: 150, y: 165, nom: "Le préparateur suivant", couleur: "#2a78d6", lignes: "Je prends le relais dans cinq minutes. Si je trouve un cutter sur la table, je fais la tête !" },
+        { x: 330, y: 160, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Bien rangé, c'est bien fini. Et ça se voit dans le sourire du collègue qui prend la suite." }
+      ],
+      decision: { q: "Tu finis ton poste et un cutter traîne sur la table. Que fais-tu ?", a: ["Je le laisse, le prochain le rangera", "Je le range dans son support et je signale le chariot près de la sortie", "Je le mets dans ma poche"], c: 1, e: "On range l'outil et on signale ce qui bloque une sortie. Ça protège tout le monde." }
+    }
+  ],
+
+  // ---------- CHARGEUR ----------
+  chargeur: [
+    {
+      titre: "Chargeur : le camion qui recule", bg: "quai", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "camion", x: 280, y: 150, nom: "Camion non calé avant chargement", regle: "Le camion est calé et freiné avant de charger, pour qu'il ne s'éloigne pas du quai.", risque: "Le camion peut avancer et provoquer une chute." },
+        { type: "perso", x: 150, y: 150, o: { couleur: "#2a78d6" }, nom: "Personne dans la zone de manœuvre", regle: "Pendant une manœuvre de camion, personne ne se trouve entre le camion et le quai.", risque: "Écrasement entre le camion et le quai." },
+        { type: "bord", x: 190, y: 96, nom: "Bord de quai sans protection", regle: "Un bord de quai ouvert est protégé ou balisé.", risque: "Chute de hauteur." }
+      ],
+      pnj: [
+        { x: 320, y: 205, nom: "Le chauffeur", couleur: "#f7a600", lignes: "Il est pressé, le camion ? Moi aussi. Mais je ne recule pas tant qu'on ne m'a pas fait signe !" },
+        { x: 90, y: 170, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Calé, freiné, et tout le monde à l'écart. Trois gestes, et la journée se termine bien." }
+      ],
+      decision: { q: "Tu vois le camion reculer vers le quai sans qu'il soit calé. Que fais-tu ?", a: ["Je laisse, le chauffeur sait ce qu'il fait", "Je signale au chauffeur et je demande qu'on cale le camion", "Je monte sur le quai pour l'aider"], c: 1, e: "Un camion se cale et se freine avant tout chargement. Le signaler, c'est rappeler la règle." }
+    },
+    {
+      titre: "Chargeur : la palette mal filmée", bg: "quai", depart: { x: 40, y: 190 },
+      extra: [{ type: "camion", x: 290, y: 115 }],
+      dangers: [
+        { type: "palette", x: 110, y: 170, nom: "Palette mal filmée", regle: "Une palette est filmée et stabilisée avant de partir.", risque: "Chute de colis pendant le transport." },
+        { type: "sangle", x: 215, y: 175, nom: "Charge non sanglée dans le camion", regle: "Les charges sont sanglées ou calées avant le départ.", risque: "Chute de la charge sur la route." },
+        { type: "caisses", x: 300, y: 200, nom: "Accès au camion encombré", regle: "L'accès au camion reste dégagé pour charger et sortir en sécurité.", risque: "Trébuchement." }
+      ],
+      pnj: [
+        { x: 170, y: 130, nom: "Le collègue chargeur", couleur: "#2a78d6", lignes: "Elle est un peu bancale, la palette. Le chauffeur est pressé, mais un colis qui tombe, personne n'est content." },
+        { x: 60, y: 150, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Une palette bien filmée, c'est le meilleur cadeau pour le client. Et pour le chauffeur." }
+      ],
+      decision: { q: "Une palette est mal filmée et le chauffeur attend. Que fais-tu ?", a: ["Je la charge telle quelle, il est pressé", "Je la refais proprement avant de la charger", "Je la pousse directement dans le camion"], c: 1, e: "Une palette bien filmée arrive intacte. Deux minutes de plus évitent une casse et un accident." }
+    },
+    {
+      titre: "Chargeur : le colis trop lourd", bg: "quai", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "perso", x: 170, y: 170, o: { couleur: "#f7a600" }, nom: "Colis trop lourd porté seul", regle: "Une charge lourde se porte à deux, ou avec un moyen mécanique.", risque: "Lombalgie, accident de manutention." },
+        { type: "perso", x: 250, y: 150, o: { couleur: "#2a78d6" }, nom: "Gants absents", regle: "Les gants adaptés sont portés pour toute manutention de carton.", risque: "Coupures, écrasements des doigts." },
+        { type: "flaque", x: 80, y: 190, c: "#5b6b7a", nom: "Sol glissant près du quai", regle: "Un sol glissant se nettoie ou se signale. On circule à pas réguliers.", risque: "Chute avec une charge dans les bras." }
+      ],
+      pnj: [
+        { x: 120, y: 150, nom: "Le collègue chargeur", couleur: "#f7a600", lignes: "On gagne du temps en le portant seul, dit-on. Mais le dos, lui, n'a pas de chronomètre." },
+        { x: 330, y: 150, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Demander de l'aide, ce n'est pas faiblir. C'est travailler malin, et rentrer en forme demain." }
+      ],
+      decision: { q: "Un colis est très lourd, et un collègue propose de le porter seul. Que fais-tu ?", a: ["On le porte seul, c'est plus rapide", "On demande de l'aide ou un transpalette, et on met nos gants", "On le traîne sur le sol"], c: 1, e: "Une charge lourde se porte à deux ou avec un engin. Le dos ne se rattrape pas." }
+    },
+    {
+      titre: "Chargeur : la rampe de chargement", bg: "quai", depart: { x: 40, y: 190 },
+      extra: [{ type: "rampe", x: 120, y: 200 }, { type: "camion", x: 275, y: 120 }],
+      dangers: [
+        { type: "porte", x: 205, y: 195, nom: "Porte du camion fermée sans vérification", regle: "Avant de fermer, on vérifie que personne ne se trouve sur la rampe.", risque: "Coincer une personne ou un engin." },
+        { type: "trousse", x: 160, y: 185, nom: "Outil laissé sur la rampe", regle: "Un outil se range après usage, jamais sur un passage.", risque: "Trébuchement ou chute de l'outil." },
+        { type: "perso", x: 90, y: 150, o: { couleur: "#2a78d6" }, nom: "Personne sur la rampe sans repère", regle: "Les personnes qui travaillent sur la rampe sont visibles, et le chauffeur les voit.", risque: "Collision avec un engin en manœuvre." }
+      ],
+      pnj: [
+        { x: 240, y: 150, nom: "Le chauffeur", couleur: "#f7a600", lignes: "Le chargement est fini ? Parfait. Je veux juste être sûr que la rampe est libre avant de refermer." },
+        { x: 30, y: 120, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Un camion fermé, c'est une bonne journée. Un camion fermé sur un collègue, c'est une très mauvaise." }
+      ],
+      decision: { q: "Un collègue veut fermer la porte sans regarder la rampe. Que fais-tu ?", a: ["Je le laisse faire, c'est presque fini", "Je lui demande de vérifier la rampe et de prévenir le chauffeur", "Je ferme la porte moi-même"], c: 1, e: "On vérifie la rampe, on prévient le chauffeur, et seulement après on ferme." }
+    }
+  ],
+
+  // ---------- CARISTE ----------
+  cariste: [
+    {
+      titre: "Cariste : le chariot sans contrôle", bg: "allee", depart: { x: 40, y: 205 },
+      extra: [],
+      dangers: [
+        { type: "chariot", x: 150, y: 165, nom: "Chariot pris sans contrôle de prise de poste", regle: "Avant chaque prise de poste, freins, direction, avertisseur et fourches sont contrôlés, et c'est tracé.", risque: "Un engin défectueux qui cause un accident." },
+        { type: "cone", x: 230, y: 185, nom: "Zone de manœuvre non balisée", regle: "Une zone de manœuvre se balise avec des cônes ou un marquage visible.", risque: "Personne qui ne voit pas l'engin." },
+        { type: "perso", x: 300, y: 175, o: { couleur: "#2a78d6" }, nom: "Personne dans la zone de l'engin", regle: "Pas de personne à pied dans la zone de manœuvre d'un chariot.", risque: "Écrasement ou choc." }
+      ],
+      pnj: [
+        { x: 70, y: 130, nom: "Le collègue cariste", couleur: "#f7a600", lignes: "Il roule bien, ce chariot. Mais il a un petit bruit dans les freins... on vérifie ?" },
+        { x: 330, y: 120, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Cinq minutes de contrôle, c'est moins long que deux heures d'arrêt. Et ça protège tout le monde." }
+      ],
+      decision: { q: "Le frein d'un chariot semble bruyant, et tu dois commencer ta tournée. Que fais-tu ?", a: ["Je roule prudemment jusqu'à la fin du poste", "Je signale le défaut et je mets l'engin hors service", "Je le répare moi-même vite fait"], c: 1, e: "Un engin défectueux se signale et se met hors service jusqu'à réparation." }
+    },
+    {
+      titre: "Cariste : les fourches en hauteur", bg: "allee", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "chariot", x: 160, y: 165, nom: "Fourches levées en déplacement", regle: "En déplacement, la charge reste basse, à quelques centimètres du sol.", risque: "Charge qui tombe sur une personne." },
+        { type: "perso", x: 240, y: 180, o: { couleur: "#d46a9f" }, nom: "Personne sous les fourches", regle: "On ne passe jamais sous une charge, ni sous des fourches levées.", risque: "Écrasement." },
+        { type: "caisses", x: 300, y: 120, nom: "Charge instable en hauteur", regle: "Une charge se gerbe stable, bien centrée sur les fourches.", risque: "Chute de la charge." }
+      ],
+      pnj: [
+        { x: 90, y: 130, nom: "Le collègue cariste", couleur: "#f7a600", lignes: "Des fourches levées pendant le trajet, je sais, c'est tentant. Mais les cartons ne volent pas, ils tombent." },
+        { x: 330, y: 150, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Tout le monde à l'écart pendant une manœuvre. C'est la règle la plus simple, et la plus utile." }
+      ],
+      decision: { q: "Tu dois passer près d'un collègue avec une charge haute. Que fais-tu ?", a: ["Je passe vite, il se poussera", "Je baisse la charge, je ralentis et je fais signe avant de passer", "Je klaxonne et j'accélère"], c: 1, e: "La charge se baisse, on ralentit, et on prévient avant de passer près d'une personne." }
+    },
+    {
+      titre: "Cariste : l'allée et le piéton distrait", bg: "allee", depart: { x: 40, y: 205 },
+      extra: [],
+      dangers: [
+        { type: "perso", x: 120, y: 165, o: { telephone: true, couleur: "#2a78d6" }, nom: "Piéton distrait sur l'allée", regle: "Les piétons restent sur le cheminement, le regard levé près des engins.", risque: "Ne pas voir un chariot qui approche." },
+        { type: "chariot", x: 240, y: 170, nom: "Chariot roulant trop vite", regle: "Dans une allée, on roule au pas et on ralentit au passage des zones piétons.", risque: "Collision, chute de la charge." },
+        { type: "cone", x: 180, y: 130, nom: "Passage non balisé", regle: "Un passage piéton se balise et se garde libre.", risque: "Personne qui n'attend pas l'engin." }
+      ],
+      pnj: [
+        { x: 60, y: 130, nom: "La préparatrice", couleur: "#d46a9f", lignes: "Je regardais mon écran. Un coup d'avertisseur, et j'ai tout compris. Merci pour le klaxon !" },
+        { x: 330, y: 115, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Au pas dans l'allée. Ça fait arriver au bout de la journée, avec le sourire." }
+      ],
+      decision: { q: "Un piéton avance sur l'allée, les yeux sur son téléphone. Que fais-tu ?", a: ["J'accélère pour passer avant lui", "Je ralentis, j'avertis et j'attends qu'il soit sur le cheminement", "Je roule normalement, c'est à lui de regarder"], c: 1, e: "On ralentit, on avertit, et on attend. Le conducteur est responsable de l'allée." }
+    },
+    {
+      titre: "Cariste : le quai et le camion", bg: "quai", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "camion", x: 280, y: 150, nom: "Camion non calé au quai", regle: "Le camion est calé avant que le chariot n'entre dans la remorque.", risque: "Le camion s'éloigne, chute du chariot." },
+        { type: "chariot", x: 170, y: 170, nom: "Chariot dans la zone sans repère", regle: "Dans une zone de chargement, le chariot est toujours guidé et visible.", risque: "Collision avec une personne." },
+        { type: "flaque", x: 70, y: 200, c: "#5b6b7a", nom: "Sol huileux", regle: "Une flaque d'huile se nettoie ou se signale.", risque: "Le chariot peut glisser." }
+      ],
+      pnj: [
+        { x: 240, y: 205, nom: "Le chauffeur", couleur: "#f7a600", lignes: "Je suis calé, promis. Et je reste dans la cabine tant que tu n'as pas fini la manœuvre." },
+        { x: 40, y: 150, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Un camion calé et un chariot guidé, c'est la moitié du chemin vers une bonne fin de semaine." }
+      ],
+      decision: { q: "Le camion n'est pas calé et tu dois entrer avec ton chariot. Que fais-tu ?", a: ["J'entre vite, le chauffeur est là", "Je demande qu'on cale le camion avant d'entrer", "J'entre doucement en espérant que tout tienne"], c: 1, e: "On ne rentre jamais dans une remorque non calée. On demande le calage avant." }
+    }
+  ],
+
+  // ---------- MAINTENANCE ----------
+  maintenance: [
+    {
+      titre: "Maintenance : l'armoire ouverte", bg: "bureau", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "armoire", x: 120, y: 165, nom: "Armoire électrique ouverte", regle: "Une armoire électrique reste fermée et signalée. Seul un personnel habilité y intervient.", risque: "Choc électrique ou brûlure." },
+        { type: "perso", x: 210, y: 180, o: { couleur: "#c8102e", casque: true }, nom: "Intervention sans habilitation", regle: "Seule une personne habilitée intervient sur une installation électrique.", risque: "Choc électrique." }
+      ],
+      pnj: [
+        { x: 300, y: 185, nom: "Le responsable électrique", couleur: "#cfd6de", chef: true, lignes: "Un tournevis ne remplace pas une habilitation. Appelle-moi, on regarde ça ensemble." }
+      ],
+      decision: { q: "Une armoire électrique est ouverte et un collègue propose de regarder vite fait. Que fais-tu ?", a: ["Je regarde moi-même, je connais un peu", "Je ferme l'armoire, je signale et j'appelle la personne habilitée", "Je laisse ouvert pour aérer"], c: 1, e: "Seule une personne habilitée intervient. On ferme, on signale, on appelle." }
+    },
+    {
+      titre: "Maintenance : les multiprises", bg: "bureau", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "multiprise", x: 130, y: 150, nom: "Multiprises branchées en cascade", regle: "On ne branche jamais une multiprise sur une autre, et on ne surcharge pas une prise.", risque: "Surchauffe et départ de feu." },
+        { type: "cable", x: 220, y: 185, nom: "Rallonge abîmée au sol", regle: "Une rallonge abîmée se remplace et ne traverse jamais une allée.", risque: "Choc électrique." },
+        { type: "trousse", x: 300, y: 125, nom: "Outil posé sur un câble", regle: "Un outil ne se pose jamais sur un câble ou une prise.", risque: "Court-circuit." }
+      ],
+      pnj: [
+        { x: 60, y: 140, nom: "Le technicien", couleur: "#2a78d6", lignes: "Je cherche une prise libre depuis tout à l'heure. Je finis par brancher l'une sur l'autre... pas bien, je sais." },
+        { x: 330, y: 200, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Une prise pour un appareil, c'est simple. Une prise qui fume, c'est plus long à raconter." }
+      ],
+      decision: { q: "Il n'y a plus de prise libre et tu dois brancher un outil. Que fais-tu ?", a: ["Je branche sur la multiprise déjà pleine", "Je demande une prise adaptée ou une multiprise avec protection", "Je branche une multiprise sur une autre"], c: 1, e: "Une prise se demande et se contrôle. Jamais de cascade de multiprises." }
+    },
+    {
+      titre: "Maintenance : l'échelle non stabilisée", bg: "rayon", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "echelle", x: 200, y: 175, nom: "Échelle non stabilisée", regle: "Une échelle est stable, calée sur un sol plat, et dépasse d'au moins 1 m le point d'appui.", risque: "Chute de hauteur si elle glisse." },
+        { type: "perso", x: 200, y: 125, o: { couleur: "#2a78d6" }, nom: "En hauteur sans casque", regle: "Pour les travaux en hauteur, le casque est obligatoire.", risque: "Choc à la tête par un outil qui tombe." }
+      ],
+      pnj: [
+        { x: 90, y: 140, nom: "Le collègue maintenance", couleur: "#f7a600", lignes: "Je la tiens, l'échelle, ne t'inquiète pas. Enfin... c'est moi qui la tiens, pas la tienne." },
+        { x: 330, y: 150, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Un casque sur la tête en hauteur, c'est la marque d'un bon professionnel. Et d'un bon ami." }
+      ],
+      decision: { q: "L'échelle bouge un peu, et tu dois monter pour changer une lampe. Que fais-tu ?", a: ["Je monte vite, ça ira", "J'attends une échelle stable ou un moyen d'accès adapté", "Je me tiens à un rayonnage en montant"], c: 1, e: "Une échelle qui bouge ne se monte pas. On attend un moyen stable." }
+    },
+    {
+      titre: "Maintenance : la bouteille de gaz", bg: "allee", depart: { x: 40, y: 205 },
+      extra: [],
+      dangers: [
+        { type: "bouteille", x: 150, y: 170, nom: "Bouteille de gaz couchée sans attache", regle: "Une bouteille de gaz se stocke debout, attachée, loin de toute chaleur.", risque: "Chute de la bouteille, fuite." },
+        { type: "cable", x: 250, y: 185, nom: "Tuyau abîmé au sol", regle: "Un tuyau abîmé se remplace, il ne traverse pas une allée.", risque: "Fuite de gaz, trébuchement." },
+        { type: "extincteur", x: 300, y: 130, nom: "Extincteur non accessible", regle: "L'extincteur reste visible et accessible en permanence.", risque: "Perte de temps en cas de départ de feu." }
+      ],
+      pnj: [
+        { x: 80, y: 140, nom: "Le collègue maintenance", couleur: "#2a78d6", lignes: "Elle était couchée, la bouteille. Je l'ai redressée, mais c'est bien mieux attachée." },
+        { x: 330, y: 200, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Une bouteille attachée, c'est une bouteille qui ne fait pas de bruit. On aime le calme ici." }
+      ],
+      decision: { q: "Une bouteille de gaz traîne couchée près d'une source de chaleur. Que fais-tu ?", a: ["Je la laisse, elle est bien fermée", "Je la redresse, je l'attache et je la range loin de la chaleur", "Je la déplace à la main jusqu'à la sortie"], c: 1, e: "Une bouteille de gaz se stocke debout, attachée, et loin de toute chaleur." }
+    }
+  ],
+
+  // ---------- CHEF D'ÉQUIPE ----------
+  chef: [
+    {
+      titre: "Chef : le plan de circulation", bg: "allee", depart: { x: 40, y: 205 },
+      extra: [],
+      dangers: [
+        { type: "perso", x: 150, y: 140, o: { couleur: "#2a78d6" }, nom: "Piéton sur la voie des engins", regle: "Piétons et engins sont séparés. Le piéton reste sur le cheminement signalé.", risque: "Collision avec un engin." },
+        { type: "cone", x: 250, y: 120, nom: "Zone engins sans signalisation", regle: "Une zone de manœuvre se signale clairement, avec des cônes et des marquages.", risque: "Personne qui ne voit pas l'engin." },
+        { type: "chariot", x: 260, y: 175, nom: "Engin en mouvement près du piéton", regle: "Un engin en mouvement se voit et s'entend à distance.", risque: "Collision." }
+      ],
+      pnj: [
+        { x: 60, y: 130, nom: "Le conducteur", couleur: "#f7a600", lignes: "Le plan est clair, mais sur le terrain, personne ne le regarde. Un bon marquage aide tout le monde." },
+        { x: 330, y: 120, nom: "Le cadre", couleur: "#3b4a5a", chef: true, lignes: "Un plan de circulation, c'est une carte. Il faut la suivre, et la faire vivre avec l'équipe." }
+      ],
+      decision: { q: "Un piéton traverse la zone des engins hors marquage. Que fais-tu ?", a: ["Je le laisse, il se débrouillera", "J'arrête l'engin, je rappelle la règle et je balise la zone", "Je demande à l'engin d'accélérer pour passer"], c: 1, e: "On arrête l'engin, on rappelle la règle, et on balise. La règle doit se voir sur le terrain." }
+    },
+    {
+      titre: "Chef : l'accueil d'un intérimaire", bg: "bureau", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "perso", x: 130, y: 165, o: { couleur: "#7b5ea7" }, nom: "Intérimaire sans gilet ni formation", regle: "Avant d'être à son poste, tout nouveau salarié reçoit l'accueil sécurité et son équipement.", risque: "Accident par méconnaissance des risques." },
+        { type: "chariot", x: 260, y: 175, nom: "Engin confié sans autorisation", regle: "Un engin ne se confie qu'à une personne formée et autorisée par écrit.", risque: "Mauvaise utilisation de l'engin." }
+      ],
+      pnj: [
+        { x: 290, y: 130, nom: "L'intérimaire", couleur: "#7b5ea7", lignes: "Je suis content d'être là ! Mais je ne sais pas encore où est le gilet, ni qui fait quoi ici." },
+        { x: 60, y: 130, nom: "Le cadre", couleur: "#3b4a5a", chef: true, lignes: "Bienvenue ! Avant tout, un bon tour de l'entrepôt et un gilet. Ensuite, on parle du travail." }
+      ],
+      decision: { q: "Un intérimaire arrive, et tu dois le faire travailler tout de suite. Que fais-tu ?", a: ["Je le mets au travail, il apprendra sur le tas", "Je fais son accueil sécurité, je lui donne son gilet et je le forme avant tout", "Je lui confie un chariot pour gagner du temps"], c: 1, e: "L'accueil sécurité et l'équipement passent avant le travail. Personne n'apprend bien sur le tas, surtout en sécurité." }
+    },
+    {
+      titre: "Chef : le rayonnage qui plie", bg: "rayon", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "caisses", x: 100, y: 120, nom: "Charge lourde en hauteur", regle: "Les charges lourdes se rangent au niveau bas, jamais en haut d'un rayonnage.", risque: "Chute de la charge." },
+        { type: "rayon_def", x: 250, y: 160, nom: "Montant de rayonnage tordu", regle: "Un rayonnage abîmé est signalé et mis hors service jusqu'à réparation.", risque: "Effondrement partiel du rayonnage." },
+        { type: "cone", x: 170, y: 190, nom: "Accès bloqué devant le rayonnage", regle: "Les accès aux rayonnages restent dégagés.", risque: "Impossible de sortir vite en cas d'urgence." }
+      ],
+      pnj: [
+        { x: 150, y: 130, nom: "Le préparateur", couleur: "#2a78d6", lignes: "Il y avait de la place là-haut... et les caisses sont lourdes. Je vais redescendre, c'est mieux." },
+        { x: 320, y: 150, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Un rayonnage tordu, c'est comme un meuble qui penche : tôt ou tard, tout tombe." }
+      ],
+      decision: { q: "Un montant de rayonnage semble tordu. Que fais-tu ?", a: ["Je le laisse, il tient encore", "Je signale, je dégage la zone et je fais mettre le rayonnage hors service", "Je cale le rayonnage avec une palette"], c: 1, e: "Un rayonnage abîmé se signale, se dégage et se met hors service avant toute réparation." }
+    },
+    {
+      titre: "Chef : l'évacuation", bg: "rayon", depart: { x: 40, y: 200 },
+      extra: [{ type: "porte", x: 60, y: 110 }, { type: "sortie", x: 310, y: 125 }],
+      dangers: [
+        { type: "extincteur", x: 200, y: 165, nom: "Extincteur masqué", regle: "Les extincteurs restent visibles et accessibles en permanence.", risque: "Perte de temps en cas de feu." },
+        { type: "cale", x: 60, y: 130, nom: "Porte coupe-feu calée", regle: "Une porte coupe-feu ne se cale jamais.", risque: "Propagation du feu et de la fumée." },
+        { type: "caisses", x: 260, y: 190, nom: "Passage vers la sortie encombré", regle: "Le chemin vers la sortie reste dégagé.", risque: "Évacuation ralentie." }
+      ],
+      pnj: [
+        { x: 130, y: 150, nom: "Le préparateur", couleur: "#2a78d6", lignes: "La porte fait un courant d'air agréable, mais je vois bien que personne ne l'a pensé pour ça." },
+        { x: 330, y: 170, nom: "Le cadre", couleur: "#3b4a5a", chef: true, lignes: "Un exercice d'évacuation, c'est bête à faire. Et c'est là qu'on voit si tout est bien dégagé." }
+      ],
+      decision: { q: "Tu fais le tour de l'évacuation et une porte est calée, un extincteur masqué. Que fais-tu ?", a: ["Je note et j'attends la fin du mois", "Je corrige ce qui est possible, je signale le reste et je le fais traiter", "Je laisse tel quel, c'est un exercice"], c: 1, e: "On corrige ce qu'on peut, on signale le reste, et on suit le traitement." }
+    }
+  ],
+
+  // ---------- CADRE ----------
+  cadre: [
+    {
+      titre: "Cadre : l'escalier de service", bg: "bureau", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "escalier", x: 290, y: 175, nom: "Escalier sans rambarde", regle: "Un escalier de service a une rambarde, un éclairage et une marche visible.", risque: "Chute de hauteur." },
+        { type: "perso", x: 220, y: 180, o: { telephone: true, couleur: "#3b4a5a" }, nom: "Monte en regardant son téléphone", regle: "On tient la rampe et on regarde où l'on met les pieds.", risque: "Chute dans l'escalier." }
+      ],
+      pnj: [
+        { x: 150, y: 130, nom: "Le collègue du service", couleur: "#2a78d6", lignes: "Je monte deux étages par jour. Le plus dangereux, c'est encore mon téléphone, pas la marche." },
+        { x: 330, y: 120, nom: "La direction", couleur: "#cfd6de", chef: true, lignes: "Un escalier sûr, c'est un détail qui compte. Je fais vérifier la rambarde dès cette semaine." }
+      ],
+      decision: { q: "Tu vois qu'un escalier de service n'a pas de rambarde. Que fais-tu ?", a: ["Je l'utilise prudemment, c'est sans gravité", "Je le signale au responsable et j'utilise un autre accès en attendant", "Je le laisse, c'est l'affaire du service technique"], c: 1, e: "On signale, et on passe par un autre accès jusqu'à la remise en état." }
+    },
+    {
+      titre: "Cadre : le câble du couloir", bg: "bureau", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "cable", x: 170, y: 195, nom: "Câble de projecteur à travers le couloir", regle: "Un câble traversant un couloir se fixe ou se protège.", risque: "Trébuchement et chute." },
+        { type: "multiprise", x: 290, y: 150, nom: "Multiprise surchargée", regle: "Une multiprise ne se surcharge jamais.", risque: "Surchauffe, incendie." },
+        { type: "porte", x: 50, y: 190, nom: "Porte coupe-feu calée", regle: "Une porte coupe-feu se ferme toute seule.", risque: "Propagation du feu." }
+      ],
+      pnj: [
+        { x: 130, y: 150, nom: "La responsable RH", couleur: "#d46a9f", lignes: "Je marchais en parlant de l'ordre du jour, j'ai failli tomber. Le câble attendait sagement." },
+        { x: 330, y: 130, nom: "Le cadre", couleur: "#3b4a5a", chef: true, lignes: "Une réunion sans chute, c'est déjà une bonne réunion. Un câble fixé, c'est la moitié du travail." }
+      ],
+      decision: { q: "Un câble de projecteur traverse le couloir de la salle de réunion. Que fais-tu ?", a: ["Je l'enjambe, ça va", "Je signale et je demande qu'il soit fixé ou protégé", "Je le scotche moi-même"], c: 1, e: "Le câble se fixe ou se protège par la personne compétente. Le signaler, c'est protéger tout le monde." }
+    },
+    {
+      titre: "Cadre : le stock de produits", bg: "bureau", depart: { x: 40, y: 200 },
+      extra: [],
+      dangers: [
+        { type: "bidon", x: 110, y: 160, nom: "Produit stocké sans bac de rétention", regle: "Les liquides dangereux sont stockés sur un bac qui retient une fuite.", risque: "Pollution et contact avec le produit." },
+        { type: "bidon", x: 240, y: 175, nom: "Bidon sans étiquette", regle: "Tout produit porte son nom et ses pictogrammes de danger.", risque: "Mélange dangereux." }
+      ],
+      pnj: [
+        { x: 180, y: 130, nom: "Le magasinier", couleur: "#2a78d6", lignes: "Ce bidon, je ne sais pas ce qu'il contient. Je le mets de côté en attendant qu'on regarde la fiche." },
+        { x: 330, y: 110, nom: "Le cadre", couleur: "#3b4a5a", chef: true, lignes: "Un produit sans étiquette, c'est un risque qui attend qu'on l'oublie. On le nomme, on le range, et on le lit." }
+      ],
+      decision: { q: "Tu trouves un bidon sans étiquette et sans fiche de données. Que fais-tu ?", a: ["Je le transvase dans une bouteille pour le ranger", "Je le signale, je ne le manipule pas et je demande l'identification", "Je le range au fond de l'armoire"], c: 1, e: "Un produit non identifié ne se manipule pas. On signale, puis on identifie avec la fiche de données." }
+    },
+    {
+      titre: "Cadre : la visite terrain", bg: "allee", depart: { x: 40, y: 205 },
+      extra: [],
+      dangers: [
+        { type: "perso", x: 150, y: 160, o: { couleur: "#3b4a5a", chef: true }, nom: "Visite sans casque ni gilet en zone engins", regle: "Toute personne en zone engins porte casque et gilet, cadres compris.", risque: "Être invisible et non protégé pour un engin." },
+        { type: "chariot", x: 260, y: 165, nom: "Engin en mouvement près du visiteur", regle: "Un visiteur se tient à distance des engins, et se fait accompagner.", risque: "Collision." },
+        { type: "cone", x: 230, y: 125, nom: "Zone non balisée", regle: "Une zone de circulation d'engins se balise.", risque: "Personne qui ne voit pas l'engin." }
+      ],
+      pnj: [
+        { x: 60, y: 130, nom: "Le conducteur", couleur: "#f7a600", lignes: "On a le droit de visiter, bien sûr ! Mais avec un gilet, s'il vous plaît. Ça me rassure autant que vous." },
+        { x: 330, y: 140, nom: "Le chef d'équipe", couleur: "#cfd6de", chef: true, lignes: "Le bon exemple vient d'en haut. Un cadre avec son casque, ça se remarque, et ça se suit." }
+      ],
+      decision: { q: "Pendant une visite, tu te retrouves dans une zone d'engins sans gilet. Que fais-tu ?", a: ["Je reste, je ne vais pas faire d'histoires", "Je demande un gilet, je me fais accompagner et je m'éloigne des engins", "Je traverse vite la zone"], c: 1, e: "Le bon exemple vient d'en haut : gilet, accompagnement, et distance avec les engins." }
+    }
+  ]
+};
+
+// ==================== ÉTAT ====================
+let etat = { service: null, idx: 0, scene: null, perso: { x: 0, y: 0 }, trouves: [], dit: {}, anim: null, indice: null };
+const $ = id => document.getElementById(id);
+function dist(a, b){ return Math.hypot(a.x - b.x, a.y - b.y); }
+
+// ==================== ÉCRANS ====================
+function montrer(id){
+  ["ecran-services", "ecran-scene", "ecran-decision"].forEach(e => { $(e).hidden = (e !== id); });
+}
+function afficherServices(){
+  clearInterval(etat.anim);
+  montrer("ecran-services");
+  $("liste-services").innerHTML = SERVICES.map(s =>
+    '<button class="btn sec" onclick="choisirService(\'' + s.id + '\')">' + s.emoji + ' ' + s.nom + '</button>'
+  ).join("");
+}
+function choisirService(id){
+  etat.service = id;
+  lancerScene(Math.floor(Math.random() * SCENES[id].length));
+}
+function lancerScene(i){
+  clearInterval(etat.anim);
+  const s = SCENES[etat.service][i];
+  etat.idx = i;
+  etat.scene = s;
+  etat.perso = { x: s.depart.x, y: s.depart.y };
+  etat.trouves = []; etat.dit = {}; etat.indice = null; etat.anim = null;
+  $("titre-scene").textContent = s.titre;
+  $("bulle").innerHTML = "Déplace-toi avec les flèches, ou touche la scène. Repère ce qui pourrait être mieux, et écoute les collègues.";
+  montrer("ecran-scene");
+  rendre();
+}
+function autreScene(){
+  const n = SCENES[etat.service].length;
+  let i;
+  do { i = Math.floor(Math.random() * n); } while(n > 1 && i === etat.idx);
+  lancerScene(i);
+}
+
+// ==================== DÉPLACEMENT ====================
+function limiter(p){
+  p.x = Math.max(20, Math.min(340, p.x));
+  p.y = Math.max(95, Math.min(225, p.y));
+}
+function bouger(dx, dy){
+  clearInterval(etat.anim);
+  etat.perso.x += dx; etat.perso.y += dy;
+  limiter(etat.perso);
+  verifier(); rendre();
+}
+function allerDepuisClic(evt){
+  if(!etat.scene) return;
+  const svg = $("scene");
+  const pt = svg.createSVGPoint();
+  pt.x = evt.clientX; pt.y = evt.clientY;
+  const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+  const cible = { x: p.x, y: p.y };
+  limiter(cible);
+  clearInterval(etat.anim);
+  etat.anim = setInterval(() => {
+    const dx = cible.x - etat.perso.x, dy = cible.y - etat.perso.y;
+    const d = Math.hypot(dx, dy);
+    if(d < 4){ clearInterval(etat.anim); return; }
+    const pas = Math.min(6, d);
+    etat.perso.x += dx / d * pas;
+    etat.perso.y += dy / d * pas;
+    verifier(); rendre();
+  }, 40);
+}
+document.addEventListener("keydown", e => {
+  if($("ecran-scene").hidden) return;
+  const t = { ArrowUp: [0, -10], ArrowDown: [0, 10], ArrowLeft: [-10, 0], ArrowRight: [10, 0] }[e.key];
+  if(t){ e.preventDefault(); bouger(t[0], t[1]); }
+});
+
+// ==================== RÉACTIONS ====================
+function verifier(){
+  const s = etat.scene;
+  s.dangers.forEach(d => {
+    if(etat.trouves.indexOf(d.nom) === -1 && dist(etat.perso, d) < 40){
+      etat.trouves.push(d.nom);
+      if(etat.indice === d.nom) etat.indice = null;
+      $("bulle").innerHTML = "<strong>✅ " + d.nom + "</strong><br>" + d.regle + "<br><em>Risque : " + d.risque + "</em>";
+      if(etat.trouves.length === s.dangers.length){
+        $("bulle").innerHTML += "<br><br>🎉 Bravo, tout est repéré ! Touche « J'ai fini de chercher » pour la petite question.";
+      }
+    }
+  });
+  s.pnj.forEach(p => {
+    if(!etat.dit[p.nom] && dist(etat.perso, p) < 45){
+      etat.dit[p.nom] = true;
+      $("bulle").innerHTML = "<strong>" + p.nom + " :</strong> « " + p.lignes + " »";
+    }
+  });
+}
+
+// ==================== INDICE ====================
+function indice(){
+  const s = etat.scene;
+  const reste = s.dangers.filter(d => etat.trouves.indexOf(d.nom) === -1);
+  if(!reste.length){
+    $("bulle").innerHTML = "🎉 Il n'y a plus rien à chercher. Tu peux répondre à la question !";
+    return;
+  }
+  const d = reste[0];
+  const dx = d.x - etat.perso.x, dy = d.y - etat.perso.y;
+  let dir;
+  if(Math.abs(dx) > Math.abs(dy)) dir = dx > 0 ? "plus à droite" : "plus à gauche";
+  else dir = dy > 0 ? "plus bas" : "plus haut";
+  etat.indice = d.nom;
+  $("bulle").innerHTML = "💡 <strong>Indice :</strong> une zone à repérer est " + dir + ". Tu y es presque !";
+  rendre();
+  setTimeout(() => { if(etat.indice === d.nom){ etat.indice = null; rendre(); } }, 4000);
+}
+
+// ==================== DESSIN ====================
+function rendre(){
+  const s = etat.scene;
+  const decor = DECOR[s.bg]();
+  const extra = (s.extra || []).map(o => OBJ[o.type](o.x, o.y)).join("");
+  const dangers = s.dangers.map(dessinerObjet).join("");
+  const marques = s.dangers.map(d => {
+    if(etat.trouves.indexOf(d.nom) !== -1){
+      return '<g transform="translate(' + (d.x + 16) + ',' + (d.y - 30) + ')"><circle r="11" fill="#2e7d32"/><text y="5" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">✓</text></g>';
+    }
+    if(etat.indice === d.nom){
+      return '<circle cx="' + d.x + '" cy="' + (d.y - 10) + '" r="30" fill="none" stroke="#ffcc00" stroke-width="4" stroke-dasharray="6 4"/>';
+    }
+    return '';
+  }).join("");
+  const gens = s.pnj.map(p => perso(p.x, p.y, { couleur: p.couleur, chef: p.chef })).join("");
+  $("scene").innerHTML = decor + extra + dangers + marques + gens + perso(etat.perso.x, etat.perso.y, { couleur: "#f7a600", joueur: true });
+  $("compteur").textContent = etat.trouves.length + " / " + s.dangers.length + " repérés";
+}
+
+// ==================== FIN DE RECHERCHE ====================
+function finirRecherche(){
+  clearInterval(etat.anim);
+  const s = etat.scene, d = s.decision;
+  const melange = d.a.map((t, i) => ({ t: t, ok: i === d.c })).sort(() => Math.random() - 0.5);
+  const oublies = s.dangers.filter(x => etat.trouves.indexOf(x.nom) === -1);
+  let intro;
+  if(oublies.length){
+    intro = "<p><strong>👀 Zones que tu n'as pas encore repérées :</strong></p>" +
+      oublies.map(x => "<p><strong>" + x.nom + "</strong> : " + x.regle + "</p>").join("");
+  } else {
+    intro = "<p><strong>🎉 Tu as tout repéré dans cette scène !</strong></p>";
+  }
+  $("decision-q").innerHTML = intro + '<p style="font-weight:700">🤔 ' + d.q + '</p>';
+  $("decision-explic").innerHTML = "";
+  $("btn-autre").hidden = true;
+  $("btn-suite").hidden = true;
+  $("decision-choix").innerHTML = melange.map(o =>
+    '<button class="btn opt" onclick="choisirReponse(' + o.ok + ', this)">' + o.t + '</button>'
+  ).join("");
+  montrer("ecran-decision");
+}
+function choisirReponse(ok, btn){
+  document.querySelectorAll("#decision-choix button").forEach(b => { b.disabled = true; });
+  btn.classList.add(ok ? "ok" : "ko");
+  const d = etat.scene.decision;
+  $("decision-explic").innerHTML = '<div class="explic"><strong>' + (ok ? "✅ Bonne décision !" : "🙂 Pas tout à fait, et ce n'est pas grave.") + "</strong> " + d.e + "</div>";
+  $("btn-autre").hidden = false;
+  $("btn-suite").hidden = false;
+}
+
+// ==================== DÉMARRAGE ====================
+afficherServices();
+</script>
+</body>
+</html>
