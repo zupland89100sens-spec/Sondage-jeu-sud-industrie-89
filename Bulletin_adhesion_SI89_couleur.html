@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bulletin d'adhésion Sud Industrie 89</title>
+<style>
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;color:#16181d;margin:0;background:#f4f6fa;line-height:1.45}
+  .bouton{text-align:center;padding:14px}
+  .bouton button{padding:12px 18px;font-size:1rem;border:0;border-radius:8px;background:#004aad;color:#fff;font-weight:700;cursor:pointer;width:100%;max-width:420px}
+  .aide{text-align:center;font-size:.85rem;color:#5b616b;margin:0 14px 10px 14px}
+  .feuille{max-width:780px;margin:0 auto;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+  .entete{background:linear-gradient(135deg,#004aad,#0a7cff);color:#fff;padding:18px 22px;display:flex;align-items:center;gap:18px}
+  .entete img{width:110px;height:auto;background:#fff;border-radius:8px;padding:4px}
+  .entete h1{margin:0;font-size:1.45rem;line-height:1.2}
+  .entete p{margin:4px 0 0 0;font-size:.9rem;opacity:.95}
+  .bande{height:8px;background:linear-gradient(90deg,#ffcc00,#c8102e)}
+  .corps{padding:18px 22px}
+  .section{display:inline-block;background:#004aad;color:#fff;font-weight:700;font-size:.9rem;padding:4px 12px;border-radius:99px;margin:14px 0 8px 0}
+  .ligne{display:flex;gap:10px;margin:9px 0;font-size:.95rem;align-items:flex-end}
+  .ligne b{white-space:nowrap}
+  .champ{flex:1;border-bottom:1.5px dotted #004aad;min-height:20px}
+  .grille{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  .cases{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.95rem;margin:8px 0;align-items:center}
+  .case{display:inline-block;width:14px;height:14px;border:2px solid #004aad;border-radius:3px;vertical-align:-2px;margin-right:6px}
+  .montant{background:#fff8d6;border:2px solid #ffcc00;border-radius:10px;padding:12px 14px}
+  .montant table{width:100%;border-collapse:collapse;font-size:.95rem}
+  .montant td{padding:6px 4px;border-bottom:1px solid #f0d878}
+  .montant td.prix{text-align:right;font-weight:700;color:#004aad;white-space:nowrap}
+  .montant .periode{margin:10px 0 0 0;font-weight:700;color:#8a6500}
+  .paiement{background:#eaf2fc;border-radius:10px;padding:12px 14px;font-size:.92rem}
+  .paiement ul{margin:6px 0 0 18px;padding:0}
+  .paiement li{margin:4px 0}
+  .consent{margin:16px 0 4px 0;font-size:.9rem;background:#eef0f2;border-radius:8px;padding:10px 12px}
+  .signature{margin-top:14px}
+  .signature .bloc{border:2px dashed #004aad;border-radius:10px;padding:10px;min-height:90px;font-size:.9rem;color:#004aad;font-weight:700}
+  .pied{background:#16181d;color:#fff;padding:12px 22px;font-size:.88rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+  .pied strong{color:#ffcc00}
+  @media (max-width:560px){.grille{grid-template-columns:1fr}.entete{flex-direction:column;text-align:center}}
+  @media print{.bouton,.aide{display:none} body{background:#fff} .feuille{box-shadow:none;max-width:none} @page{margin:10mm}}
+</style>
+</head>
+<body>
+
+<div class="bouton"><button onclick="window.print()">🖨️ Imprimer ou enregistrer en PDF</button></div>
+<p class="aide">Sur téléphone : menu du navigateur (⋮ ou Partager), puis <strong>Imprimer</strong>, puis <strong>Enregistrer en PDF</strong>.</p>
+
+<div class="feuille">
+
+  <div class="entete">
+    <img src="logo.jpg" alt="Logo Sud Industrie">
+    <div>
+      <h1>BULLETIN D'ADHÉSION</h1>
+      <p>Sud Industrie 89 · Syndicalisme de lutte</p>
+    </div>
+  </div>
+  <div class="bande"></div>
+
+  <div class="corps">
+
+    <span class="section">👤 Mes informations</span>
+    <div class="grille">
+      <div class="ligne"><b>Nom :</b><span class="champ"></span></div>
+      <div class="ligne"><b>Prénom :</b><span class="champ"></span></div>
+    </div>
+    <div class="ligne"><b>Adresse :</b><span class="champ"></span></div>
+    <div class="ligne"><span class="champ"></span></div>
+    <div class="grille">
+      <div class="ligne"><b>Date de naissance :</b><span class="champ"></span></div>
+      <div class="ligne"><b>Téléphone :</b><span class="champ"></span></div>
+    </div>
+    <div class="ligne"><b>Mail :</b><span class="champ"></span></div>
+
+    <span class="section">🏭 Mon travail</span>
+    <div class="ligne"><b>Entreprise :</b><span class="champ"></span></div>
+    <div class="ligne"><b>Activité professionnelle :</b><span class="champ"></span></div>
+    <div class="cases"><b>Qualification :</b><span><span class="case"></span>Ouvrier</span><span><span class="case"></span>Employé</span><span><span class="case"></span>Cadre</span></div>
+    <div class="cases"><b>Type de contrat :</b><span><span class="case"></span>CDD</span><span><span class="case"></span>CDI</span><span><span class="case"></span>Intérim</span></div>
+
+    <span class="section">💶 Ma cotisation</span>
+    <div class="montant">
+      <table>
+        <tr><td>1er collège</td><td class="prix">10 € par mois</td><td class="prix">20 € à chaque prélèvement</td></tr>
+        <tr><td>2e et 3e collèges</td><td class="prix">12 € par mois</td><td class="prix">24 € à chaque prélèvement</td></tr>
+      </table>
+      <p class="periode">📅 Prélèvement tous les 2 mois</p>
+      <p style="margin:6px 0 0 0;font-size:.85rem">La cotisation ouvre droit à une réduction d'impôt : renseignez-vous sur impots.gouv.fr.</p>
+    </div>
+
+    <span class="section">💳 Mode de paiement</span>
+    <div class="paiement">
+      <ul>
+        <li>Chèque à l'ordre de <strong>Sud Industrie 89</strong></li>
+        <li>Virement : IBAN FR76 4255 9100 0008 0132 6366 381</li>
+        <li>Code banque 42559 · code guichet 10000 · numéro de compte 08013263663 · clé RIB 81 · code BIC CCOPFRPPXXX</li>
+      </ul>
+    </div>
+
+    <div class="ligne" style="margin-top:16px"><b>Fait à :</b><span class="champ"></span><b>le :</b><span class="champ" style="flex:0 0 130px"></span></div>
+
+    <div class="consent">✅ En adhérant à Sud Industrie 89, je donne mon consentement pour faire partie des listes de diffusion.</div>
+
+    <div class="signature">
+      <div class="bloc">✍️ Signature :</div>
+    </div>
+
+  </div>
+
+  <div class="pied">
+    <span><strong>Sud Industrie 89</strong></span>
+    <span>✉️ sud.industrie.ele89@gmail.com</span>
+    <span>📞 06 26 71 16 87</span>
+  </div>
+
+</div>
+</body>
+</html>
