@@ -834,7 +834,7 @@ body.grand{font-size:19px}
 <section id="jeu" hidden>
   <div class="card" style="text-align:center;">
     <h2>🎯 Mission sécurité</h2>
-    <p style="font-size:.95rem; color:var(--mute);">Huit scènes de ta journée à l'entrepôt. Repère les dangers, puis choisis la bonne décision. Chaque erreur te montre ce qu'elle peut provoquer.</p>
+    <p style="font-size:.95rem; color:var(--mute);">Douze scènes de ta journée à l'entrepôt. Repère les dangers, puis choisis la bonne décision. Chaque erreur te montre ce qu'elle peut provoquer.</p>
     <p class="note">Scène <span id="jeu-scene">1</span> · Score : <strong id="jeu-score">0</strong> · Meilleur : <strong id="jeu-best">0</strong></p>
     <div class="badges" id="jeu-badges">
       <span class="badge" data-badge="premier">🥇 Premier danger repéré</span>
@@ -1637,6 +1637,84 @@ JEU_SCENES.push(
       haut: { nom: "Charge placée trop haut", regle: "Les charges lourdes se rangent à hauteur d'épaule ou plus bas, pour éviter de forcer.", risque: "Chute de la charge ou effort dangereux." }
     },
     decision: { q: "Une charge lourde doit être déplacée, et un collègue propose de la porter seul pour gagner du temps. Que fais-tu ?", a: ["Je la porte seul, on gagne du temps", "Je demande de l'aide ou un engin, et je mets mes gants", "Je la laisse là pour plus tard"], c: 1, e: "Demander de l'aide ou un engin évite les lombalgies et les accidents." }
+  }
+);
+// ==================== SCÈNES SUPPLÉMENTAIRES : SÉCURITÉ GÉNÉRALE ====================
+JEU_SCENES.push(
+  {
+    titre: "9. Produits chimiques",
+    intro: "Un produit d'entretien est stocké près d'un point d'eau. Repère ce qui n'est pas conforme.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Stockage de produits chimiques">
+<rect width="320" height="200" fill="#d5d9de"/><rect y="170" width="320" height="30" fill="#c5cad1"/>
+<rect x="20" y="40" width="4" height="130" fill="#55606c"/><rect x="120" y="40" width="4" height="130" fill="#55606c"/><rect x="20" y="100" width="104" height="4" fill="#55606c"/>
+<g class="hs" data-id="etiquette" tabindex="0" role="button" aria-label="Danger : bidon sans étiquette"><rect x="28" y="60" width="40" height="40" fill="transparent"/><rect x="36" y="64" width="24" height="34" rx="4" fill="#4a8fd6"/></g>
+<g class="hs" data-id="bac" tabindex="0" role="button" aria-label="Danger : pas de bac de rétention"><rect x="28" y="130" width="90" height="36" fill="transparent"/><rect x="28" y="150" width="90" height="16" fill="none" stroke="#c8102e" stroke-dasharray="4 3" stroke-width="2"/></g>
+<rect x="200" y="60" width="90" height="90" fill="#f4f6f8" stroke="#9aa1ab"/><rect x="208" y="90" width="74" height="10" fill="#2a78d6"/>
+<g class="hs" data-id="fds" tabindex="0" role="button" aria-label="Danger : fiche de données de sécurité absente"><rect x="200" y="150" width="90" height="20" fill="transparent"/><rect x="212" y="154" width="66" height="10" fill="none" stroke="#c8102e" stroke-dasharray="3 2"/></g>
+<rect x="250" y="10" width="60" height="22" fill="#2e7d32"/><text x="256" y="25" font-size="9" fill="#fff" font-family="Arial" font-weight="700">POINT D'EAU</text>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Produits chimiques : que vois-tu ?</text>
+</svg>`,
+    dangers: {
+      etiquette: { nom: "Bidon sans étiquette", regle: "Tout produit doit être étiqueté avec son nom et ses pictogrammes de danger. Un produit non identifié ne se manipule pas.", risque: "Mélange dangereux ou brûlure par un produit inconnu." },
+      bac: { nom: "Pas de bac de rétention", regle: "Les liquides dangereux doivent être stockés sur un bac de rétention, pour retenir une fuite.", risque: "Pollution et contact avec un produit répandu au sol." },
+      fds: { nom: "Fiche de données de sécurité absente", regle: "La fiche de données de sécurité (FDS) de chaque produit doit être accessible aux salariés.", risque: "On ne sait pas quoi faire en cas de contact ou de fuite." }
+    },
+    decision: { q: "Tu trouves un bidon de produit nettoyant sans étiquette, près d'un point d'eau. Que fais-tu ?", a: ["Je le transvase dans une bouteille pour le ranger", "Je le signale à mon responsable sans y toucher", "Je le mets de côté sans rien dire"], c: 1, e: "Un produit non identifié peut être dangereux. On ne le manipule pas : on signale, puis on identifie." }
+  },
+  {
+    titre: "10. Incendie",
+    intro: "Une zone de stockage est en place près d'une sortie. Repère ce qui bloque la sécurité incendie.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Zone de stockage et sécurité incendie">
+<rect width="320" height="200" fill="#d5d9de"/><rect y="172" width="320" height="28" fill="#c5cad1"/>
+<rect x="230" y="30" width="70" height="142" fill="#9aa1ab"/><rect x="245" y="70" width="40" height="102" fill="#2e7d32"/><text x="252" y="60" font-size="8" font-weight="700" fill="#2e7d32" font-family="Arial">SORTIE</text>
+<g class="hs" data-id="extincteur" tabindex="0" role="button" aria-label="Danger : extincteur masqué"><rect x="20" y="100" width="90" height="72" fill="transparent"/><rect x="24" y="110" width="80" height="62" fill="#d9b87c" stroke="#8a6a3f"/><rect x="40" y="90" width="16" height="30" rx="4" fill="#c8102e"/></g>
+<g class="hs" data-id="porte" tabindex="0" role="button" aria-label="Danger : porte coupe-feu calée ouverte"><rect x="190" y="50" width="40" height="122" fill="transparent"/><rect x="176" y="50" width="6" height="122" fill="#55606c"/><rect x="176" y="150" width="30" height="6" fill="#8a6a3f"/></g>
+<g class="hs" data-id="plan" tabindex="0" role="button" aria-label="Danger : plan d'évacuation absent"><rect x="120" y="30" width="40" height="40" fill="transparent"/><rect x="126" y="36" width="28" height="28" fill="none" stroke="#c8102e" stroke-dasharray="3 2" stroke-width="2"/></g>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Incendie : que vois-tu ?</text>
+</svg>`,
+    dangers: {
+      extincteur: { nom: "Extincteur masqué", regle: "Les extincteurs doivent rester visibles et accessibles en permanence, sans rien devant.", risque: "En cas de départ de feu, on perd du temps à le trouver." },
+      porte: { nom: "Porte coupe-feu calée ouverte", regle: "Les portes coupe-feu doivent rester fermées ou se fermer automatiquement. Elles ne se calent jamais.", risque: "Le feu et la fumée se propagent dans tout le bâtiment." },
+      plan: { nom: "Plan d'évacuation absent", regle: "Un plan d'évacuation doit être affiché près de l'entrée et indiquer les sorties.", risque: "Une évacuation hésitante en cas de panique ou de fumée." }
+    },
+    decision: { q: "Tu vois un extincteur masqué par des cartons. Que fais-tu ?", a: ["Je le déplace ailleurs pour dégager le passage", "Je laisse, il n'est pas utilisé souvent", "Je dégage l'accès et je signale le stockage à ma hiérarchie"], c: 2, e: "L'extincteur doit rester accessible en permanence, et le stockage doit être corrigé à la source." }
+  },
+  {
+    titre: "11. Électricité",
+    intro: "Une zone de travail est alimentée en électricité. Repère les risques électriques.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Zone électrique">
+<rect width="320" height="200" fill="#d5d9de"/><rect y="172" width="320" height="28" fill="#c5cad1"/>
+<g class="hs" data-id="armoire" tabindex="0" role="button" aria-label="Danger : armoire électrique ouverte"><rect x="30" y="40" width="80" height="120" fill="transparent"/><rect x="34" y="44" width="72" height="112" fill="#e6e9ed" stroke="#55606c" stroke-width="2"/><rect x="60" y="80" width="24" height="60" fill="#c8102e"/></g>
+<g class="hs" data-id="rallonge" tabindex="0" role="button" aria-label="Danger : rallonge abîmée au sol"><rect x="120" y="150" width="160" height="22" fill="transparent"/><line x1="125" y1="162" x2="275" y2="162" stroke="#333" stroke-width="4"/><circle cx="278" cy="162" r="5" fill="#777"/><line x1="200" y1="158" x2="208" y2="166" stroke="#c8102e" stroke-width="2"/></g>
+<g class="hs" data-id="multiprise" tabindex="0" role="button" aria-label="Danger : multiprises en cascade"><rect x="190" y="60" width="70" height="60" fill="transparent"/><rect x="196" y="66" width="50" height="16" rx="3" fill="#333"/><rect x="200" y="84" width="50" height="16" rx="3" fill="#333"/><rect x="204" y="102" width="50" height="16" rx="3" fill="#333"/></g>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Électricité : que vois-tu ?</text>
+</svg>`,
+    dangers: {
+      armoire: { nom: "Armoire électrique ouverte", regle: "Une armoire électrique reste fermée à clé et signalée. Seul un personnel habilité y intervient.", risque: "Choc électrique ou brûlure par contact avec une pièce sous tension." },
+      rallonge: { nom: "Rallonge abîmée au sol", regle: "Une rallonge dénudée ou abîmée se remplace. Elle ne doit pas traverser une zone de circulation.", risque: "Choc électrique, court-circuit ou départ de feu." },
+      multiprise: { nom: "Multiprises en cascade", regle: "On ne branche jamais une multiprise sur une autre. Une prise ne doit pas être surchargée.", risque: "Surchauffe et départ de feu." }
+    },
+    decision: { q: "Une rallonge abîmée traverse une allée. Un collègue dit : « ça tient, pas le temps de la changer ». Que fais-tu ?", a: ["Je suis d'accord, ça tient", "Je la scotche moi-même pour la protéger", "Je signale la rallonge et je la fais retirer ou remplacer"], c: 2, e: "Une rallonge abîmée est un risque de choc électrique et d'incendie. Elle se signale et se remplace." }
+  },
+  {
+    titre: "12. Stockage en hauteur",
+    intro: "Des palettes sont stockées sur un rayonnage. Repère ce qui n'est pas sûr.",
+    svg: `<svg viewBox="0 0 320 200" width="100%" style="max-width:360px" role="img" aria-label="Stockage sur rayonnage">
+<rect width="320" height="200" fill="#d5d9de"/><rect y="172" width="320" height="28" fill="#c5cad1"/>
+<rect x="40" y="30" width="5" height="142" fill="#2a78d6"/><rect x="180" y="30" width="5" height="142" fill="#2a78d6"/>
+<rect x="40" y="70" width="145" height="4" fill="#2a78d6"/><rect x="40" y="120" width="145" height="4" fill="#2a78d6"/>
+<rect x="60" y="48" width="50" height="22" fill="#d9b87c" stroke="#8a6a3f"/>
+<g class="hs" data-id="charge" tabindex="0" role="button" aria-label="Danger : charge instable en hauteur"><rect x="120" y="20" width="60" height="50" fill="transparent"/><rect x="124" y="30" width="46" height="40" fill="#d9b87c" stroke="#8a6a3f"/><rect x="128" y="24" width="38" height="8" fill="#e8c98f"/></g>
+<g class="hs" data-id="montant" tabindex="0" role="button" aria-label="Danger : montant de rayonnage endommagé"><rect x="170" y="60" width="30" height="80" fill="transparent"/><path d="M180 60 L186 100 L178 140" fill="none" stroke="#c8102e" stroke-width="3"/></g>
+<g class="hs" data-id="acces" tabindex="0" role="button" aria-label="Danger : accès bloqué devant le rayonnage"><rect x="210" y="100" width="90" height="72" fill="transparent"/><rect x="220" y="130" width="60" height="40" fill="#d9b87c" stroke="#8a6a3f"/></g>
+<text x="160" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Stockage : que vois-tu ?</text>
+</svg>`,
+    dangers: {
+      charge: { nom: "Charge instable en hauteur", regle: "Une charge doit être stable, bien centrée et ne pas dépasser les limites du rayonnage.", risque: "Chute de la charge sur une personne qui passe dessous." },
+      montant: { nom: "Montant de rayonnage endommagé", regle: "Un rayonnage abîmé doit être signalé et mis hors service jusqu'à réparation.", risque: "Effondrement partiel ou total du rayonnage." },
+      acces: { nom: "Accès bloqué devant le rayonnage", regle: "Les allées de travail et les accès aux rayonnages doivent rester dégagés.", risque: "Impossible de sortir vite en cas d'urgence, et risque de heurt." }
+    },
+    decision: { q: "Une palette haute est posée sur un rayonnage qui semble déformé. Que fais-tu ?", a: ["Je la laisse, elle a l'air stable", "Je la rehausse avec une autre palette", "Je signale le rayonnage et je fais dégager la zone en attendant"], c: 2, e: "Un rayonnage endommagé peut s'effondrer. La zone se dégage et le défaut se signale avant toute remise en service." }
   }
 );
 const DECISIONS_TERRAIN = [
