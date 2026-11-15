@@ -1048,7 +1048,7 @@ document.addEventListener("play", e => {
 // ==================== ONGLETS ====================
 document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
   document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-pressed", x === b));
-  ["droits","victoires","elections","sondage","quiz","photos","videos","questions","jeu","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
+  ["droits","victoires","elections","sondage","quiz","photos","videos","questions","jeu","flash","qrcode"].forEach(s => $(s).hidden = s !== b.dataset.t);
   if(b.dataset.t === "qrcode") drawQR();
   if(b.dataset.t === "quiz") showStart();
   if(b.dataset.t === "photos") chargerGalerie();
