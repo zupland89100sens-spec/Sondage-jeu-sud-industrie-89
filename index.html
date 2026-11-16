@@ -713,12 +713,15 @@ body{background:#f4f6fa!important}
           <label for="flash-desc" style="font-weight:bold; display:block; margin-bottom:5px;">2. Décrire le problème :</label>
           <textarea id="flash-desc" rows="4" placeholder="Ex : palette qui bloque la sortie de secours." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-family:Arial, sans-serif;"></textarea>
         </div>
-        <div style="background:#eef0f2; border-radius:8px; padding:10px; font-size:.9rem;">
-          <strong>3. Ajouter la photo :</strong> touchez le bouton ci-dessous, puis joignez votre photo au mail qui s'ouvre (icône trombone ou pièce jointe).
+        <div>
+          <label for="flash-photo" style="font-weight:bold; display:block; margin-bottom:5px;">3. Ajouter une photo (facultatif) :</label>
+          <input type="file" id="flash-photo" accept="image/*" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; background:#f9f9f9;">
+          <small style="color:#666;">La photo est réduite automatiquement avant l'envoi.</small>
         </div>
         <p id="flash-err" class="msg-err" hidden></p>
-        <button type="button" onclick="flashPreparerMail()" style="background:#c8102e;">📧 Préparer mon signalement</button>
-        <p class="note" style="text-align:left;">⚠️ Ce mail part de votre messagerie : votre adresse y apparaît. Ne mettez ni nom ni collègue dans la description.</p>
+        <p id="flash-ok" hidden style="background:#2e7d32; color:#fff; padding:14px; border-radius:8px; text-align:center; font-weight:bold; margin:0;">✅ Merci ! Votre signalement a bien été envoyé. Il sera traité rapidement.</p>
+        <button type="button" onclick="flashEnvoyer(this)" style="background:#c8102e;">📸 Envoyer le signalement</button>
+        <p class="note" style="text-align:left;">🔒 Aucun nom ni adresse mail n'est envoyé. Ne mettez aucun nom de collègue ou de chef dans la description.</p>
       </div>
       
     </div>
@@ -957,6 +960,7 @@ const REGLAGES = {
 const APP_URL = "";
 const FORMSPREE_URL = "https://formspree.io/f/xljbejjl";
 const QUESTIONS_URL = "https://script.google.com/macros/s/AKfycbz9wwu_0t_XCCLZ0OUyAMDY8Vtwap7KciXZbVh5y0dPYv8pt6wlV2W8dPmhO4-pqw85Zg/exec";
+const FLASH_URL = "https://script.google.com/macros/s/AKfycbyl_036AeZu_jIxNe-_WXX1kb91cQCYhI2R0ZvbLqrXY0Ax5-MyjVHTdaJWjdwceeVh/exec";
 const JD_FORMSPREE = "https://formspree.io/f/xwlovwav";
 const IA_URL = "https://assistant-sud.kg4fnd86k2-c01.workers.dev/";
 const LEGI = "https://www.legifrance.gouv.fr/codes/texte_lc/LEGITEXT000006072050/";
@@ -2154,20 +2158,59 @@ function fermerPage(){
   });
   window.scrollTo(0, 0);
 }
-// ==================== FLASH SÉCURITÉ (mail préparé) ====================
-function flashPreparerMail(){
+// ==================== FLASH SÉCURITÉ (envoi direct) ====================
+function reduirePhoto(file){
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const max = 1280;
+      const r = Math.min(1, max / Math.max(img.width, img.height));
+      const w = Math.round(img.width * r), h = Math.round(img.height * r);
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL("image/jpeg", 0.8).split(",")[1]);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(); };
+    img.src = url;
+  });
+}
+function flashEnvoyer(btn){
   const lieu = $("flash-lieu").value.trim();
   const desc = $("flash-desc").value.trim();
-  const err = $("flash-err");
-  err.hidden = true;
+  const file = $("flash-photo").files[0];
+  const err = $("flash-err"), ok = $("flash-ok");
+  err.hidden = true; ok.hidden = true;
   if(!desc){
     err.textContent = "Décris le problème avant d'envoyer.";
     err.hidden = false;
     return;
   }
-  const corps = "FLASH SÉCURITÉ\n\nLieu : " + (lieu || "non précisé") + "\n\nDescription :\n" + desc +
-    "\n\n(Pensez à joindre la photo à ce mail.)";
-  window.location.href = "mailto:" + REGLAGES.mail + "?subject=" + encodeURIComponent("Flash Sécurité") + "&body=" + encodeURIComponent(corps);
+  btn.disabled = true; btn.textContent = "Envoi en cours...";
+  const envoyer = photo => {
+    fetch(FLASH_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ lieu: lieu, description: desc, photo: photo })
+    }).then(() => {
+      $("flash-desc").value = ""; $("flash-lieu").value = ""; $("flash-photo").value = "";
+      ok.hidden = false;
+    }).catch(() => {
+      err.textContent = "Oups, l'envoi n'a pas abouti. Vérifie ton réseau et réessaie.";
+      err.hidden = false;
+    }).finally(() => {
+      btn.disabled = false; btn.textContent = "📸 Envoyer le signalement";
+    });
+  };
+  if(!file){ envoyer(""); return; }
+  reduirePhoto(file).then(envoyer).catch(() => {
+    err.textContent = "Impossible de traiter cette photo. Essayez une autre photo, ou envoyez sans photo.";
+    err.hidden = false;
+    btn.disabled = false; btn.textContent = "📸 Envoyer le signalement";
+  });
 }
 </script>
 <!-- BOUTONS FIXES -->
