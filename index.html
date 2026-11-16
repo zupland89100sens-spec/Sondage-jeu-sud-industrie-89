@@ -175,7 +175,7 @@ body{background:#f4f6fa!important}
   <img class="logo-anime" src="logo.jpg" alt="Logo Sud Industrie ELE" style="display:block; width:110px; height:auto; margin:0 auto 8px auto;">
   <h1>SUD <span>INDUSTRIE</span> ELE</h1>
   <p class="sub"><span class="bob">✊</span> Votre Espace Salarié <span class="bob">🗳️</span></p>
-  <p style="margin:10px 0 0 0; color:#fff; font-size:.9rem;">👥 Élus titulaires : Tony, Ilda · élus suppléant : Mélanie, Christopher · Délégué syndical : Aziz</p>
+  <p style="margin:10px 0 0 0; color:#fff; font-size:.9rem;">👥 Élus : Tony, Ilda, Mélanie, Christopher · Délégué : Aziz</p>
   <a href="tel:0626711687" style="display:inline-block; margin-top:8px; background:#fff; color:#004aad; padding:8px 16px; border-radius:999px; font-weight:700; text-decoration:none;">📞 Appeler le syndicat</a>
 </header>
 
@@ -650,6 +650,7 @@ body{background:#f4f6fa!important}
 <button class="btn sec" onclick="fermerPage()" style="margin-top:0; background:var(--bg); color:var(--ink); border:2px solid var(--blue);">⬅️ Retour à l'accueil</button>
   <div class="card" style="text-align:center;">
     <h2>🎯 Mission sécurité</h2>
+    <a href="jeu-terrain-v4.html" target="_blank" rel="noopener" style="display:block; padding:12px; margin:10px 0; border:2px solid var(--blue); border-radius:8px; color:var(--blue); font-weight:700; text-decoration:none;">🧪 Tester la nouvelle version du jeu</a>
     <p style="font-size:.95rem; color:var(--mute);">Douze scènes de ta journée à l'entrepôt. Repère les dangers, puis choisis la bonne décision. Chaque erreur te montre ce qu'elle peut provoquer.</p>
     <p class="note">Scène <span id="jeu-scene">1</span> · Score : <strong id="jeu-score">0</strong> · Meilleur : <strong id="jeu-best">0</strong></p>
     <div class="badges" id="jeu-badges">
@@ -699,21 +700,22 @@ body{background:#f4f6fa!important}
         </ul>
       </div>
       
-      <form action="https://formspree.io/f/mkjrjznv" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 15px;">
-        
+      <div style="display:flex; flex-direction:column; gap:15px;">
         <div>
-          <label for="photo-upload" style="font-weight: bold; display: block; margin-bottom: 5px;">1. Choisir une photo (ou en prendre une) :</label>
-          <input type="file" id="photo-upload" name="photo" accept="image/*" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9;">
-          <small style="color: #666; display: block; margin-top: 5px;">Sur téléphone, un menu s'ouvrira pour choisir entre l'appareil photo et votre galerie.</small>
+          <label for="flash-lieu" style="font-weight:bold; display:block; margin-bottom:5px;">1. Où se trouve le danger ?</label>
+          <input type="text" id="flash-lieu" placeholder="Ex : allée 4, quai 3" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
         </div>
-        
         <div>
-          <label for="photo-desc" style="font-weight: bold; display: block; margin-bottom: 5px;">2. Décrire le problème (où et quoi ?) :</label>
-          <textarea id="photo-desc" name="description" rows="4" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: Arial, sans-serif;" placeholder="Ex: Palette qui bloque la sortie de secours au quai 3."></textarea>
+          <label for="flash-desc" style="font-weight:bold; display:block; margin-bottom:5px;">2. Décrire le problème :</label>
+          <textarea id="flash-desc" rows="4" placeholder="Ex : palette qui bloque la sortie de secours." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-family:Arial, sans-serif;"></textarea>
         </div>
-
-        <button type="submit" style="display: block; width: 100%; padding: 14px; border: 0; border-radius: 8px; background: #c8102e; color: #fff; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 10px;">📧 Envoyer le signalement</button>
-      </form>
+        <div style="background:#eef0f2; border-radius:8px; padding:10px; font-size:.9rem;">
+          <strong>3. Ajouter la photo :</strong> touchez le bouton ci-dessous, puis joignez votre photo au mail qui s'ouvre (icône trombone ou pièce jointe).
+        </div>
+        <p id="flash-err" class="msg-err" hidden></p>
+        <button type="button" onclick="flashPreparerMail()" style="background:#c8102e;">📧 Préparer mon signalement</button>
+        <p class="note" style="text-align:left;">⚠️ Ce mail part de votre messagerie : votre adresse y apparaît. Ne mettez ni nom ni collègue dans la description.</p>
+      </div>
       
     </div>
     <!-- FIN FORMULAIRE FLASH SÉCURITÉ -->
@@ -2147,6 +2149,21 @@ function fermerPage(){
     c.hidden = c.dataset.prevHidden === "1";
   });
   window.scrollTo(0, 0);
+}
+// ==================== FLASH SÉCURITÉ (mail préparé) ====================
+function flashPreparerMail(){
+  const lieu = $("flash-lieu").value.trim();
+  const desc = $("flash-desc").value.trim();
+  const err = $("flash-err");
+  err.hidden = true;
+  if(!desc){
+    err.textContent = "Décris le problème avant d'envoyer.";
+    err.hidden = false;
+    return;
+  }
+  const corps = "FLASH SÉCURITÉ\n\nLieu : " + (lieu || "non précisé") + "\n\nDescription :\n" + desc +
+    "\n\n(Pensez à joindre la photo à ce mail.)";
+  window.location.href = "mailto:" + REGLAGES.mail + "?subject=" + encodeURIComponent("Flash Sécurité") + "&body=" + encodeURIComponent(corps);
 }
 </script>
 <!-- BOUTONS FIXES -->
